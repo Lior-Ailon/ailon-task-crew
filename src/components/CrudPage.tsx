@@ -70,14 +70,15 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
       }
     }
 
+    const client = supabase.from(table) as any;
     if (editing) {
-      const { error } = await supabase.from(table).update(payload).eq("id", editing.id);
+      const { error } = await client.update(payload).eq("id", editing.id);
       if (error) return toast.error(error.message);
       toast.success("עודכן בהצלחה");
     } else {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return toast.error("לא מחובר");
-      const { error } = await supabase.from(table).insert({ ...payload, user_id: user.id });
+      const { error } = await client.insert({ ...payload, user_id: user.id });
       if (error) return toast.error(error.message);
       toast.success("נוצר בהצלחה");
     }
