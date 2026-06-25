@@ -18,10 +18,10 @@ import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
 
 export type FieldDef =
-  | { name: string; label: string; type: "text" | "email" | "tel" | "number" | "date" | "textarea"; required?: boolean }
+  | { name: string; label: string; type: "text" | "email" | "tel" | "number" | "date" | "datetime-local" | "textarea"; required?: boolean }
   | { name: string; label: string; type: "select"; options: { value: string; label: string }[]; required?: boolean };
 
-export type TableName = "leads" | "customers" | "projects" | "tasks";
+export type TableName = "leads" | "customers" | "projects" | "tasks" | "meetings";
 
 export interface CrudPageProps {
   title: string;
