@@ -56,6 +56,42 @@ export type Database = {
         }
         Relationships: []
       }
+      ideas: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          priority: Database["public"]["Enums"]["idea_priority"]
+          status: Database["public"]["Enums"]["idea_status"]
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          priority?: Database["public"]["Enums"]["idea_priority"]
+          status?: Database["public"]["Enums"]["idea_status"]
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          priority?: Database["public"]["Enums"]["idea_priority"]
+          status?: Database["public"]["Enums"]["idea_status"]
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           company: string | null
@@ -303,6 +339,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      idea_priority: "low" | "medium" | "high"
+      idea_status: "new" | "in_review" | "approved" | "rejected" | "implemented"
       lead_status: "new" | "contacted" | "qualified" | "converted" | "lost"
       meeting_status: "scheduled" | "completed" | "cancelled"
       project_status:
@@ -440,6 +478,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      idea_priority: ["low", "medium", "high"],
+      idea_status: ["new", "in_review", "approved", "rejected", "implemented"],
       lead_status: ["new", "contacted", "qualified", "converted", "lost"],
       meeting_status: ["scheduled", "completed", "cancelled"],
       project_status: [
