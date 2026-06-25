@@ -9,11 +9,11 @@ import {
   LogOut,
   Menu,
   X,
-  Sparkles,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import logoAsset from "@/assets/ailon-logo.png.asset.json";
 
 const navItems = [
   { to: "/dashboard", label: "דשבורד", icon: LayoutDashboard },
@@ -44,10 +44,8 @@ export function AppShell() {
       {/* Mobile Topbar */}
       <header className="lg:hidden fixed top-0 inset-x-0 z-40 glass-strong border-b h-14 flex items-center justify-between px-4">
         <Link to="/dashboard" className="flex items-center gap-2">
-          <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-            <Sparkles className="size-4 text-primary-foreground" />
-          </div>
-          <span className="font-bold text-sm tracking-wider">AILON TASK</span>
+          <img src={logoAsset.url} alt="AILON TASK" className="size-9 object-contain" />
+          <span className="font-bold text-sm tracking-wider text-primary">AILON TASK</span>
         </Link>
         <button
           onClick={() => setMobileOpen(true)}
@@ -102,11 +100,9 @@ function SidebarContent({
     <>
       <div className="p-6 border-b border-border/50">
         <Link to="/dashboard" className="flex items-center gap-3" onClick={onNavigate}>
-          <div className="size-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center glow">
-            <Sparkles className="size-5 text-primary-foreground" />
-          </div>
+          <img src={logoAsset.url} alt="AILON TASK" className="size-12 object-contain drop-shadow-sm" />
           <div>
-            <div className="font-bold text-base tracking-wider">AILON TASK</div>
+            <div className="font-bold text-base tracking-wider text-primary">AILON TASK</div>
             <div className="text-[10px] text-muted-foreground tracking-widest">CRM SYSTEM</div>
           </div>
         </Link>

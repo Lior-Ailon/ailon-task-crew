@@ -53,61 +53,61 @@
 :root {
   --radius: 0.875rem;
 
-  /* Light, fresh palette — teal + emerald green + white. AILON TASK */
-  --background: oklch(0.985 0.005 200);
-  --foreground: oklch(0.22 0.04 215);
+  /* AILON TASK brand — deep teal-green + light cyan + white */
+  --background: oklch(0.985 0.006 190);
+  --foreground: oklch(0.24 0.04 200);
 
-  --card: oklch(1 0 0 / 80%);
-  --card-foreground: oklch(0.22 0.04 215);
+  --card: oklch(1 0 0 / 82%);
+  --card-foreground: oklch(0.24 0.04 200);
 
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.04 215);
+  --popover-foreground: oklch(0.24 0.04 200);
 
-  /* Primary = teal (sky-cyan) */
-  --primary: oklch(0.66 0.13 210);
+  /* Primary = brand deep teal-green (#0E5C57-ish) */
+  --primary: oklch(0.48 0.07 185);
   --primary-foreground: oklch(0.99 0 0);
 
-  --secondary: oklch(0.95 0.02 200);
-  --secondary-foreground: oklch(0.28 0.05 215);
+  --secondary: oklch(0.95 0.02 195);
+  --secondary-foreground: oklch(0.30 0.05 200);
 
-  --muted: oklch(0.96 0.01 210);
-  --muted-foreground: oklch(0.50 0.03 215);
+  --muted: oklch(0.96 0.012 195);
+  --muted-foreground: oklch(0.50 0.03 200);
 
-  /* Accent = brand green */
-  --accent: oklch(0.72 0.17 150);
-  --accent-foreground: oklch(0.16 0.05 160);
+  /* Accent = bright cyan-teal */
+  --accent: oklch(0.78 0.12 200);
+  --accent-foreground: oklch(0.20 0.05 200);
 
   --destructive: oklch(0.62 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
 
-  --border: oklch(0.66 0.05 210 / 18%);
-  --input: oklch(0.66 0.05 210 / 14%);
-  --ring: oklch(0.66 0.13 210);
+  --border: oklch(0.50 0.05 195 / 18%);
+  --input: oklch(0.50 0.05 195 / 14%);
+  --ring: oklch(0.48 0.07 185);
 
-  --chart-1: oklch(0.66 0.13 210);
-  --chart-2: oklch(0.72 0.17 150);
-  --chart-3: oklch(0.78 0.12 195);
-  --chart-4: oklch(0.78 0.15 130);
-  --chart-5: oklch(0.62 0.10 230);
+  --chart-1: oklch(0.48 0.07 185);
+  --chart-2: oklch(0.78 0.12 200);
+  --chart-3: oklch(0.72 0.14 165);
+  --chart-4: oklch(0.65 0.10 215);
+  --chart-5: oklch(0.55 0.09 175);
 
-  --sidebar: oklch(1 0 0 / 75%);
-  --sidebar-foreground: oklch(0.22 0.04 215);
-  --sidebar-primary: oklch(0.66 0.13 210);
+  --sidebar: oklch(1 0 0 / 78%);
+  --sidebar-foreground: oklch(0.24 0.04 200);
+  --sidebar-primary: oklch(0.48 0.07 185);
   --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.95 0.03 200);
-  --sidebar-accent-foreground: oklch(0.22 0.04 215);
-  --sidebar-border: oklch(0.66 0.05 210 / 18%);
-  --sidebar-ring: oklch(0.66 0.13 210);
+  --sidebar-accent: oklch(0.95 0.03 195);
+  --sidebar-accent-foreground: oklch(0.24 0.04 200);
+  --sidebar-border: oklch(0.50 0.05 195 / 18%);
+  --sidebar-ring: oklch(0.48 0.07 185);
 
   /* Custom design tokens */
-  --gradient-primary: linear-gradient(135deg, oklch(0.66 0.13 210), oklch(0.72 0.17 150));
-  --gradient-soft: linear-gradient(135deg, oklch(0.66 0.13 210 / 12%), oklch(0.72 0.17 150 / 12%));
+  --gradient-primary: linear-gradient(135deg, oklch(0.42 0.07 185), oklch(0.72 0.13 195));
+  --gradient-soft: linear-gradient(135deg, oklch(0.48 0.07 185 / 10%), oklch(0.78 0.12 200 / 12%));
   --gradient-mesh:
-    radial-gradient(at 15% 10%, oklch(0.66 0.13 210 / 22%) 0px, transparent 55%),
-    radial-gradient(at 85% 5%, oklch(0.72 0.17 150 / 18%) 0px, transparent 55%),
-    radial-gradient(at 75% 90%, oklch(0.66 0.13 210 / 14%) 0px, transparent 55%);
-  --shadow-glow: 0 10px 40px -12px oklch(0.66 0.13 210 / 35%);
-  --shadow-glass: 0 8px 28px -8px oklch(0.50 0.08 215 / 18%);
+    radial-gradient(at 12% 8%, oklch(0.78 0.12 200 / 22%) 0px, transparent 55%),
+    radial-gradient(at 88% 4%, oklch(0.48 0.07 185 / 18%) 0px, transparent 55%),
+    radial-gradient(at 78% 92%, oklch(0.78 0.12 200 / 16%) 0px, transparent 55%);
+  --shadow-glow: 0 10px 40px -12px oklch(0.48 0.07 185 / 35%);
+  --shadow-glass: 0 8px 28px -8px oklch(0.45 0.06 195 / 18%);
 }
 
 @layer base {
