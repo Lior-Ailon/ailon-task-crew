@@ -7,6 +7,7 @@ import {
   FolderKanban,
   CheckSquare,
   CalendarDays,
+  Lightbulb,
   LogOut,
   Menu,
   X,
@@ -23,6 +24,7 @@ const navItems = [
   { to: "/projects", label: "פרויקטים", icon: FolderKanban },
   { to: "/tasks", label: "משימות", icon: CheckSquare },
   { to: "/meetings", label: "פגישות", icon: CalendarDays },
+  { to: "/ideas", label: "רעיונות", icon: Lightbulb },
 ] as const;
 
 export function AppShell() {
