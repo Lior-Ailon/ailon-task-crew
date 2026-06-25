@@ -195,14 +195,14 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
 
 export function StatusPill({ label, tone = "default" }: { label: string; tone?: "default" | "blue" | "purple" | "cyan" | "emerald" | "red" | "amber" | "slate" }) {
   const tones = {
-    default: "bg-muted text-muted-foreground",
-    blue: "bg-blue-500/20 text-blue-300",
-    purple: "bg-purple-500/20 text-purple-300",
-    cyan: "bg-cyan-500/20 text-cyan-300",
-    emerald: "bg-emerald-500/20 text-emerald-300",
-    red: "bg-red-500/20 text-red-300",
-    amber: "bg-amber-500/20 text-amber-300",
-    slate: "bg-slate-500/20 text-slate-300",
+    default: "bg-muted text-muted-foreground border border-border",
+    blue: "bg-sky-100 text-sky-700 border border-sky-200",
+    purple: "bg-violet-100 text-violet-700 border border-violet-200",
+    cyan: "bg-cyan-100 text-cyan-700 border border-cyan-200",
+    emerald: "bg-emerald-100 text-emerald-700 border border-emerald-200",
+    red: "bg-red-100 text-red-700 border border-red-200",
+    amber: "bg-amber-100 text-amber-700 border border-amber-200",
+    slate: "bg-slate-100 text-slate-700 border border-slate-200",
   };
   return <span className={`text-[10px] font-medium px-2 py-1 rounded-full ${tones[tone]}`}>{label}</span>;
 }
