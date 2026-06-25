@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import logoAsset from "@/assets/ailon-logo.png.asset.json";
+import introVideo from "@/assets/ailon-intro.mp4.asset.json";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
@@ -61,11 +63,27 @@ function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-3xl sm:text-4xl font-bold">
-          שלום, ברוך הבא ל<span className="gradient-text">AILON TASK</span>
-        </h1>
-        <p className="text-muted-foreground mt-2">סקירה כללית של המערכת שלך</p>
+      {/* Hero banner with intro video */}
+      <header className="relative overflow-hidden rounded-3xl glass-strong">
+        <video
+          src={introVideo.url}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 size-full object-cover opacity-60"
+        />
+        <div className="absolute inset-0 bg-gradient-to-l from-primary/85 via-primary/55 to-primary/10" />
+        <div className="relative z-10 p-6 sm:p-10 flex items-center gap-5 text-white">
+          <img src={logoAsset.url} alt="" className="size-16 sm:size-20 object-contain drop-shadow-lg shrink-0" />
+          <div className="min-w-0">
+            <div className="text-[11px] tracking-[0.3em] opacity-80">AILON TASK · CRM</div>
+            <h1 className="text-2xl sm:text-4xl font-extrabold mt-1 leading-tight">
+              Dream it. Plan it. <span className="text-accent">Achieve it.</span>
+            </h1>
+            <p className="opacity-85 text-xs sm:text-sm mt-2">סקירה כללית של המערכת שלך</p>
+          </div>
+        </div>
       </header>
 
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -135,15 +153,15 @@ function DashboardPage() {
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {
-    new: { label: "חדש", cls: "bg-blue-500/20 text-blue-300" },
-    contacted: { label: "יצרנו קשר", cls: "bg-purple-500/20 text-purple-300" },
-    qualified: { label: "מוכשר", cls: "bg-cyan-500/20 text-cyan-300" },
-    converted: { label: "המיר", cls: "bg-emerald-500/20 text-emerald-300" },
-    lost: { label: "אבוד", cls: "bg-red-500/20 text-red-300" },
-    todo: { label: "לביצוע", cls: "bg-slate-500/20 text-slate-300" },
-    in_progress: { label: "בתהליך", cls: "bg-amber-500/20 text-amber-300" },
-    done: { label: "הושלם", cls: "bg-emerald-500/20 text-emerald-300" },
+    new: { label: "חדש", cls: "bg-sky-100 text-sky-700 border border-sky-200" },
+    contacted: { label: "יצרנו קשר", cls: "bg-violet-100 text-violet-700 border border-violet-200" },
+    qualified: { label: "מוכשר", cls: "bg-cyan-100 text-cyan-700 border border-cyan-200" },
+    converted: { label: "המיר", cls: "bg-emerald-100 text-emerald-700 border border-emerald-200" },
+    lost: { label: "אבוד", cls: "bg-red-100 text-red-700 border border-red-200" },
+    todo: { label: "לביצוע", cls: "bg-slate-100 text-slate-700 border border-slate-200" },
+    in_progress: { label: "בתהליך", cls: "bg-amber-100 text-amber-700 border border-amber-200" },
+    done: { label: "הושלם", cls: "bg-emerald-100 text-emerald-700 border border-emerald-200" },
   };
-  const info = map[status] ?? { label: status, cls: "bg-muted text-muted-foreground" };
+  const info = map[status] ?? { label: status, cls: "bg-muted text-muted-foreground border border-border" };
   return <span className={`text-[10px] font-medium px-2 py-1 rounded-full ${info.cls}`}>{info.label}</span>;
 }
