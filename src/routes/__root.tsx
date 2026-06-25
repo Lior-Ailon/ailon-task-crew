@@ -79,7 +79,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { name: "theme-color", content: "#0A0E1A" },
+      { name: "theme-color", content: "#E6F7F2" },
       { title: "AILON TASK · מערכת CRM" },
       { name: "description", content: "מערכת מיני CRM של איילון טאסק - ניהול לידים, לקוחות, פרויקטים ומשימות בעיצוב מודרני." },
       { property: "og:title", content: "AILON TASK · מערכת CRM" },
