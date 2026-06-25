@@ -6,6 +6,7 @@ import {
   Users,
   FolderKanban,
   CheckSquare,
+  CalendarDays,
   LogOut,
   Menu,
   X,
@@ -21,6 +22,7 @@ const navItems = [
   { to: "/customers", label: "לקוחות", icon: Users },
   { to: "/projects", label: "פרויקטים", icon: FolderKanban },
   { to: "/tasks", label: "משימות", icon: CheckSquare },
+  { to: "/meetings", label: "פגישות", icon: CalendarDays },
 ] as const;
 
 export function AppShell() {

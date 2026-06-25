@@ -101,6 +101,79 @@ export type Database = {
         }
         Relationships: []
       }
+      meetings: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          description: string | null
+          end_time: string
+          id: string
+          lead_id: string | null
+          location: string | null
+          meeting_url: string | null
+          project_id: string | null
+          start_time: string
+          status: Database["public"]["Enums"]["meeting_status"]
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          description?: string | null
+          end_time: string
+          id?: string
+          lead_id?: string | null
+          location?: string | null
+          meeting_url?: string | null
+          project_id?: string | null
+          start_time: string
+          status?: Database["public"]["Enums"]["meeting_status"]
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          description?: string | null
+          end_time?: string
+          id?: string
+          lead_id?: string | null
+          location?: string | null
+          meeting_url?: string | null
+          project_id?: string | null
+          start_time?: string
+          status?: Database["public"]["Enums"]["meeting_status"]
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meetings_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetings_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -231,6 +304,7 @@ export type Database = {
     }
     Enums: {
       lead_status: "new" | "contacted" | "qualified" | "converted" | "lost"
+      meeting_status: "scheduled" | "completed" | "cancelled"
       project_status:
         | "planning"
         | "active"
@@ -367,6 +441,7 @@ export const Constants = {
   public: {
     Enums: {
       lead_status: ["new", "contacted", "qualified", "converted", "lost"],
+      meeting_status: ["scheduled", "completed", "cancelled"],
       project_status: [
         "planning",
         "active",
