@@ -284,9 +284,117 @@ export type Database = {
           },
         ]
       }
-      tasks: {
+      quotes: {
         Row: {
           created_at: string
+          customer_id: string | null
+          description: string | null
+          id: string
+          notes: string | null
+          quote_number: string | null
+          status: string
+          title: string
+          total_amount: number | null
+          updated_at: string
+          user_id: string
+          valid_until: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          description?: string | null
+          id?: string
+          notes?: string | null
+          quote_number?: string | null
+          status?: string
+          title: string
+          total_amount?: number | null
+          updated_at?: string
+          user_id: string
+          valid_until?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          description?: string | null
+          id?: string
+          notes?: string | null
+          quote_number?: string | null
+          status?: string
+          title?: string
+          total_amount?: number | null
+          updated_at?: string
+          user_id?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscriptions: {
+        Row: {
+          billing_cycle: string
+          created_at: string
+          customer_id: string | null
+          id: string
+          next_billing_date: string | null
+          notes: string | null
+          plan_name: string
+          price: number | null
+          start_date: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          billing_cycle?: string
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          next_billing_date?: string | null
+          notes?: string | null
+          plan_name: string
+          price?: number | null
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          billing_cycle?: string
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          next_billing_date?: string | null
+          notes?: string | null
+          plan_name?: string
+          price?: number | null
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          assignee_id: string | null
+          created_at: string
+          customer_id: string | null
           description: string | null
           due_date: string | null
           id: string
@@ -298,7 +406,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          assignee_id?: string | null
           created_at?: string
+          customer_id?: string | null
           description?: string | null
           due_date?: string | null
           id?: string
@@ -310,7 +420,9 @@ export type Database = {
           user_id: string
         }
         Update: {
+          assignee_id?: string | null
           created_at?: string
+          customer_id?: string | null
           description?: string | null
           due_date?: string | null
           id?: string
@@ -322,6 +434,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "tasks_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "tasks_project_id_fkey"
             columns: ["project_id"]
