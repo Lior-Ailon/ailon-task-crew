@@ -19,9 +19,10 @@ import { toast } from "sonner";
 
 export type FieldDef =
   | { name: string; label: string; type: "text" | "email" | "tel" | "number" | "date" | "datetime-local" | "textarea"; required?: boolean }
-  | { name: string; label: string; type: "select"; options: { value: string; label: string }[]; required?: boolean };
+  | { name: string; label: string; type: "select"; options: { value: string; label: string }[]; required?: boolean }
+  | { name: string; label: string; type: "lookup"; lookupTable: "customers" | "projects" | "profiles"; labelField: string; required?: boolean };
 
-export type TableName = "leads" | "customers" | "projects" | "tasks" | "meetings" | "ideas";
+export type TableName = "leads" | "customers" | "projects" | "tasks" | "meetings" | "ideas" | "subscriptions" | "quotes";
 
 export interface CrudPageProps {
   title: string;
@@ -132,6 +133,8 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
                         ))}
                       </SelectContent>
                     </Select>
+                  ) : f.type === "lookup" ? (
+                    <LookupSelect name={f.name} table={f.lookupTable} labelField={f.labelField} defaultValue={editing?.[f.name] ?? ""} />
                   ) : (
                     <Input
                       id={f.name}
@@ -205,4 +208,30 @@ export function StatusPill({ label, tone = "default" }: { label: string; tone?: 
     slate: "bg-slate-100 text-slate-700 border border-slate-200",
   };
   return <span className={`text-[10px] font-medium px-2 py-1 rounded-full ${tones[tone]}`}>{label}</span>;
+}
+
+function LookupSelect({ name, table, labelField, defaultValue }: { name: string; table: "customers" | "projects" | "profiles"; labelField: string; defaultValue?: string }) {
+  const [value, setValue] = useState<string>(defaultValue || "__none__");
+  const { data: options = [] } = useQuery({
+    queryKey: ["lookup", table],
+    queryFn: async () => {
+      const { data, error } = await supabase.from(table).select(`id, ${labelField}`).order(labelField);
+      if (error) throw error;
+      return data as Array<Record<string, any>>;
+    },
+  });
+  return (
+    <>
+      <input type="hidden" name={name} value={value === "__none__" ? "" : value} />
+      <Select value={value} onValueChange={setValue}>
+        <SelectTrigger><SelectValue placeholder="בחר..." /></SelectTrigger>
+        <SelectContent>
+          <SelectItem value="__none__">— ללא —</SelectItem>
+          {options.map((o) => (
+            <SelectItem key={o.id} value={o.id}>{o[labelField] || "(ללא שם)"}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </>
+  );
 }

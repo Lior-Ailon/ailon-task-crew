@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { CrudPage, StatusPill, type FieldDef } from "@/components/CrudPage";
-import { Mail, Phone, Building2 } from "lucide-react";
+import { Mail, Phone, Building2, UserCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const statusOptions = [
   { value: "new", label: "חדש" },
@@ -25,8 +29,31 @@ const fields: FieldDef[] = [
   { name: "notes", label: "הערות", type: "textarea" },
 ];
 
-export const Route = createFileRoute("/_authenticated/leads")({
-  component: () => (
+function LeadsPage() {
+  const qc = useQueryClient();
+
+  async function convertToCustomer(lead: any) {
+    if (!confirm(`להמיר את "${lead.name}" ללקוח?`)) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return toast.error("לא מחובר");
+    const { error: insertErr } = await supabase.from("customers").insert({
+      user_id: user.id,
+      name: lead.name,
+      company: lead.company,
+      email: lead.email,
+      phone: lead.phone,
+      notes: lead.notes,
+    });
+    if (insertErr) return toast.error(insertErr.message);
+    await supabase.from("leads").update({ status: "converted" }).eq("id", lead.id);
+    toast.success("הליד הומר ללקוח בהצלחה");
+    qc.invalidateQueries({ queryKey: ["leads"] });
+    qc.invalidateQueries({ queryKey: ["customers"] });
+    qc.invalidateQueries({ queryKey: ["count", "customers"] });
+    qc.invalidateQueries({ queryKey: ["lookup", "customers"] });
+  }
+
+  return (
     <CrudPage
       title="לידים"
       subtitle="נהל את הלידים שלך ועקוב אחר התקדמותם"
@@ -56,8 +83,23 @@ export const Route = createFileRoute("/_authenticated/leads")({
               <span className="text-sm font-bold gradient-text">₪{Number(item.estimated_value).toLocaleString()}</span>
             )}
           </div>
+          {item.status !== "converted" && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full mt-3 glass"
+              onClick={() => convertToCustomer(item)}
+            >
+              <UserCheck className="size-3.5 ml-1" />
+              המר ללקוח
+            </Button>
+          )}
         </article>
       )}
     />
-  ),
+  );
+}
+
+export const Route = createFileRoute("/_authenticated/leads")({
+  component: LeadsPage,
 });
