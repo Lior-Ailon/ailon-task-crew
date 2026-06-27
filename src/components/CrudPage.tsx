@@ -133,6 +133,8 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
                         ))}
                       </SelectContent>
                     </Select>
+                  ) : f.type === "lookup" ? (
+                    <LookupSelect name={f.name} table={f.lookupTable} labelField={f.labelField} defaultValue={editing?.[f.name] ?? ""} />
                   ) : (
                     <Input
                       id={f.name}
