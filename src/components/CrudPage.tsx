@@ -209,3 +209,29 @@ export function StatusPill({ label, tone = "default" }: { label: string; tone?: 
   };
   return <span className={`text-[10px] font-medium px-2 py-1 rounded-full ${tones[tone]}`}>{label}</span>;
 }
+
+function LookupSelect({ name, table, labelField, defaultValue }: { name: string; table: "customers" | "projects" | "profiles"; labelField: string; defaultValue?: string }) {
+  const [value, setValue] = useState<string>(defaultValue || "__none__");
+  const { data: options = [] } = useQuery({
+    queryKey: ["lookup", table],
+    queryFn: async () => {
+      const { data, error } = await supabase.from(table).select(`id, ${labelField}`).order(labelField);
+      if (error) throw error;
+      return data as Array<Record<string, any>>;
+    },
+  });
+  return (
+    <>
+      <input type="hidden" name={name} value={value === "__none__" ? "" : value} />
+      <Select value={value} onValueChange={setValue}>
+        <SelectTrigger><SelectValue placeholder="בחר..." /></SelectTrigger>
+        <SelectContent>
+          <SelectItem value="__none__">— ללא —</SelectItem>
+          {options.map((o) => (
+            <SelectItem key={o.id} value={o.id}>{o[labelField] || "(ללא שם)"}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </>
+  );
+}
