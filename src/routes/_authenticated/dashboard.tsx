@@ -54,6 +54,19 @@ function DashboardPage() {
     },
   });
 
+  const recentIdeas = useQuery({
+    queryKey: ["recent-ideas"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("ideas")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(5);
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const stats = [
     { label: "לידים", value: leads.data ?? 0, icon: UserPlus, to: "/leads", color: "from-fuchsia-500 to-purple-500" },
     { label: "לקוחות", value: customers.data ?? 0, icon: Users, to: "/customers", color: "from-cyan-400 to-blue-500" },
