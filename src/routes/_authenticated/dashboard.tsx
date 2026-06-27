@@ -160,6 +160,36 @@ function DashboardPage() {
           )}
         </section>
       </div>
+
+      <section className="glass rounded-2xl p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <Lightbulb className="size-5 text-accent" />
+          <h2 className="font-semibold">רעיונות אחרונים</h2>
+          <Link to="/ideas" className="text-xs text-primary hover:underline mr-auto">לכל הרעיונות ←</Link>
+        </div>
+        {recentIdeas.data?.length ? (
+          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {recentIdeas.data.map((idea: any) => (
+              <li key={idea.id} className="p-3 rounded-xl bg-muted/30 border border-border/40">
+                <div className="font-medium text-sm truncate">{idea.title}</div>
+                {idea.description && (
+                  <div className="text-xs text-muted-foreground mt-1 line-clamp-2">{idea.description}</div>
+                )}
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200">
+                    {idea.status ?? "חדש"}
+                  </span>
+                  {idea.priority && (
+                    <span className="text-[10px] text-muted-foreground">עדיפות: {idea.priority}</span>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-muted-foreground">אין רעיונות עדיין — <Link to="/ideas" className="text-primary hover:underline">הוסף ראשון</Link></p>
+        )}
+      </section>
     </div>
   );
 }
