@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { CrudPage, StatusPill, type FieldDef } from "@/components/CrudPage";
-import { Calendar, Flag } from "lucide-react";
+import { Calendar, Flag, User, Users } from "lucide-react";
 
 const statusOptions = [
   { value: "todo", label: "לביצוע" },
@@ -24,10 +26,29 @@ const fields: FieldDef[] = [
   { name: "status", label: "סטטוס", type: "select", options: statusOptions, required: true },
   { name: "priority", label: "עדיפות", type: "select", options: priorityOptions, required: true },
   { name: "due_date", label: "תאריך יעד", type: "date" },
+  { name: "assignee_id", label: "אחראי", type: "lookup", lookupTable: "profiles", labelField: "full_name" },
+  { name: "customer_id", label: "לקוח משויך", type: "lookup", lookupTable: "customers", labelField: "name" },
+  { name: "project_id", label: "פרויקט משויך", type: "lookup", lookupTable: "projects", labelField: "name" },
 ];
 
-export const Route = createFileRoute("/_authenticated/tasks")({
-  component: () => (
+function TasksPage() {
+  const { data: profiles = [] } = useQuery({
+    queryKey: ["lookup", "profiles"],
+    queryFn: async () => (await supabase.from("profiles").select("id, full_name, email")).data ?? [],
+  });
+  const { data: customers = [] } = useQuery({
+    queryKey: ["lookup", "customers"],
+    queryFn: async () => (await supabase.from("customers").select("id, name")).data ?? [],
+  });
+  const { data: projects = [] } = useQuery({
+    queryKey: ["lookup", "projects"],
+    queryFn: async () => (await supabase.from("projects").select("id, name")).data ?? [],
+  });
+  const profileMap = new Map(profiles.map((p: any) => [p.id, p.full_name || p.email || "משתמש"]));
+  const customerMap = new Map(customers.map((c: any) => [c.id, c.name]));
+  const projectMap = new Map(projects.map((p: any) => [p.id, p.name]));
+
+  return (
     <CrudPage
       title="משימות"
       subtitle="כל המשימות הפתוחות והסגורות שלך"
@@ -42,6 +63,17 @@ export const Route = createFileRoute("/_authenticated/tasks")({
               {item.description && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{item.description}</p>}
             </div>
             {actions}
+          </div>
+          <div className="space-y-1 text-xs text-muted-foreground">
+            {item.assignee_id && (
+              <div className="flex items-center gap-1"><User className="size-3" />{profileMap.get(item.assignee_id) ?? "—"}</div>
+            )}
+            {item.customer_id && (
+              <div className="flex items-center gap-1"><Users className="size-3" />{customerMap.get(item.customer_id) ?? "—"}</div>
+            )}
+            {item.project_id && (
+              <div className="flex items-center gap-1">📁 {projectMap.get(item.project_id) ?? "—"}</div>
+            )}
           </div>
           <div className="flex items-center gap-2 flex-wrap mt-3 pt-3 border-t border-border/50">
             <StatusPill label={statusLabel[item.status] ?? item.status} tone={statusTone[item.status]} />
@@ -58,5 +90,9 @@ export const Route = createFileRoute("/_authenticated/tasks")({
         </article>
       )}
     />
-  ),
+  );
+}
+
+export const Route = createFileRoute("/_authenticated/tasks")({
+  component: TasksPage,
 });

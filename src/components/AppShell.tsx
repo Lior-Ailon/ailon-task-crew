@@ -8,6 +8,8 @@ import {
   CheckSquare,
   CalendarDays,
   Lightbulb,
+  Repeat,
+  FileText,
   LogOut,
   Menu,
   X,
@@ -24,6 +26,8 @@ const navItems = [
   { to: "/projects", label: "פרויקטים", icon: FolderKanban },
   { to: "/tasks", label: "משימות", icon: CheckSquare },
   { to: "/meetings", label: "פגישות", icon: CalendarDays },
+  { to: "/quotes", label: "הצעות מחיר", icon: FileText },
+  { to: "/subscriptions", label: "מנויים", icon: Repeat },
   { to: "/ideas", label: "רעיונות", icon: Lightbulb },
 ] as const;
 
