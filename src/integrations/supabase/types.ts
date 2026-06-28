@@ -62,6 +62,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          lead_id: string | null
           priority: Database["public"]["Enums"]["idea_priority"]
           status: Database["public"]["Enums"]["idea_status"]
           title: string
@@ -73,6 +74,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          lead_id?: string | null
           priority?: Database["public"]["Enums"]["idea_priority"]
           status?: Database["public"]["Enums"]["idea_status"]
           title: string
@@ -84,13 +86,22 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          lead_id?: string | null
           priority?: Database["public"]["Enums"]["idea_priority"]
           status?: Database["public"]["Enums"]["idea_status"]
           title?: string
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ideas_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       leads: {
         Row: {

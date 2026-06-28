@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CrudPage, StatusPill, type FieldDef } from "@/components/CrudPage";
-import { Calendar, Flag, User, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar, Flag, User, Users, Check } from "lucide-react";
+import { toast } from "sonner";
 
 const statusOptions = [
   { value: "todo", label: "לביצוע" },
@@ -32,6 +34,7 @@ const fields: FieldDef[] = [
 ];
 
 function TasksPage() {
+  const qc = useQueryClient();
   const { data: profiles = [] } = useQuery({
     queryKey: ["lookup", "profiles"],
     queryFn: async () => (await supabase.from("profiles").select("id, full_name, email")).data ?? [],
@@ -47,6 +50,15 @@ function TasksPage() {
   const profileMap = new Map(profiles.map((p: any) => [p.id, p.full_name || p.email || "משתמש"]));
   const customerMap = new Map(customers.map((c: any) => [c.id, c.name]));
   const projectMap = new Map(projects.map((p: any) => [p.id, p.name]));
+
+  async function markDone(id: string) {
+    const { error } = await supabase.from("tasks").update({ status: "done" }).eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("המשימה סומנה כהושלמה");
+    qc.invalidateQueries({ queryKey: ["tasks"] });
+    qc.invalidateQueries({ queryKey: ["count", "tasks"] });
+    qc.invalidateQueries({ queryKey: ["recent-tasks"] });
+  }
 
   return (
     <CrudPage
@@ -87,6 +99,16 @@ function TasksPage() {
               </span>
             )}
           </div>
+          {item.status !== "done" && (
+            <Button
+              size="sm"
+              onClick={() => markDone(item.id)}
+              className="w-full mt-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
+            >
+              <Check className="size-4 ml-1" />
+              בוצע
+            </Button>
+          )}
         </article>
       )}
     />

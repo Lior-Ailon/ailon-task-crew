@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock, Lightbulb } from "lucide-react";
+import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock, Lightbulb, FileText } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import logoAsset from "@/assets/ailon-logo.png.asset.json";
 import introVideo from "@/assets/ailon-intro.mp4.asset.json";
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
 });
 
-function useCount(table: "leads" | "customers" | "projects" | "tasks") {
+function useCount(table: "leads" | "customers" | "projects" | "tasks" | "ideas" | "quotes") {
   return useQuery({
     queryKey: ["count", table],
     queryFn: async () => {
@@ -26,6 +26,8 @@ function DashboardPage() {
   const customers = useCount("customers");
   const projects = useCount("projects");
   const tasks = useCount("tasks");
+  const ideas = useCount("ideas");
+  const quotes = useCount("quotes");
 
   const recentTasks = useQuery({
     queryKey: ["recent-tasks"],
@@ -72,6 +74,8 @@ function DashboardPage() {
     { label: "לקוחות", value: customers.data ?? 0, icon: Users, to: "/customers", color: "from-cyan-400 to-blue-500" },
     { label: "פרויקטים", value: projects.data ?? 0, icon: FolderKanban, to: "/projects", color: "from-emerald-400 to-teal-500" },
     { label: "משימות", value: tasks.data ?? 0, icon: CheckSquare, to: "/tasks", color: "from-amber-400 to-orange-500" },
+    { label: "רעיונות", value: ideas.data ?? 0, icon: Lightbulb, to: "/ideas", color: "from-yellow-400 to-amber-500" },
+    { label: "הצעות מחיר", value: quotes.data ?? 0, icon: FileText, to: "/quotes", color: "from-sky-400 to-indigo-500" },
   ] as const;
 
   return (
