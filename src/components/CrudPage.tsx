@@ -20,7 +20,7 @@ import { toast } from "sonner";
 export type FieldDef =
   | { name: string; label: string; type: "text" | "email" | "tel" | "number" | "date" | "datetime-local" | "textarea"; required?: boolean }
   | { name: string; label: string; type: "select"; options: { value: string; label: string }[]; required?: boolean }
-  | { name: string; label: string; type: "lookup"; lookupTable: "customers" | "projects" | "profiles"; labelField: string; required?: boolean };
+  | { name: string; label: string; type: "lookup"; lookupTable: "customers" | "projects" | "profiles" | "leads"; labelField: string; required?: boolean };
 
 export type TableName = "leads" | "customers" | "projects" | "tasks" | "meetings" | "ideas" | "subscriptions" | "quotes";
 
@@ -210,7 +210,7 @@ export function StatusPill({ label, tone = "default" }: { label: string; tone?: 
   return <span className={`text-[10px] font-medium px-2 py-1 rounded-full ${tones[tone]}`}>{label}</span>;
 }
 
-function LookupSelect({ name, table, labelField, defaultValue }: { name: string; table: "customers" | "projects" | "profiles"; labelField: string; defaultValue?: string }) {
+function LookupSelect({ name, table, labelField, defaultValue }: { name: string; table: "customers" | "projects" | "profiles" | "leads"; labelField: string; defaultValue?: string }) {
   const [value, setValue] = useState<string>(defaultValue || "__none__");
   const { data: options = [] } = useQuery({
     queryKey: ["lookup", table],
