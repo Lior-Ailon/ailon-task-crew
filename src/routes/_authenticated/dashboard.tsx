@@ -198,7 +198,129 @@ function DashboardPage() {
           <p className="text-sm text-muted-foreground">אין רעיונות עדיין — <Link to="/ideas" className="text-primary hover:underline">הוסף ראשון</Link></p>
         )}
       </section>
+
+      <MeetingsCalendarSection />
     </div>
+  );
+}
+
+function MeetingsCalendarSection() {
+  const { data: meetings = [] } = useQuery({
+    queryKey: ["dashboard-meetings"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("meetings").select("*").order("start_time", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const [cursor, setCursor] = useState(() => {
+    const d = new Date();
+    d.setDate(1);
+    return d;
+  });
+
+  const { days, monthLabel } = useMemo(() => {
+    const year = cursor.getFullYear();
+    const month = cursor.getMonth();
+    const first = new Date(year, month, 1);
+    const last = new Date(year, month + 1, 0);
+    const startWeekday = first.getDay();
+    const cells: { date: Date | null; events: any[] }[] = [];
+    for (let i = 0; i < startWeekday; i++) cells.push({ date: null, events: [] });
+    for (let d = 1; d <= last.getDate(); d++) {
+      const date = new Date(year, month, d);
+      const dayEvents = meetings.filter((m: any) => {
+        const md = new Date(m.start_time);
+        return md.getFullYear() === year && md.getMonth() === month && md.getDate() === d;
+      });
+      cells.push({ date, events: dayEvents });
+    }
+    return {
+      days: cells,
+      monthLabel: cursor.toLocaleDateString("he-IL", { month: "long", year: "numeric" }),
+    };
+  }, [cursor, meetings]);
+
+  const upcoming = useMemo(
+    () =>
+      meetings
+        .filter((m: any) => new Date(m.start_time) >= new Date() && m.status === "scheduled")
+        .slice(0, 4),
+    [meetings],
+  );
+
+  const today = new Date();
+  const weekdayLabels = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "ש'"];
+
+  return (
+    <section className="glass rounded-2xl p-5">
+      <div className="flex items-center gap-2 mb-4">
+        <CalendarDays className="size-5 text-accent" />
+        <h2 className="font-semibold">יומן פגישות</h2>
+        <Link to="/meetings" className="text-xs text-primary hover:underline mr-auto">לכל הפגישות ←</Link>
+      </div>
+      <div className="grid lg:grid-cols-[1fr_280px] gap-4">
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <Button variant="ghost" size="sm" onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))}>›</Button>
+            <h3 className="font-medium text-sm">{monthLabel}</h3>
+            <Button variant="ghost" size="sm" onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}>‹</Button>
+          </div>
+          <div className="grid grid-cols-7 gap-1 text-center text-[10px] text-muted-foreground mb-1">
+            {weekdayLabels.map((d) => <div key={d} className="py-1 font-medium">{d}</div>)}
+          </div>
+          <div className="grid grid-cols-7 gap-1">
+            {days.map((cell, i) => {
+              const isToday = cell.date &&
+                cell.date.getFullYear() === today.getFullYear() &&
+                cell.date.getMonth() === today.getMonth() &&
+                cell.date.getDate() === today.getDate();
+              return (
+                <div key={i} className={cn(
+                  "aspect-square rounded-lg p-1 text-xs flex flex-col",
+                  cell.date ? "bg-muted/30 border border-border/40" : "opacity-0 pointer-events-none",
+                  isToday && "border-2 border-accent",
+                )}>
+                  {cell.date && (
+                    <>
+                      <span className={cn("font-medium", isToday && "text-accent")}>{cell.date.getDate()}</span>
+                      {cell.events.length > 0 && (
+                        <div className="mt-auto flex flex-wrap gap-0.5">
+                          {cell.events.slice(0, 3).map((e: any) => (
+                            <span key={e.id} className="size-1.5 rounded-full bg-primary" title={e.title} />
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-xs font-semibold text-muted-foreground">פגישות קרובות</h3>
+          {upcoming.length === 0 ? (
+            <p className="text-xs text-muted-foreground">אין פגישות מתוכננות</p>
+          ) : (
+            upcoming.map((m: any) => (
+              <div key={m.id} className="p-3 rounded-xl bg-muted/30 border border-border/40">
+                <div className="font-medium text-sm truncate">{m.title}</div>
+                <div className="text-[11px] text-muted-foreground mt-1">
+                  {new Date(m.start_time).toLocaleString("he-IL", { dateStyle: "short", timeStyle: "short" })}
+                </div>
+                {m.location && (
+                  <div className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1">
+                    <MapPin className="size-3" />{m.location}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </section>
   );
 }
 
