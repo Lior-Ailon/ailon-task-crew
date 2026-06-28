@@ -33,11 +33,12 @@ function DashboardPage() {
   const quotes = useCount("quotes");
 
   const recentTasks = useQuery({
-    queryKey: ["recent-tasks"],
+    queryKey: ["recent-tasks", "open"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("tasks")
         .select("*")
+        .neq("status", "done")
         .order("created_at", { ascending: false })
         .limit(5);
       if (error) throw error;
