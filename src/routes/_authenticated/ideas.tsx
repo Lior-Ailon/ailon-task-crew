@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { CrudPage, StatusPill, type FieldDef } from "@/components/CrudPage";
-import { Lightbulb, Tag } from "lucide-react";
+import { Lightbulb, Tag, UserPlus } from "lucide-react";
 
 const statusOptions = [
   { value: "new", label: "חדש" },
@@ -26,12 +28,19 @@ const fields: FieldDef[] = [
   { name: "title", label: "כותרת הרעיון", type: "text", required: true },
   { name: "description", label: "תיאור", type: "textarea" },
   { name: "category", label: "קטגוריה", type: "text" },
+  { name: "lead_id", label: "ליד משויך", type: "lookup", lookupTable: "leads", labelField: "name" },
   { name: "status", label: "סטטוס", type: "select", options: statusOptions, required: true },
   { name: "priority", label: "עדיפות", type: "select", options: priorityOptions, required: true },
 ];
 
-export const Route = createFileRoute("/_authenticated/ideas")({
-  component: () => (
+function IdeasPage() {
+  const { data: leads = [] } = useQuery({
+    queryKey: ["lookup", "leads"],
+    queryFn: async () => (await supabase.from("leads").select("id, name")).data ?? [],
+  });
+  const leadMap = new Map(leads.map((l: any) => [l.id, l.name]));
+
+  return (
     <CrudPage
       title="רעיונות"
       subtitle="אסוף, נהל ופתח רעיונות חדשים לעסק"
@@ -59,6 +68,11 @@ export const Route = createFileRoute("/_authenticated/ideas")({
           {item.description && (
             <p className="text-xs text-muted-foreground line-clamp-3 mb-3">{item.description}</p>
           )}
+          {item.lead_id && (
+            <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
+              <UserPlus className="size-3" />ליד: {leadMap.get(item.lead_id) ?? "—"}
+            </div>
+          )}
           <div className="flex items-center justify-between pt-3 border-t border-border/50 gap-2">
             <StatusPill label={statusLabel[item.status] ?? item.status} tone={statusTone[item.status]} />
             <StatusPill label={priorityLabel[item.priority] ?? item.priority} tone={priorityTone[item.priority]} />
@@ -66,5 +80,9 @@ export const Route = createFileRoute("/_authenticated/ideas")({
         </article>
       )}
     />
-  ),
+  );
+}
+
+export const Route = createFileRoute("/_authenticated/ideas")({
+  component: IdeasPage,
 });
