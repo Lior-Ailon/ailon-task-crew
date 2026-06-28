@@ -149,7 +149,7 @@ function DashboardPage() {
         <section className="glass rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-4">
             <Clock className="size-5 text-accent" />
-            <h2 className="font-semibold">משימות אחרונות</h2>
+            <h2 className="font-semibold">משימות פתוחות</h2>
           </div>
           {recentTasks.data?.length ? (
             <ul className="space-y-2">
