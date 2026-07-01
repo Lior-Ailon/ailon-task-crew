@@ -1,5 +1,6 @@
 import { Link, useRouterState, useNavigate, Outlet } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard,
   UserPlus,
@@ -13,6 +14,7 @@ import {
   LogOut,
   Menu,
   X,
+  ShieldCheck,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -20,15 +22,16 @@ import { cn } from "@/lib/utils";
 import logoAsset from "@/assets/ailon-logo.png.asset.json";
 
 const navItems = [
-  { to: "/dashboard", label: "דשבורד", icon: LayoutDashboard },
-  { to: "/leads", label: "לידים", icon: UserPlus },
-  { to: "/customers", label: "לקוחות", icon: Users },
-  { to: "/projects", label: "פרויקטים", icon: FolderKanban },
-  { to: "/tasks", label: "משימות", icon: CheckSquare },
-  { to: "/meetings", label: "פגישות", icon: CalendarDays },
-  { to: "/quotes", label: "הצעות מחיר", icon: FileText },
-  { to: "/subscriptions", label: "מנויים", icon: Repeat },
-  { to: "/ideas", label: "רעיונות", icon: Lightbulb },
+  { to: "/dashboard", label: "דשבורד", icon: LayoutDashboard, admin: false },
+  { to: "/leads", label: "לידים", icon: UserPlus, admin: false },
+  { to: "/customers", label: "לקוחות", icon: Users, admin: false },
+  { to: "/projects", label: "פרויקטים", icon: FolderKanban, admin: false },
+  { to: "/tasks", label: "משימות", icon: CheckSquare, admin: false },
+  { to: "/meetings", label: "פגישות", icon: CalendarDays, admin: false },
+  { to: "/quotes", label: "הצעות מחיר", icon: FileText, admin: false },
+  { to: "/subscriptions", label: "מנויים", icon: Repeat, admin: false },
+  { to: "/ideas", label: "רעיונות", icon: Lightbulb, admin: false },
+  { to: "/users", label: "משתמשי מערכת", icon: ShieldCheck, admin: true },
 ] as const;
 
 export function AppShell() {
