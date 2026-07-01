@@ -135,3 +135,47 @@ function SidebarContent({
     </>
   );
 }
+
+function NavList({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
+  const { data: roles } = useQuery({
+    queryKey: ["my-roles"],
+    queryFn: async () => {
+      const { data: userRes } = await supabase.auth.getUser();
+      if (!userRes.user) return [];
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userRes.user.id);
+      return (data ?? []).map((r: any) => r.role as string);
+    },
+    staleTime: 60_000,
+  });
+  const isAdmin = roles?.includes("admin") ?? false;
+
+  return (
+    <>
+      {navItems
+        .filter((i) => !i.admin || isAdmin)
+        .map((item) => {
+          const active = pathname === item.to;
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              onClick={onNavigate}
+              className={cn(
+                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
+                active
+                  ? "bg-gradient-to-l from-primary/20 to-accent/10 text-foreground border border-primary/30"
+                  : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50",
+              )}
+            >
+              <Icon className={cn("size-4", active && "text-accent")} />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+    </>
+  );
+}
