@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import logoAsset from "@/assets/ailon-logo.png.asset.json";
 import officeAsset from "@/assets/ailon-office.jpg.asset.json";
@@ -19,7 +18,6 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -34,23 +32,6 @@ function AuthPage() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("ברוך הבא!");
-    navigate({ to: "/dashboard" });
-  }
-
-  async function signUp(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: window.location.origin,
-        data: { full_name: fullName },
-      },
-    });
-    setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("נרשמת בהצלחה!");
     navigate({ to: "/dashboard" });
   }
 
@@ -100,53 +81,47 @@ function AuthPage() {
           </div>
 
           <div className="glass-strong rounded-3xl p-6 sm:p-8">
-            <div className="hidden lg:block mb-6">
-              <h1 className="text-2xl font-bold text-foreground">ברוכים הבאים</h1>
-              <p className="text-sm text-muted-foreground mt-1">היכנס לחשבון שלך או צור חשבון חדש</p>
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold text-foreground">כניסה למערכת</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                השתמש בפרטים שסופקו לך על ידי מנהל המערכת
+              </p>
             </div>
 
-            <Tabs defaultValue="signin" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="signin">כניסה</TabsTrigger>
-                <TabsTrigger value="signup">הרשמה</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="signin">
-                <form onSubmit={signIn} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email-in">אימייל</Label>
-                    <Input id="email-in" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} dir="ltr" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="pass-in">סיסמה</Label>
-                    <Input id="pass-in" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} dir="ltr" />
-                  </div>
-                  <Button type="submit" disabled={loading} className="w-full bg-gradient-to-l from-primary to-accent text-primary-foreground font-semibold">
-                    {loading ? "מתחבר..." : "כניסה למערכת"}
-                  </Button>
-                </form>
-              </TabsContent>
-
-              <TabsContent value="signup">
-                <form onSubmit={signUp} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name-up">שם מלא</Label>
-                    <Input id="name-up" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email-up">אימייל</Label>
-                    <Input id="email-up" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} dir="ltr" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="pass-up">סיסמה</Label>
-                    <Input id="pass-up" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} dir="ltr" />
-                  </div>
-                  <Button type="submit" disabled={loading} className="w-full bg-gradient-to-l from-primary to-accent text-primary-foreground font-semibold">
-                    {loading ? "יוצר חשבון..." : "צור חשבון חדש"}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
+            <form onSubmit={signIn} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email-in">אימייל</Label>
+                <Input
+                  id="email-in"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  dir="ltr"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="pass-in">סיסמה</Label>
+                <Input
+                  id="pass-in"
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  dir="ltr"
+                />
+              </div>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-l from-primary to-accent text-primary-foreground font-semibold"
+              >
+                {loading ? "מתחבר..." : "כניסה"}
+              </Button>
+              <p className="text-xs text-center text-muted-foreground pt-2">
+                אין לך חשבון? פנה למנהל המערכת ליצירת משתמש.
+              </p>
+            </form>
           </div>
         </div>
       </div>
