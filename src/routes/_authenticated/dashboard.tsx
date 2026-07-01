@@ -263,7 +263,10 @@ function MeetingsCalendarSection() {
       <div className="flex items-center gap-2 mb-4">
         <CalendarDays className="size-5 text-accent" />
         <h2 className="font-semibold">יומן פגישות</h2>
-        <Link to="/meetings" className="text-xs text-primary hover:underline mr-auto">לכל הפגישות ←</Link>
+        <div className="mr-auto flex items-center gap-2">
+          <NewMeetingDialog />
+          <Link to="/meetings" className="text-xs text-primary hover:underline">לכל הפגישות ←</Link>
+        </div>
       </div>
       <div className="grid lg:grid-cols-[1fr_280px] gap-4">
         <div>
