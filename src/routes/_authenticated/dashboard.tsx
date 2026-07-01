@@ -352,8 +352,8 @@ function NewMeetingDialog() {
     const { data: userData } = await supabase.auth.getUser();
     const { error } = await supabase.from("meetings").insert({
       title, start_time, end_time, location, meeting_url, description,
-      status: "scheduled", user_id: userData.user?.id,
-    });
+      status: "scheduled", user_id: userData.user?.id ?? "",
+    } as any);
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("הפגישה נקבעה");
