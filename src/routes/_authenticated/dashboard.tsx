@@ -1,11 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock, Lightbulb, FileText, CalendarDays, MapPin } from "lucide-react";
+import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock, Lightbulb, FileText, CalendarDays, MapPin, Plus } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { toast } from "sonner";
 import logoAsset from "@/assets/ailon-logo.png.asset.json";
 import introVideo from "@/assets/ailon-intro.mp4.asset.json";
 
@@ -258,7 +263,10 @@ function MeetingsCalendarSection() {
       <div className="flex items-center gap-2 mb-4">
         <CalendarDays className="size-5 text-accent" />
         <h2 className="font-semibold">יומן פגישות</h2>
-        <Link to="/meetings" className="text-xs text-primary hover:underline mr-auto">לכל הפגישות ←</Link>
+        <div className="mr-auto flex items-center gap-2">
+          <NewMeetingDialog />
+          <Link to="/meetings" className="text-xs text-primary hover:underline">לכל הפגישות ←</Link>
+        </div>
       </div>
       <div className="grid lg:grid-cols-[1fr_280px] gap-4">
         <div>
@@ -321,6 +329,61 @@ function MeetingsCalendarSection() {
         </div>
       </div>
     </section>
+  );
+}
+
+function NewMeetingDialog() {
+  const qc = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const title = String(fd.get("title") || "").trim();
+    const start_time = String(fd.get("start_time") || "");
+    const end_time = String(fd.get("end_time") || "");
+    const location = String(fd.get("location") || "") || null;
+    const meeting_url = String(fd.get("meeting_url") || "") || null;
+    const description = String(fd.get("description") || "") || null;
+    if (!title || !start_time || !end_time) return toast.error("חסרים שדות חובה");
+
+    setSaving(true);
+    const { data: userData } = await supabase.auth.getUser();
+    const { error } = await supabase.from("meetings").insert({
+      title, start_time, end_time, location, meeting_url, description,
+      status: "scheduled", user_id: userData.user?.id ?? "",
+    } as any);
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    toast.success("הפגישה נקבעה");
+    qc.invalidateQueries({ queryKey: ["dashboard-meetings"] });
+    qc.invalidateQueries({ queryKey: ["meetings"] });
+    setOpen(false);
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button size="sm" className="h-8 gap-1"><Plus className="size-4" />פגישה חדשה</Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader><DialogTitle>קביעת פגישה חדשה</DialogTitle></DialogHeader>
+        <form onSubmit={onSubmit} className="space-y-3">
+          <div><Label>נושא *</Label><Input name="title" required /></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>התחלה *</Label><Input name="start_time" type="datetime-local" required /></div>
+            <div><Label>סיום *</Label><Input name="end_time" type="datetime-local" required /></div>
+          </div>
+          <div><Label>מיקום</Label><Input name="location" /></div>
+          <div><Label>קישור (Zoom/Meet)</Label><Input name="meeting_url" /></div>
+          <div><Label>תיאור</Label><Textarea name="description" rows={3} /></div>
+          <DialogFooter>
+            <Button type="submit" disabled={saving}>{saving ? "שומר..." : "קבע פגישה"}</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
