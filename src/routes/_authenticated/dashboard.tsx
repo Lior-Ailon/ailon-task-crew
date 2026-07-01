@@ -332,6 +332,61 @@ function MeetingsCalendarSection() {
   );
 }
 
+function NewMeetingDialog() {
+  const qc = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const title = String(fd.get("title") || "").trim();
+    const start_time = String(fd.get("start_time") || "");
+    const end_time = String(fd.get("end_time") || "");
+    const location = String(fd.get("location") || "") || null;
+    const meeting_url = String(fd.get("meeting_url") || "") || null;
+    const description = String(fd.get("description") || "") || null;
+    if (!title || !start_time || !end_time) return toast.error("חסרים שדות חובה");
+
+    setSaving(true);
+    const { data: userData } = await supabase.auth.getUser();
+    const { error } = await supabase.from("meetings").insert({
+      title, start_time, end_time, location, meeting_url, description,
+      status: "scheduled", user_id: userData.user?.id,
+    });
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    toast.success("הפגישה נקבעה");
+    qc.invalidateQueries({ queryKey: ["dashboard-meetings"] });
+    qc.invalidateQueries({ queryKey: ["meetings"] });
+    setOpen(false);
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button size="sm" className="h-8 gap-1"><Plus className="size-4" />פגישה חדשה</Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader><DialogTitle>קביעת פגישה חדשה</DialogTitle></DialogHeader>
+        <form onSubmit={onSubmit} className="space-y-3">
+          <div><Label>נושא *</Label><Input name="title" required /></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>התחלה *</Label><Input name="start_time" type="datetime-local" required /></div>
+            <div><Label>סיום *</Label><Input name="end_time" type="datetime-local" required /></div>
+          </div>
+          <div><Label>מיקום</Label><Input name="location" /></div>
+          <div><Label>קישור (Zoom/Meet)</Label><Input name="meeting_url" /></div>
+          <div><Label>תיאור</Label><Textarea name="description" rows={3} /></div>
+          <DialogFooter>
+            <Button type="submit" disabled={saving}>{saving ? "שומר..." : "קבע פגישה"}</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {
     new: { label: "חדש", cls: "bg-sky-100 text-sky-700 border border-sky-200" },
