@@ -120,26 +120,7 @@ function SidebarContent({
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
-        {navItems.map((item) => {
-          const active = pathname === item.to;
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.to}
-              to={item.to}
-              onClick={onNavigate}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
-                active
-                  ? "bg-gradient-to-l from-primary/20 to-accent/10 text-foreground border border-primary/30"
-                  : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50",
-              )}
-            >
-              <Icon className={cn("size-4", active && "text-accent")} />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
+        <NavList pathname={pathname} onNavigate={onNavigate} />
       </nav>
 
       <div className="p-4 border-t border-border/50">
