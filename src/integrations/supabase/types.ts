@@ -56,6 +56,45 @@ export type Database = {
         }
         Relationships: []
       }
+      expenses: {
+        Row: {
+          amount: number | null
+          created_at: string
+          expense_date: string
+          expense_type: string
+          id: string
+          notes: string | null
+          receipt_path: string | null
+          spender: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          expense_date?: string
+          expense_type: string
+          id?: string
+          notes?: string | null
+          receipt_path?: string | null
+          spender?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          expense_date?: string
+          expense_type?: string
+          id?: string
+          notes?: string | null
+          receipt_path?: string | null
+          spender?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ideas: {
         Row: {
           category: string | null
@@ -99,6 +138,50 @@ export type Database = {
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      incomes: {
+        Row: {
+          amount: number | null
+          created_at: string
+          customer_id: string | null
+          customer_name: string | null
+          id: string
+          income_date: string
+          notes: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          customer_id?: string | null
+          customer_name?: string | null
+          id?: string
+          income_date?: string
+          notes?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          customer_id?: string | null
+          customer_name?: string | null
+          id?: string
+          income_date?: string
+          notes?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "incomes_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
             referencedColumns: ["id"]
           },
         ]
