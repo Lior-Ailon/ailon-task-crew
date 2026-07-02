@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { toast } from "sonner";
 import logoAsset from "@/assets/ailon-logo.png.asset.json";
 import introVideo from "@/assets/ailon-intro.mp4.asset.json";
+import officeAsset from "@/assets/ailon-office.jpg.asset.json";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
