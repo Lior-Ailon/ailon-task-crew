@@ -90,17 +90,22 @@ function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Hero banner with intro video */}
+      {/* Hero banner with intro video + office backdrop */}
       <header className="relative overflow-hidden rounded-3xl glass-strong">
+        <img
+          src={officeAsset.url}
+          alt=""
+          className="absolute inset-0 size-full object-cover"
+        />
         <video
           src={introVideo.url}
           autoPlay
           muted
           loop
           playsInline
-          className="absolute inset-0 size-full object-cover opacity-60"
+          className="absolute inset-0 size-full object-cover opacity-40 mix-blend-luminosity"
         />
-        <div className="absolute inset-0 bg-gradient-to-l from-primary/85 via-primary/55 to-primary/10" />
+        <div className="absolute inset-0 bg-gradient-to-l from-primary/90 via-primary/60 to-primary/20" />
         <div className="relative z-10 p-6 sm:p-10 flex items-center gap-5 text-white">
           <img src={logoAsset.url} alt="" className="size-16 sm:size-20 object-contain drop-shadow-lg shrink-0" />
           <div className="min-w-0">
