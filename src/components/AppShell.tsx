@@ -15,6 +15,8 @@ import {
   Menu,
   X,
   ShieldCheck,
+  TrendingDown,
+  TrendingUp,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -30,6 +32,8 @@ const navItems = [
   { to: "/meetings", label: "פגישות", icon: CalendarDays, admin: false },
   { to: "/quotes", label: "הצעות מחיר", icon: FileText, admin: false },
   { to: "/subscriptions", label: "מנויים", icon: Repeat, admin: false },
+  { to: "/incomes", label: "הכנסות", icon: TrendingUp, admin: false },
+  { to: "/expenses", label: "הוצאות", icon: TrendingDown, admin: false },
   { to: "/ideas", label: "רעיונות", icon: Lightbulb, admin: false },
   { to: "/users", label: "משתמשי מערכת", icon: ShieldCheck, admin: true },
 ] as const;
