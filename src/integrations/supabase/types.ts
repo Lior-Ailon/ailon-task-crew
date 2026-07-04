@@ -384,6 +384,7 @@ export type Database = {
           customer_id: string | null
           description: string | null
           id: string
+          modules: Json
           notes: string | null
           quote_number: string | null
           status: string
@@ -398,6 +399,7 @@ export type Database = {
           customer_id?: string | null
           description?: string | null
           id?: string
+          modules?: Json
           notes?: string | null
           quote_number?: string | null
           status?: string
@@ -412,6 +414,7 @@ export type Database = {
           customer_id?: string | null
           description?: string | null
           id?: string
+          modules?: Json
           notes?: string | null
           quote_number?: string | null
           status?: string
