@@ -14,7 +14,8 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Search, Paperclip, Calendar, User, Download } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Paperclip, Calendar, User, Download, Repeat } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
 const expensesTable = () => (supabase.from as any)("expenses");
