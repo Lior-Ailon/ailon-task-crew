@@ -79,6 +79,7 @@ function ExpensesPage() {
         spender: fd.get("spender") || null,
         amount: fd.get("amount") ? Number(fd.get("amount")) : null,
         notes: fd.get("notes") || null,
+        recurrence: fd.get("recurrence") || "one_time",
       };
 
       if (file) {
