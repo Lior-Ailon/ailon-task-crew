@@ -162,6 +162,16 @@ function ExpensesPage() {
                 <Input id="amount" name="amount" type="number" step="0.01" defaultValue={editing?.amount ?? ""} />
               </div>
               <div className="space-y-1.5">
+                <Label htmlFor="recurrence">סוג תשלום</Label>
+                <Select name="recurrence" defaultValue={editing?.recurrence ?? "one_time"}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="one_time">חד פעמי</SelectItem>
+                    <SelectItem value="monthly">חודשי</SelectItem>
+                    <SelectItem value="yearly">שנתי</SelectItem>
+                  </SelectContent>
+                </Select>
+              <div className="space-y-1.5">
                 <Label htmlFor="notes">הערות</Label>
                 <Textarea id="notes" name="notes" rows={2} defaultValue={editing?.notes ?? ""} />
               </div>
