@@ -1,8 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CrudPage, StatusPill, type FieldDef } from "@/components/CrudPage";
-import { Lightbulb, Tag, UserPlus } from "lucide-react";
+import { Lightbulb, Tag, UserPlus, Rocket } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const statusOptions = [
   { value: "new", label: "חדש" },
@@ -34,11 +36,33 @@ const fields: FieldDef[] = [
 ];
 
 function IdeasPage() {
+  const qc = useQueryClient();
+  const navigate = useNavigate();
   const { data: leads = [] } = useQuery({
     queryKey: ["lookup", "leads"],
     queryFn: async () => (await supabase.from("leads").select("id, name")).data ?? [],
   });
   const leadMap = new Map(leads.map((l: any) => [l.id, l.name]));
+
+  async function convertToProject(item: any) {
+    if (!confirm(`להפוך את הרעיון "${item.title}" לפרויקט חדש?`)) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return toast.error("לא מחובר");
+    const { error: pErr } = await supabase.from("projects").insert({
+      user_id: user.id,
+      name: item.title,
+      description: item.description ?? null,
+      status: "planning",
+    });
+    if (pErr) return toast.error(pErr.message);
+    const { error: iErr } = await supabase.from("ideas").update({ status: "implemented" }).eq("id", item.id);
+    if (iErr) return toast.error(iErr.message);
+    toast.success("הרעיון הפך לפרויקט בהצלחה");
+    qc.invalidateQueries({ queryKey: ["ideas"] });
+    qc.invalidateQueries({ queryKey: ["projects"] });
+    qc.invalidateQueries({ queryKey: ["count", "projects"] });
+    navigate({ to: "/projects" });
+  }
 
   return (
     <CrudPage
@@ -74,8 +98,20 @@ function IdeasPage() {
             </div>
           )}
           <div className="flex items-center justify-between pt-3 border-t border-border/50 gap-2">
-            <StatusPill label={statusLabel[item.status] ?? item.status} tone={statusTone[item.status]} />
-            <StatusPill label={priorityLabel[item.priority] ?? item.priority} tone={priorityTone[item.priority]} />
+            <div className="flex items-center gap-2">
+              <StatusPill label={statusLabel[item.status] ?? item.status} tone={statusTone[item.status]} />
+              <StatusPill label={priorityLabel[item.priority] ?? item.priority} tone={priorityTone[item.priority]} />
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => convertToProject(item)}
+              disabled={item.status === "implemented"}
+              className="h-7 text-xs gap-1"
+            >
+              <Rocket className="size-3" />
+              הפוך לפרויקט
+            </Button>
           </div>
         </article>
       )}
