@@ -65,6 +65,7 @@ export type Database = {
           id: string
           notes: string | null
           receipt_path: string | null
+          recurrence: string
           spender: string | null
           updated_at: string
           user_id: string
@@ -77,6 +78,7 @@ export type Database = {
           id?: string
           notes?: string | null
           receipt_path?: string | null
+          recurrence?: string
           spender?: string | null
           updated_at?: string
           user_id: string
@@ -89,6 +91,7 @@ export type Database = {
           id?: string
           notes?: string | null
           receipt_path?: string | null
+          recurrence?: string
           spender?: string | null
           updated_at?: string
           user_id?: string
