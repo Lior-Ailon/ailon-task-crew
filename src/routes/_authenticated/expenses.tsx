@@ -249,7 +249,16 @@ function ExpensesPage() {
                 ) : (
                   <span className="text-xs text-muted-foreground">אין קבלה</span>
                 )}
-                <span className="text-lg font-bold text-red-600">₪{Number(item.amount ?? 0).toLocaleString()}</span>
+                <div className="text-left">
+                  <span className="text-lg font-bold text-red-600 block">₪{Number(item.amount ?? 0).toLocaleString()}</span>
+                  <span className="text-[10px] text-muted-foreground flex items-center gap-1 justify-end">
+                    <Repeat className="size-3" />
+                    {item.recurrence === "monthly" ? "חודשי" : item.recurrence === "yearly" ? "שנתי" : "חד פעמי"}
+                    {item.recurrence && item.recurrence !== "one_time" && (
+                      <> · עד סוף השנה: ₪{projectedUntilYearEnd(item).toLocaleString(undefined, { maximumFractionDigits: 0 })}</>
+                    )}
+                  </span>
+                </div>
               </div>
             </article>
           ))}
