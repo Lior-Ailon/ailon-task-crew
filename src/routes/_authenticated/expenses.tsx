@@ -193,9 +193,15 @@ function ExpensesPage() {
         </Dialog>
       </header>
 
-      <div className="glass rounded-2xl p-4 flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">סה״כ הוצאות</span>
-        <span className="text-2xl font-bold text-red-600">₪{total.toLocaleString()}</span>
+      <div className="grid sm:grid-cols-2 gap-3">
+        <div className="glass rounded-2xl p-4 flex items-center justify-between">
+          <span className="text-sm text-muted-foreground">סה״כ הוצאות שנרשמו</span>
+          <span className="text-2xl font-bold text-red-600">₪{total.toLocaleString()}</span>
+        </div>
+        <div className="glass rounded-2xl p-4 flex items-center justify-between">
+          <span className="text-sm text-muted-foreground">צפי עד סוף השנה ({new Date().getFullYear()})</span>
+          <span className="text-2xl font-bold text-red-600">₪{projectedTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+        </div>
       </div>
 
       <div className="relative">
