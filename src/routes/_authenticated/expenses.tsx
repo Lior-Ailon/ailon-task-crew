@@ -171,6 +171,7 @@ function ExpensesPage() {
                     <SelectItem value="yearly">שנתי</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
               <div className="space-y-1.5">
                 <Label htmlFor="notes">הערות</Label>
                 <Textarea id="notes" name="notes" rows={2} defaultValue={editing?.notes ?? ""} />
