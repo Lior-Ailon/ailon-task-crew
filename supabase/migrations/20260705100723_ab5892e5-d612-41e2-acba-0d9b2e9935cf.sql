@@ -1,0 +1,1 @@
+ALTER TABLE public.expenses ADD COLUMN IF NOT EXISTS recurrence text NOT NULL DEFAULT 'one_time';

@@ -14,7 +14,8 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Search, Paperclip, Calendar, User, Download } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Paperclip, Calendar, User, Download, Repeat } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
 const expensesTable = () => (supabase.from as any)("expenses");
@@ -44,6 +45,29 @@ function ExpensesPage() {
 
   const total = items.reduce((s, i: any) => s + Number(i.amount ?? 0), 0);
 
+  // חישוב עלות צפויה עד סוף השנה הקלנדרית לפי סוג התשלום
+  function projectedUntilYearEnd(item: any): number {
+    const amount = Number(item.amount ?? 0);
+    if (!amount) return 0;
+    const rec = item.recurrence ?? "one_time";
+    const start = item.expense_date ? new Date(item.expense_date) : new Date();
+    const now = new Date();
+    const base = start > now ? start : now;
+    const year = base.getFullYear();
+    if (rec === "monthly") {
+      const remainingMonths = 12 - base.getMonth(); // כולל החודש הנוכחי
+      return amount * Math.max(0, remainingMonths);
+    }
+    if (rec === "yearly") {
+      // תשלום שנתי - נספר פעם אחת השנה אם התאריך בשנה הנוכחית
+      return start.getFullYear() === year ? amount : 0;
+    }
+    return amount;
+  }
+
+  const projectedTotal = items.reduce((s, i: any) => s + projectedUntilYearEnd(i), 0);
+
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setUploading(true);
@@ -55,6 +79,7 @@ function ExpensesPage() {
         spender: fd.get("spender") || null,
         amount: fd.get("amount") ? Number(fd.get("amount")) : null,
         notes: fd.get("notes") || null,
+        recurrence: fd.get("recurrence") || "one_time",
       };
 
       if (file) {
@@ -137,6 +162,17 @@ function ExpensesPage() {
                 <Input id="amount" name="amount" type="number" step="0.01" defaultValue={editing?.amount ?? ""} />
               </div>
               <div className="space-y-1.5">
+                <Label htmlFor="recurrence">סוג תשלום</Label>
+                <Select name="recurrence" defaultValue={editing?.recurrence ?? "one_time"}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="one_time">חד פעמי</SelectItem>
+                    <SelectItem value="monthly">חודשי</SelectItem>
+                    <SelectItem value="yearly">שנתי</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
                 <Label htmlFor="notes">הערות</Label>
                 <Textarea id="notes" name="notes" rows={2} defaultValue={editing?.notes ?? ""} />
               </div>
@@ -157,9 +193,15 @@ function ExpensesPage() {
         </Dialog>
       </header>
 
-      <div className="glass rounded-2xl p-4 flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">סה״כ הוצאות</span>
-        <span className="text-2xl font-bold text-red-600">₪{total.toLocaleString()}</span>
+      <div className="grid sm:grid-cols-2 gap-3">
+        <div className="glass rounded-2xl p-4 flex items-center justify-between">
+          <span className="text-sm text-muted-foreground">סה״כ הוצאות שנרשמו</span>
+          <span className="text-2xl font-bold text-red-600">₪{total.toLocaleString()}</span>
+        </div>
+        <div className="glass rounded-2xl p-4 flex items-center justify-between">
+          <span className="text-sm text-muted-foreground">צפי עד סוף השנה ({new Date().getFullYear()})</span>
+          <span className="text-2xl font-bold text-red-600">₪{projectedTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+        </div>
       </div>
 
       <div className="relative">
@@ -207,7 +249,16 @@ function ExpensesPage() {
                 ) : (
                   <span className="text-xs text-muted-foreground">אין קבלה</span>
                 )}
-                <span className="text-lg font-bold text-red-600">₪{Number(item.amount ?? 0).toLocaleString()}</span>
+                <div className="text-left">
+                  <span className="text-lg font-bold text-red-600 block">₪{Number(item.amount ?? 0).toLocaleString()}</span>
+                  <span className="text-[10px] text-muted-foreground flex items-center gap-1 justify-end">
+                    <Repeat className="size-3" />
+                    {item.recurrence === "monthly" ? "חודשי" : item.recurrence === "yearly" ? "שנתי" : "חד פעמי"}
+                    {item.recurrence && item.recurrence !== "one_time" && (
+                      <> · עד סוף השנה: ₪{projectedUntilYearEnd(item).toLocaleString(undefined, { maximumFractionDigits: 0 })}</>
+                    )}
+                  </span>
+                </div>
               </div>
             </article>
           ))}
