@@ -45,6 +45,29 @@ function ExpensesPage() {
 
   const total = items.reduce((s, i: any) => s + Number(i.amount ?? 0), 0);
 
+  // חישוב עלות צפויה עד סוף השנה הקלנדרית לפי סוג התשלום
+  function projectedUntilYearEnd(item: any): number {
+    const amount = Number(item.amount ?? 0);
+    if (!amount) return 0;
+    const rec = item.recurrence ?? "one_time";
+    const start = item.expense_date ? new Date(item.expense_date) : new Date();
+    const now = new Date();
+    const base = start > now ? start : now;
+    const year = base.getFullYear();
+    if (rec === "monthly") {
+      const remainingMonths = 12 - base.getMonth(); // כולל החודש הנוכחי
+      return amount * Math.max(0, remainingMonths);
+    }
+    if (rec === "yearly") {
+      // תשלום שנתי - נספר פעם אחת השנה אם התאריך בשנה הנוכחית
+      return start.getFullYear() === year ? amount : 0;
+    }
+    return amount;
+  }
+
+  const projectedTotal = items.reduce((s, i: any) => s + projectedUntilYearEnd(i), 0);
+
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setUploading(true);
