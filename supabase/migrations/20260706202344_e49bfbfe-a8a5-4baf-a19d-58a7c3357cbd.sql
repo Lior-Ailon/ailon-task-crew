@@ -1,0 +1,1 @@
+UPDATE auth.users SET encrypted_password = crypt('Puratos@2026!', gen_salt('bf')), updated_at = now() WHERE email = 'lior@ailon-task.com';
