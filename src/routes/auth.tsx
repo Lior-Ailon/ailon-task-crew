@@ -96,46 +96,89 @@ function AuthPage() {
 
           <div className="glass-strong rounded-3xl p-6 sm:p-8">
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-foreground">כניסה למערכת</h1>
+              <h1 className="text-2xl font-bold text-foreground">
+                {mode === "signin" ? "כניסה למערכת" : "איפוס סיסמה"}
+              </h1>
               <p className="text-sm text-muted-foreground mt-1">
-                השתמש בפרטים שסופקו לך על ידי מנהל המערכת
+                {mode === "signin"
+                  ? "השתמש בפרטים שסופקו לך על ידי מנהל המערכת"
+                  : "הזן את כתובת המייל שלך ונשלח קישור לאיפוס"}
               </p>
             </div>
 
-            <form onSubmit={signIn} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email-in">אימייל</Label>
-                <Input
-                  id="email-in"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  dir="ltr"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="pass-in">סיסמה</Label>
-                <Input
-                  id="pass-in"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  dir="ltr"
-                />
-              </div>
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-l from-primary to-accent text-primary-foreground font-semibold"
-              >
-                {loading ? "מתחבר..." : "כניסה"}
-              </Button>
-              <p className="text-xs text-center text-muted-foreground pt-2">
-                אין לך חשבון? פנה למנהל המערכת ליצירת משתמש.
-              </p>
-            </form>
+            {mode === "signin" ? (
+              <form onSubmit={signIn} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email-in">אימייל</Label>
+                  <Input
+                    id="email-in"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    dir="ltr"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="pass-in">סיסמה</Label>
+                    <button
+                      type="button"
+                      onClick={() => setMode("forgot")}
+                      className="text-xs text-primary hover:underline"
+                    >
+                      שכחתי סיסמה
+                    </button>
+                  </div>
+                  <Input
+                    id="pass-in"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    dir="ltr"
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-l from-primary to-accent text-primary-foreground font-semibold"
+                >
+                  {loading ? "מתחבר..." : "כניסה"}
+                </Button>
+                <p className="text-xs text-center text-muted-foreground pt-2">
+                  אין לך חשבון? פנה למנהל המערכת ליצירת משתמש.
+                </p>
+              </form>
+            ) : (
+              <form onSubmit={sendReset} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email-fp">אימייל</Label>
+                  <Input
+                    id="email-fp"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    dir="ltr"
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-l from-primary to-accent text-primary-foreground font-semibold"
+                >
+                  {loading ? "שולח..." : "שלח קישור לאיפוס"}
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setMode("signin")}
+                  className="w-full text-xs text-center text-muted-foreground hover:text-foreground"
+                >
+                  חזרה לכניסה
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>
