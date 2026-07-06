@@ -18,6 +18,7 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [mode, setMode] = useState<"signin" | "forgot">("signin");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -33,6 +34,19 @@ function AuthPage() {
     if (error) return toast.error(error.message);
     toast.success("ברוך הבא!");
     navigate({ to: "/dashboard" });
+  }
+
+  async function sendReset(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email) return toast.error("הזן כתובת אימייל");
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setLoading(false);
+    if (error) return toast.error(error.message);
+    toast.success("נשלח מייל עם קישור לאיפוס הסיסמה");
+    setMode("signin");
   }
 
   return (
