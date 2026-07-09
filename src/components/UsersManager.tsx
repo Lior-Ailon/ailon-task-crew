@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
@@ -29,11 +28,6 @@ import {
 } from "@/components/ui/select";
 import { Shield, Pencil, Eye, Trash2, UserPlus, ShieldAlert } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated/users")({
-  ssr: false,
-  component: UsersPage,
-});
-
 type Role = "admin" | "editor" | "viewer";
 
 const roleMeta: Record<Role, { label: string; icon: any; className: string }> = {
@@ -42,7 +36,7 @@ const roleMeta: Record<Role, { label: string; icon: any; className: string }> = 
   viewer: { label: "קריאה", icon: Eye, className: "bg-muted text-muted-foreground border-border" },
 };
 
-function UsersPage() {
+export function UsersManager() {
   const qc = useQueryClient();
   const listFn = useServerFn(listSystemUsers);
   const createFn = useServerFn(createSystemUser);
@@ -93,17 +87,17 @@ function UsersPage() {
         <ShieldAlert className="size-10 mx-auto text-destructive mb-3" />
         <h2 className="text-lg font-semibold">אין גישה</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          רק משתמשים עם הרשאת <b>ניהול</b> יכולים לצפות בעמוד זה.
+          רק משתמשים עם הרשאת <b>ניהול</b> יכולים לנהל משתמשים.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">משתמשי מערכת</h1>
+          <h2 className="text-lg font-semibold">משתמשי מערכת</h2>
           <p className="text-sm text-muted-foreground">ניהול חשבונות והרשאות</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>

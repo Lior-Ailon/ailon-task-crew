@@ -14,7 +14,7 @@ import {
   LogOut,
   Menu,
   X,
-  ShieldCheck,
+  Settings,
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
@@ -35,7 +35,7 @@ const navItems = [
   { to: "/incomes", label: "הכנסות", icon: TrendingUp, admin: false },
   { to: "/expenses", label: "הוצאות", icon: TrendingDown, admin: false },
   { to: "/ideas", label: "רעיונות", icon: Lightbulb, admin: false },
-  { to: "/users", label: "משתמשי מערכת", icon: ShieldCheck, admin: true },
+  { to: "/settings", label: "הגדרות", icon: Settings, admin: true },
 ] as const;
 
 export function AppShell() {
