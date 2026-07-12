@@ -102,6 +102,7 @@ function TasksPage() {
       table="tasks"
       fields={fields}
       searchKeys={["title", "description"]}
+      onAfterSave={handleAfterSave}
       renderCard={(item, actions) => (
         <article key={item.id} className="glass-strong rounded-3xl p-4 hover:border-accent/40 transition-colors">
           <div className="flex justify-between items-start mb-3">
