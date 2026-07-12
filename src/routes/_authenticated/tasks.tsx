@@ -56,6 +56,36 @@ function TasksPage() {
   const customerMap = new Map(customers.map((c: any) => [c.id, c.name]));
   const projectMap = new Map(projects.map((p: any) => [p.id, p.name]));
 
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
+  const [priorityFilter, setPriorityFilter] = useState<string>("all");
+  const [dueFrom, setDueFrom] = useState<string>("");
+  const [dueTo, setDueTo] = useState<string>("");
+
+  const hasFilters =
+    statusFilter !== "all" || assigneeFilter !== "all" || priorityFilter !== "all" || dueFrom || dueTo;
+
+  function resetFilters() {
+    setStatusFilter("all");
+    setAssigneeFilter("all");
+    setPriorityFilter("all");
+    setDueFrom("");
+    setDueTo("");
+  }
+
+  function filterItems(item: any) {
+    if (statusFilter !== "all" && item.status !== statusFilter) return false;
+    if (priorityFilter !== "all" && item.priority !== priorityFilter) return false;
+    if (assigneeFilter !== "all") {
+      if (assigneeFilter === "__none__") {
+        if (item.assignee_id) return false;
+      } else if (item.assignee_id !== assigneeFilter) return false;
+    }
+    if (dueFrom && (!item.due_date || item.due_date < dueFrom)) return false;
+    if (dueTo && (!item.due_date || item.due_date > dueTo)) return false;
+    return true;
+  }
+
   async function markDone(item: any) {
     const { error } = await supabase.from("tasks").update({ status: "done" }).eq("id", item.id);
     if (error) return toast.error(error.message);
