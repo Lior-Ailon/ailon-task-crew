@@ -138,7 +138,7 @@ function TasksPage() {
           {item.status !== "done" && (
             <Button
               size="sm"
-              onClick={() => markDone(item.id)}
+              onClick={() => markDone(item)}
               className="w-full mt-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
             >
               <Check className="size-4 ml-1" />
