@@ -35,6 +35,96 @@ function newModule(): QuoteModule {
   return { id: crypto.randomUUID(), title: "", description: "", cost: 0 };
 }
 
+function printQuote(item: any, customerName?: string) {
+  const mods: QuoteModule[] = Array.isArray(item.modules) ? item.modules : [];
+  const total = Number(item.total_amount ?? mods.reduce((s, m) => s + (Number(m.cost) || 0), 0));
+  const statusLabels: Record<string, string> = {
+    draft: "טיוטה", sent: "נשלחה", accepted: "אושרה", rejected: "נדחתה", expired: "פגה",
+  };
+  const esc = (s: any) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+  const rows = mods.map((m, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td>
+        <div class="mod-title">${esc(m.title) || "&mdash;"}</div>
+        ${m.description ? `<div class="mod-desc">${esc(m.description)}</div>` : ""}
+      </td>
+      <td class="num">₪${Number(m.cost || 0).toLocaleString()}</td>
+    </tr>`).join("");
+
+  const html = `<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8" />
+<title>הצעת מחיר ${esc(item.quote_number || item.title)}</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", "Assistant", Arial, sans-serif; color: #111; margin: 0; padding: 32px; background: #fff; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #111; padding-bottom: 16px; margin-bottom: 24px; }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  .meta { color: #555; font-size: 13px; }
+  .meta div { margin: 2px 0; }
+  .section { margin: 20px 0; }
+  .section h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin: 0 0 8px; }
+  .desc { white-space: pre-wrap; font-size: 14px; line-height: 1.5; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14px; }
+  th, td { padding: 10px 12px; text-align: right; border-bottom: 1px solid #ddd; vertical-align: top; }
+  th { background: #f5f5f5; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #444; }
+  td.num, th.num { text-align: left; direction: ltr; white-space: nowrap; }
+  .mod-title { font-weight: 600; }
+  .mod-desc { font-size: 12px; color: #666; margin-top: 2px; white-space: pre-wrap; }
+  .total { margin-top: 16px; display: flex; justify-content: space-between; padding: 14px 12px; background: #f5f5f5; border-radius: 6px; font-size: 16px; font-weight: 700; }
+  .notes { margin-top: 24px; padding-top: 16px; border-top: 1px solid #ddd; font-size: 12px; color: #666; white-space: pre-wrap; }
+  @media print { body { padding: 0; } .no-print { display: none; } }
+  .toolbar { position: fixed; top: 12px; left: 12px; }
+  .toolbar button { padding: 8px 16px; font-size: 14px; cursor: pointer; }
+</style>
+</head>
+<body>
+  <div class="toolbar no-print">
+    <button onclick="window.print()">הדפס / שמור כ־PDF</button>
+  </div>
+  <div class="header">
+    <div>
+      <h1>${esc(item.title)}</h1>
+      <div class="meta">
+        ${item.quote_number ? `<div>מספר הצעה: ${esc(item.quote_number)}</div>` : ""}
+        ${customerName ? `<div>לקוח: ${esc(customerName)}</div>` : ""}
+        ${item.valid_until ? `<div>בתוקף עד: ${esc(item.valid_until)}</div>` : ""}
+      </div>
+    </div>
+    <div class="meta" style="text-align:left;">
+      <div>סטטוס: ${esc(statusLabels[item.status] ?? item.status ?? "")}</div>
+      <div>תאריך: ${new Date(item.created_at ?? Date.now()).toLocaleDateString("he-IL")}</div>
+    </div>
+  </div>
+
+  ${item.description ? `<div class="section"><h2>תיאור</h2><div class="desc">${esc(item.description)}</div></div>` : ""}
+
+  <div class="section">
+    <h2>מודולים / סעיפים</h2>
+    <table>
+      <thead><tr><th style="width:40px;">#</th><th>פירוט</th><th class="num" style="width:120px;">עלות</th></tr></thead>
+      <tbody>${rows || `<tr><td colspan="3" style="text-align:center;color:#999;">אין סעיפים</td></tr>`}</tbody>
+    </table>
+  </div>
+
+  <div class="total"><span>סכום כולל</span><span style="direction:ltr;">₪${total.toLocaleString()}</span></div>
+
+  ${item.notes ? `<div class="notes"><strong>הערות:</strong><br/>${esc(item.notes)}</div>` : ""}
+
+  <script>window.addEventListener("load", () => setTimeout(() => window.print(), 300));</script>
+</body>
+</html>`;
+
+  const w = window.open("", "_blank");
+  if (!w) return;
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+}
+
+
 function QuotesPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
