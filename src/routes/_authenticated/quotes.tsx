@@ -86,7 +86,10 @@ function printQuote(item: any, customerName?: string) {
     <button onclick="window.print()">הדפס / שמור כ־PDF</button>
   </div>
   <div class="header">
-    <div>
+    <div class="brand">
+      <img src="${window.location.origin}${ailonLogo.url}" alt="Ailon Task" class="logo" />
+    </div>
+    <div class="header-main">
       <h1>${esc(item.title)}</h1>
       <div class="meta">
         ${item.quote_number ? `<div>מספר הצעה: ${esc(item.quote_number)}</div>` : ""}
