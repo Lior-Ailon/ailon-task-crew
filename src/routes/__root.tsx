@@ -45,7 +45,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center glass rounded-2xl p-8">
+      <div className="max-w-md text-center glass-strong rounded-3xl p-8">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
           הדף לא נטען כראוי
         </h1>

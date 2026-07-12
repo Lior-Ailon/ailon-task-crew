@@ -83,7 +83,7 @@ export function UsersManager() {
 
   if (error) {
     return (
-      <div className="glass rounded-2xl p-8 text-center">
+      <div className="glass-strong rounded-3xl p-8 text-center">
         <ShieldAlert className="size-10 mx-auto text-destructive mb-3" />
         <h2 className="text-lg font-semibold">אין גישה</h2>
         <p className="text-sm text-muted-foreground mt-1">
@@ -165,9 +165,9 @@ export function UsersManager() {
       </div>
 
       {isLoading ? (
-        <div className="glass rounded-2xl p-8 text-center text-muted-foreground">טוען...</div>
+        <div className="glass-strong rounded-3xl p-8 text-center text-muted-foreground">טוען...</div>
       ) : (
-        <div className="glass rounded-2xl overflow-hidden">
+        <div className="glass-strong rounded-3xl overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-muted/40">
               <tr className="text-right">

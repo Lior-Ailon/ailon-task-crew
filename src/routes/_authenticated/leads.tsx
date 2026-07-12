@@ -61,7 +61,7 @@ function LeadsPage() {
       fields={fields}
       searchKeys={["name", "company", "email"]}
       renderCard={(item, actions) => (
-        <article key={item.id} className="glass rounded-2xl p-4 hover:border-primary/40 transition-colors">
+        <article key={item.id} className="glass-strong rounded-3xl p-4 hover:border-primary/40 transition-colors">
           <div className="flex justify-between items-start mb-3">
             <div className="min-w-0">
               <h3 className="font-semibold truncate">{item.name}</h3>

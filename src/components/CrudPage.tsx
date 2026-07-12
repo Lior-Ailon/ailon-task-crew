@@ -172,7 +172,7 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
       {isLoading ? (
         <div className="text-center py-12 text-muted-foreground">טוען...</div>
       ) : filtered.length === 0 ? (
-        <div className="glass rounded-2xl p-12 text-center">
+        <div className="glass-strong rounded-3xl p-12 text-center">
           <p className="text-muted-foreground">{search ? "לא נמצאו תוצאות" : "אין נתונים עדיין. הוסף ראשון!"}</p>
         </div>
       ) : (

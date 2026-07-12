@@ -72,7 +72,7 @@ function IdeasPage() {
       fields={fields}
       searchKeys={["title", "description", "category"]}
       renderCard={(item, actions) => (
-        <article key={item.id} className="glass rounded-2xl p-4 hover:border-primary/40 transition-colors">
+        <article key={item.id} className="glass-strong rounded-3xl p-4 hover:border-primary/40 transition-colors">
           <div className="flex justify-between items-start mb-3">
             <div className="min-w-0 flex items-start gap-2">
               <div className="size-9 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center shrink-0">

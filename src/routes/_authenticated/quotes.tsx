@@ -417,7 +417,7 @@ function QuotesPage() {
       {isLoading ? (
         <div className="text-center py-12 text-muted-foreground">טוען...</div>
       ) : filtered.length === 0 ? (
-        <div className="glass rounded-2xl p-12 text-center">
+        <div className="glass-strong rounded-3xl p-12 text-center">
           <p className="text-muted-foreground">{search ? "לא נמצאו תוצאות" : "אין הצעות עדיין. הוסף ראשונה!"}</p>
         </div>
       ) : (
@@ -425,7 +425,7 @@ function QuotesPage() {
           {filtered.map((item: any) => {
             const mods: QuoteModule[] = Array.isArray(item.modules) ? item.modules : [];
             return (
-              <article key={item.id} className="glass rounded-2xl p-4 hover:border-primary/40 transition-colors">
+              <article key={item.id} className="glass-strong rounded-3xl p-4 hover:border-primary/40 transition-colors">
                 <div className="flex justify-between items-start mb-3">
                   <div className="min-w-0">
                     <h3 className="font-semibold truncate">{item.title}</h3>
