@@ -3,8 +3,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CrudPage, StatusPill, type FieldDef } from "@/components/CrudPage";
 import { Button } from "@/components/ui/button";
-import { Calendar, Flag, User, Users, Check } from "lucide-react";
+import { Calendar, Flag, User, Users, Check, X } from "lucide-react";
 import { toast } from "sonner";
+import { useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { sendTaskNotification } from "@/lib/email/send-task-notification";
 
 const statusOptions = [
