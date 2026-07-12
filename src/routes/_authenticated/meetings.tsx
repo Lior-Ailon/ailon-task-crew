@@ -18,8 +18,7 @@ const statusLabel: Record<string, string> = Object.fromEntries(statusOptions.map
 const fields: FieldDef[] = [
   { name: "title", label: "נושא הפגישה", type: "text", required: true },
   { name: "description", label: "תיאור / סדר יום", type: "textarea" },
-  { name: "start_time", label: "תאריך ושעת התחלה", type: "datetime-local", required: true },
-  { name: "end_time", label: "תאריך ושעת סיום", type: "datetime-local", required: true },
+  { name: "start_time", label: "תאריך ושעה", type: "datetime-local", required: true },
   { name: "location", label: "מיקום", type: "text" },
   { name: "meeting_url", label: "קישור לפגישה (Zoom/Meet)", type: "text" },
   { name: "status", label: "סטטוס", type: "select", options: statusOptions, required: true },
@@ -194,7 +193,7 @@ export const Route = createFileRoute("/_authenticated/meetings")({
           <div className="space-y-1.5 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <Calendar className="size-3" />
-              {formatDate(item.start_time)} – {new Date(item.end_time).toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}
+              {formatDate(item.start_time)}
             </div>
             {item.location && (
               <div className="flex items-center gap-1.5">
