@@ -34,9 +34,10 @@ export interface CrudPageProps {
   extraHeader?: ReactNode;
   orderBy?: string;
   onAfterSave?: (event: "created" | "updated", payload: any, previous: any | null) => void;
+  filterItems?: (item: any) => boolean;
 }
 
-export function CrudPage({ title, subtitle, table, fields, renderCard, searchKeys = ["name", "title"], extraHeader, orderBy = "created_at", onAfterSave }: CrudPageProps) {
+export function CrudPage({ title, subtitle, table, fields, renderCard, searchKeys = ["name", "title"], extraHeader, orderBy = "created_at", onAfterSave, filterItems }: CrudPageProps) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
