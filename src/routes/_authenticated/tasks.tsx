@@ -218,11 +218,11 @@ function TasksPage() {
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
                   <Label className="text-xs text-foreground/70">מ־</Label>
-                  <Input type="date" value={dueFrom} onChange={(e) => setDueFrom(e.target.value)} className="bg-white/80 border-white/60" />
+                  <Input type="date" value={dueFrom} onChange={(e) => setDueFrom(e.target.value)} className="bg-white/95 border-white/80 shadow-sm" />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs text-foreground/70">עד</Label>
-                  <Input type="date" value={dueTo} onChange={(e) => setDueTo(e.target.value)} className="bg-white/80 border-white/60" />
+                  <Input type="date" value={dueTo} onChange={(e) => setDueTo(e.target.value)} className="bg-white/95 border-white/80 shadow-sm" />
                 </div>
               </div>
             )}
