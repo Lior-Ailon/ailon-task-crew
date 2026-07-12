@@ -5,6 +5,7 @@ import { CrudPage, StatusPill, type FieldDef } from "@/components/CrudPage";
 import { Button } from "@/components/ui/button";
 import { Calendar, Flag, User, Users, Check } from "lucide-react";
 import { toast } from "sonner";
+import { sendTaskNotification } from "@/lib/email/send-task-notification";
 
 const statusOptions = [
   { value: "todo", label: "לביצוע" },
@@ -51,13 +52,47 @@ function TasksPage() {
   const customerMap = new Map(customers.map((c: any) => [c.id, c.name]));
   const projectMap = new Map(projects.map((p: any) => [p.id, p.name]));
 
-  async function markDone(id: string) {
-    const { error } = await supabase.from("tasks").update({ status: "done" }).eq("id", id);
+  async function markDone(item: any) {
+    const { error } = await supabase.from("tasks").update({ status: "done" }).eq("id", item.id);
     if (error) return toast.error(error.message);
     toast.success("המשימה סומנה כהושלמה");
+    const { data: { user } } = await supabase.auth.getUser();
+    const actorName = user ? (profileMap.get(user.id) as string) ?? user.email ?? undefined : undefined;
+    sendTaskNotification({
+      eventLabel: "משימה בוצעה",
+      taskId: item.id,
+      taskTitle: item.title,
+      taskDescription: item.description,
+      status: "done",
+      priority: item.priority,
+      dueDate: item.due_date,
+      assignee: item.assignee_id ? (profileMap.get(item.assignee_id) as string) : undefined,
+      actor: actorName,
+    });
     qc.invalidateQueries({ queryKey: ["tasks"] });
     qc.invalidateQueries({ queryKey: ["count", "tasks"] });
     qc.invalidateQueries({ queryKey: ["recent-tasks"] });
+  }
+
+  async function handleAfterSave(event: "created" | "updated", payload: any, previous: any | null) {
+    const { data: { user } } = await supabase.auth.getUser();
+    const actorName = user ? (profileMap.get(user.id) as string) ?? user.email ?? undefined : undefined;
+    let eventLabel = event === "created" ? "משימה נפתחה" : "משימה עודכנה";
+    if (event === "updated" && previous && previous.status !== payload.status) {
+      if (payload.status === "done") eventLabel = "משימה בוצעה";
+      else if (previous.status !== "done" && payload.status === "todo") eventLabel = "משימה נפתחה מחדש";
+    }
+    sendTaskNotification({
+      eventLabel,
+      taskId: payload.id,
+      taskTitle: payload.title,
+      taskDescription: payload.description,
+      status: payload.status,
+      priority: payload.priority,
+      dueDate: payload.due_date,
+      assignee: payload.assignee_id ? (profileMap.get(payload.assignee_id) as string) : undefined,
+      actor: actorName,
+    });
   }
 
   return (
@@ -67,6 +102,7 @@ function TasksPage() {
       table="tasks"
       fields={fields}
       searchKeys={["title", "description"]}
+      onAfterSave={handleAfterSave}
       renderCard={(item, actions) => (
         <article key={item.id} className="glass-strong rounded-3xl p-4 hover:border-accent/40 transition-colors">
           <div className="flex justify-between items-start mb-3">
@@ -102,7 +138,7 @@ function TasksPage() {
           {item.status !== "done" && (
             <Button
               size="sm"
-              onClick={() => markDone(item.id)}
+              onClick={() => markDone(item)}
               className="w-full mt-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
             >
               <Check className="size-4 ml-1" />
