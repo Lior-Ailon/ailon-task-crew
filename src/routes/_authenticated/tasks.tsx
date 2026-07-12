@@ -163,8 +163,8 @@ function TasksPage() {
                   className={
                     "px-3 py-1.5 rounded-full text-xs font-medium transition-all " +
                     (active
-                      ? "bg-white text-primary shadow-md shadow-primary/20 ring-1 ring-primary/30"
-                      : "bg-white/40 text-foreground/70 hover:bg-white/70")
+                      ? "bg-white text-primary shadow-lg shadow-primary/25 ring-1 ring-primary/30"
+                      : "bg-white/60 text-foreground/80 hover:bg-white/90 shadow-sm")
                   }
                 >
                   {c.label}
