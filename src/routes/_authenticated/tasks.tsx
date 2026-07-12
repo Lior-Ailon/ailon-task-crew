@@ -149,10 +149,9 @@ function TasksPage() {
       onAfterSave={handleAfterSave}
       filterItems={filterItems}
       extraHeader={
-        <div className="relative overflow-hidden rounded-3xl p-4 border border-white/60 shadow-xl bg-[linear-gradient(135deg,oklch(0.93_0.06_200)_0%,oklch(0.85_0.12_195)_50%,oklch(0.78_0.15_210)_100%)]">
-          <div className="absolute inset-0 pointer-events-none opacity-90 bg-[radial-gradient(at_10%_0%,oklch(1_0_0/80%)_0px,transparent_50%),radial-gradient(at_90%_100%,oklch(0.68_0.16_195/55%)_0px,transparent_55%)]" />
+        <div className="relative overflow-hidden rounded-3xl p-4 border border-white/40 shadow-xl bg-gradient-to-l from-primary/90 via-primary/70 to-primary/30">
           <div className="relative flex flex-wrap items-center gap-2">
-            <span className="text-sm font-semibold text-foreground/80 ml-1">סנן לפי:</span>
+            <span className="text-sm font-semibold text-white/90 ml-1">סנן לפי:</span>
             {filterCategories.map((c) => {
               const active = filterBy === c.key;
               return (
@@ -163,8 +162,8 @@ function TasksPage() {
                   className={
                     "px-3 py-1.5 rounded-full text-xs font-medium transition-all " +
                     (active
-                      ? "bg-white text-primary shadow-lg shadow-primary/25 ring-1 ring-primary/30"
-                      : "bg-white/60 text-foreground/80 hover:bg-white/90 shadow-sm")
+                      ? "bg-white text-primary shadow-lg shadow-primary/30 ring-1 ring-white/50"
+                      : "bg-white/25 text-white hover:bg-white/40 shadow-sm")
                   }
                 >
                   {c.label}
@@ -173,7 +172,7 @@ function TasksPage() {
             })}
             <div className="flex-1" />
             {hasFilters && (
-              <Button type="button" variant="ghost" size="sm" onClick={resetFilters} className="rounded-full">
+              <Button type="button" variant="ghost" size="sm" onClick={resetFilters} className="rounded-full text-white hover:bg-white/20 hover:text-white">
                 <X className="size-3.5 ml-1" />
                 נקה סינון
               </Button>
@@ -182,7 +181,7 @@ function TasksPage() {
           <div className="relative mt-3">
             {filterBy === "status" && (
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="bg-white/95 border-white/80 shadow-sm"><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
+                <SelectTrigger className="bg-white border-white/60 shadow-sm text-foreground"><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">כל הסטטוסים</SelectItem>
                   {statusOptions.map((o) => (
@@ -193,7 +192,7 @@ function TasksPage() {
             )}
             {filterBy === "assignee" && (
               <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
-                <SelectTrigger className="bg-white/95 border-white/80 shadow-sm"><SelectValue placeholder="בחר אחראי" /></SelectTrigger>
+                <SelectTrigger className="bg-white border-white/60 shadow-sm text-foreground"><SelectValue placeholder="בחר אחראי" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">כל האחראים</SelectItem>
                   <SelectItem value="__none__">— ללא אחראי —</SelectItem>
@@ -205,7 +204,7 @@ function TasksPage() {
             )}
             {filterBy === "priority" && (
               <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                <SelectTrigger className="bg-white/95 border-white/80 shadow-sm"><SelectValue placeholder="בחר עדיפות" /></SelectTrigger>
+                <SelectTrigger className="bg-white border-white/60 shadow-sm text-foreground"><SelectValue placeholder="בחר עדיפות" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">כל העדיפויות</SelectItem>
                   {priorityOptions.map((o) => (
@@ -217,12 +216,12 @@ function TasksPage() {
             {filterBy === "due" && (
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <Label className="text-xs text-foreground/70">מ־</Label>
-                  <Input type="date" value={dueFrom} onChange={(e) => setDueFrom(e.target.value)} className="bg-white/95 border-white/80 shadow-sm" />
+                  <Label className="text-xs text-white/80">מ־</Label>
+                  <Input type="date" value={dueFrom} onChange={(e) => setDueFrom(e.target.value)} className="bg-white border-white/60 shadow-sm text-foreground" />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs text-foreground/70">עד</Label>
-                  <Input type="date" value={dueTo} onChange={(e) => setDueTo(e.target.value)} className="bg-white/95 border-white/80 shadow-sm" />
+                  <Label className="text-xs text-white/80">עד</Label>
+                  <Input type="date" value={dueTo} onChange={(e) => setDueTo(e.target.value)} className="bg-white border-white/60 shadow-sm text-foreground" />
                 </div>
               </div>
             )}
