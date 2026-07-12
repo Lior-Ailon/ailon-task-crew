@@ -181,7 +181,7 @@ function TasksPage() {
           <div className="relative mt-3">
             {filterBy === "status" && (
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="bg-white/95 border-white/80 shadow-sm"><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
+                <SelectTrigger className="bg-white border-white/60 shadow-sm text-foreground"><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">כל הסטטוסים</SelectItem>
                   {statusOptions.map((o) => (
@@ -192,7 +192,7 @@ function TasksPage() {
             )}
             {filterBy === "assignee" && (
               <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
-                <SelectTrigger className="bg-white/95 border-white/80 shadow-sm"><SelectValue placeholder="בחר אחראי" /></SelectTrigger>
+                <SelectTrigger className="bg-white border-white/60 shadow-sm text-foreground"><SelectValue placeholder="בחר אחראי" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">כל האחראים</SelectItem>
                   <SelectItem value="__none__">— ללא אחראי —</SelectItem>
@@ -204,7 +204,7 @@ function TasksPage() {
             )}
             {filterBy === "priority" && (
               <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                <SelectTrigger className="bg-white/95 border-white/80 shadow-sm"><SelectValue placeholder="בחר עדיפות" /></SelectTrigger>
+                <SelectTrigger className="bg-white border-white/60 shadow-sm text-foreground"><SelectValue placeholder="בחר עדיפות" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">כל העדיפויות</SelectItem>
                   {priorityOptions.map((o) => (
@@ -216,12 +216,12 @@ function TasksPage() {
             {filterBy === "due" && (
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <Label className="text-xs text-foreground/70">מ־</Label>
-                  <Input type="date" value={dueFrom} onChange={(e) => setDueFrom(e.target.value)} className="bg-white/95 border-white/80 shadow-sm" />
+                  <Label className="text-xs text-white/80">מ־</Label>
+                  <Input type="date" value={dueFrom} onChange={(e) => setDueFrom(e.target.value)} className="bg-white border-white/60 shadow-sm text-foreground" />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs text-foreground/70">עד</Label>
-                  <Input type="date" value={dueTo} onChange={(e) => setDueTo(e.target.value)} className="bg-white/95 border-white/80 shadow-sm" />
+                  <Label className="text-xs text-white/80">עד</Label>
+                  <Input type="date" value={dueTo} onChange={(e) => setDueTo(e.target.value)} className="bg-white border-white/60 shadow-sm text-foreground" />
                 </div>
               </div>
             )}
