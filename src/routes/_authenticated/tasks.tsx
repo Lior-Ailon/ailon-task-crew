@@ -149,10 +149,9 @@ function TasksPage() {
       onAfterSave={handleAfterSave}
       filterItems={filterItems}
       extraHeader={
-        <div className="relative overflow-hidden rounded-3xl p-4 border border-white/60 shadow-xl bg-[linear-gradient(135deg,oklch(0.93_0.06_200)_0%,oklch(0.85_0.12_195)_50%,oklch(0.78_0.15_210)_100%)]">
-          <div className="absolute inset-0 pointer-events-none opacity-90 bg-[radial-gradient(at_10%_0%,oklch(1_0_0/80%)_0px,transparent_50%),radial-gradient(at_90%_100%,oklch(0.68_0.16_195/55%)_0px,transparent_55%)]" />
+        <div className="relative overflow-hidden rounded-3xl p-4 border border-white/40 shadow-xl bg-gradient-to-l from-primary/90 via-primary/70 to-primary/30">
           <div className="relative flex flex-wrap items-center gap-2">
-            <span className="text-sm font-semibold text-foreground/80 ml-1">סנן לפי:</span>
+            <span className="text-sm font-semibold text-white/90 ml-1">סנן לפי:</span>
             {filterCategories.map((c) => {
               const active = filterBy === c.key;
               return (
@@ -163,8 +162,8 @@ function TasksPage() {
                   className={
                     "px-3 py-1.5 rounded-full text-xs font-medium transition-all " +
                     (active
-                      ? "bg-white text-primary shadow-lg shadow-primary/25 ring-1 ring-primary/30"
-                      : "bg-white/60 text-foreground/80 hover:bg-white/90 shadow-sm")
+                      ? "bg-white text-primary shadow-lg shadow-primary/30 ring-1 ring-white/50"
+                      : "bg-white/25 text-white hover:bg-white/40 shadow-sm")
                   }
                 >
                   {c.label}
@@ -173,7 +172,7 @@ function TasksPage() {
             })}
             <div className="flex-1" />
             {hasFilters && (
-              <Button type="button" variant="ghost" size="sm" onClick={resetFilters} className="rounded-full">
+              <Button type="button" variant="ghost" size="sm" onClick={resetFilters} className="rounded-full text-white hover:bg-white/20 hover:text-white">
                 <X className="size-3.5 ml-1" />
                 נקה סינון
               </Button>
