@@ -123,7 +123,7 @@ function DashboardPage() {
           <Link
             key={s.label}
             to={s.to}
-            className="glass rounded-2xl p-4 sm:p-5 hover:scale-[1.02] transition-transform group"
+            className="glass-strong rounded-3xl p-4 sm:p-5 hover:scale-[1.02] transition-transform group"
           >
             <div className={`size-10 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center mb-3 group-hover:glow transition-shadow`}>
               <s.icon className="size-5 text-white" />
@@ -135,7 +135,7 @@ function DashboardPage() {
       </section>
 
       <div className="grid lg:grid-cols-2 gap-4">
-        <section className="glass rounded-2xl p-5">
+        <section className="glass-strong rounded-3xl p-5">
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp className="size-5 text-accent" />
             <h2 className="font-semibold">לידים פתוחים</h2>
@@ -157,7 +157,7 @@ function DashboardPage() {
           )}
         </section>
 
-        <section className="glass rounded-2xl p-5">
+        <section className="glass-strong rounded-3xl p-5">
           <div className="flex items-center gap-2 mb-4">
             <Clock className="size-5 text-accent" />
             <h2 className="font-semibold">משימות פתוחות</h2>
@@ -180,7 +180,7 @@ function DashboardPage() {
         </section>
       </div>
 
-      <section className="glass rounded-2xl p-5">
+      <section className="glass-strong rounded-3xl p-5">
         <div className="flex items-center gap-2 mb-4">
           <Lightbulb className="size-5 text-accent" />
           <h2 className="font-semibold">רעיונות אחרונים</h2>
@@ -265,7 +265,7 @@ function MeetingsCalendarSection() {
   const weekdayLabels = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "ש'"];
 
   return (
-    <section className="glass rounded-2xl p-5">
+    <section className="glass-strong rounded-3xl p-5">
       <div className="flex items-center gap-2 mb-4">
         <CalendarDays className="size-5 text-accent" />
         <h2 className="font-semibold">יומן פגישות</h2>

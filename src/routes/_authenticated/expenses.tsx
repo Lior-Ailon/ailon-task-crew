@@ -194,11 +194,11 @@ function ExpensesPage() {
       </header>
 
       <div className="grid sm:grid-cols-2 gap-3">
-        <div className="glass rounded-2xl p-4 flex items-center justify-between">
+        <div className="glass-strong rounded-3xl p-4 flex items-center justify-between">
           <span className="text-sm text-muted-foreground">סה״כ הוצאות שנרשמו</span>
           <span className="text-2xl font-bold text-red-600">₪{total.toLocaleString()}</span>
         </div>
-        <div className="glass rounded-2xl p-4 flex items-center justify-between">
+        <div className="glass-strong rounded-3xl p-4 flex items-center justify-between">
           <span className="text-sm text-muted-foreground">צפי עד סוף השנה ({new Date().getFullYear()})</span>
           <span className="text-2xl font-bold text-red-600">₪{projectedTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
         </div>
@@ -212,13 +212,13 @@ function ExpensesPage() {
       {isLoading ? (
         <div className="text-center py-12 text-muted-foreground">טוען...</div>
       ) : filtered.length === 0 ? (
-        <div className="glass rounded-2xl p-12 text-center">
+        <div className="glass-strong rounded-3xl p-12 text-center">
           <p className="text-muted-foreground">{search ? "לא נמצאו תוצאות" : "אין הוצאות עדיין"}</p>
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {filtered.map((item: any) => (
-            <article key={item.id} className="glass rounded-2xl p-4 hover:border-primary/40 transition-colors">
+            <article key={item.id} className="glass-strong rounded-3xl p-4 hover:border-primary/40 transition-colors">
               <div className="flex justify-between items-start mb-3">
                 <div className="min-w-0">
                   <h3 className="font-semibold truncate">{item.expense_type}</h3>

@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_authenticated/customers")({
       fields={fields}
       searchKeys={["name", "company", "email", "tax_id"]}
       renderCard={(item, actions) => (
-        <article key={item.id} className="glass rounded-2xl p-4 hover:border-accent/40 transition-colors">
+        <article key={item.id} className="glass-strong rounded-3xl p-4 hover:border-accent/40 transition-colors">
           <div className="flex justify-between items-start mb-3">
             <div className="flex items-center gap-3 min-w-0">
               <div className="size-10 rounded-xl bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center font-bold text-sm shrink-0">
