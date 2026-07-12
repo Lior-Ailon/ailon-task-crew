@@ -193,7 +193,7 @@ function TasksPage() {
             )}
             {filterBy === "assignee" && (
               <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
-                <SelectTrigger className="bg-white/80 border-white/60"><SelectValue placeholder="בחר אחראי" /></SelectTrigger>
+                <SelectTrigger className="bg-white/95 border-white/80 shadow-sm"><SelectValue placeholder="בחר אחראי" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">כל האחראים</SelectItem>
                   <SelectItem value="__none__">— ללא אחראי —</SelectItem>
