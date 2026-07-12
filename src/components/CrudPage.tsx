@@ -53,6 +53,7 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
   });
 
   const filtered = items.filter((it: any) => {
+    if (filterItems && !filterItems(it)) return false;
     if (!search) return true;
     const q = search.toLowerCase();
     return searchKeys.some((k) => String(it[k] ?? "").toLowerCase().includes(q));
