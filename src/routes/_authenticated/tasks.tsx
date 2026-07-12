@@ -149,8 +149,8 @@ function TasksPage() {
       onAfterSave={handleAfterSave}
       filterItems={filterItems}
       extraHeader={
-        <div className="relative overflow-hidden rounded-3xl p-4 border border-white/40 shadow-lg bg-[linear-gradient(120deg,oklch(0.95_0.04_200)_0%,oklch(0.9_0.08_195)_45%,oklch(0.86_0.11_210)_100%)]">
-          <div className="absolute inset-0 pointer-events-none opacity-70 bg-[radial-gradient(at_10%_0%,oklch(1_0_0/60%)_0px,transparent_50%),radial-gradient(at_90%_100%,oklch(0.72_0.13_195/40%)_0px,transparent_55%)]" />
+        <div className="relative overflow-hidden rounded-3xl p-4 border border-white/60 shadow-xl bg-[linear-gradient(135deg,oklch(0.93_0.06_200)_0%,oklch(0.85_0.12_195)_50%,oklch(0.78_0.15_210)_100%)]">
+          <div className="absolute inset-0 pointer-events-none opacity-90 bg-[radial-gradient(at_10%_0%,oklch(1_0_0/80%)_0px,transparent_50%),radial-gradient(at_90%_100%,oklch(0.68_0.16_195/55%)_0px,transparent_55%)]" />
           <div className="relative flex flex-wrap items-center gap-2">
             <span className="text-sm font-semibold text-foreground/80 ml-1">סנן לפי:</span>
             {filterCategories.map((c) => {
@@ -163,8 +163,8 @@ function TasksPage() {
                   className={
                     "px-3 py-1.5 rounded-full text-xs font-medium transition-all " +
                     (active
-                      ? "bg-white text-primary shadow-md shadow-primary/20 ring-1 ring-primary/30"
-                      : "bg-white/40 text-foreground/70 hover:bg-white/70")
+                      ? "bg-white text-primary shadow-lg shadow-primary/25 ring-1 ring-primary/30"
+                      : "bg-white/60 text-foreground/80 hover:bg-white/90 shadow-sm")
                   }
                 >
                   {c.label}
@@ -182,7 +182,7 @@ function TasksPage() {
           <div className="relative mt-3">
             {filterBy === "status" && (
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="bg-white/80 border-white/60"><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
+                <SelectTrigger className="bg-white/95 border-white/80 shadow-sm"><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">כל הסטטוסים</SelectItem>
                   {statusOptions.map((o) => (
@@ -193,7 +193,7 @@ function TasksPage() {
             )}
             {filterBy === "assignee" && (
               <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
-                <SelectTrigger className="bg-white/80 border-white/60"><SelectValue placeholder="בחר אחראי" /></SelectTrigger>
+                <SelectTrigger className="bg-white/95 border-white/80 shadow-sm"><SelectValue placeholder="בחר אחראי" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">כל האחראים</SelectItem>
                   <SelectItem value="__none__">— ללא אחראי —</SelectItem>
@@ -205,7 +205,7 @@ function TasksPage() {
             )}
             {filterBy === "priority" && (
               <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                <SelectTrigger className="bg-white/80 border-white/60"><SelectValue placeholder="בחר עדיפות" /></SelectTrigger>
+                <SelectTrigger className="bg-white/95 border-white/80 shadow-sm"><SelectValue placeholder="בחר עדיפות" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">כל העדיפויות</SelectItem>
                   {priorityOptions.map((o) => (
@@ -218,11 +218,11 @@ function TasksPage() {
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
                   <Label className="text-xs text-foreground/70">מ־</Label>
-                  <Input type="date" value={dueFrom} onChange={(e) => setDueFrom(e.target.value)} className="bg-white/80 border-white/60" />
+                  <Input type="date" value={dueFrom} onChange={(e) => setDueFrom(e.target.value)} className="bg-white/95 border-white/80 shadow-sm" />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs text-foreground/70">עד</Label>
-                  <Input type="date" value={dueTo} onChange={(e) => setDueTo(e.target.value)} className="bg-white/80 border-white/60" />
+                  <Input type="date" value={dueTo} onChange={(e) => setDueTo(e.target.value)} className="bg-white/95 border-white/80 shadow-sm" />
                 </div>
               </div>
             )}
