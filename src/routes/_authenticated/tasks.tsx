@@ -56,6 +56,8 @@ function TasksPage() {
   const customerMap = new Map(customers.map((c: any) => [c.id, c.name]));
   const projectMap = new Map(projects.map((p: any) => [p.id, p.name]));
 
+  type FilterKey = "status" | "assignee" | "priority" | "due";
+  const [filterBy, setFilterBy] = useState<FilterKey>("status");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [assigneeFilter, setAssigneeFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
@@ -63,7 +65,7 @@ function TasksPage() {
   const [dueTo, setDueTo] = useState<string>("");
 
   const hasFilters =
-    statusFilter !== "all" || assigneeFilter !== "all" || priorityFilter !== "all" || dueFrom || dueTo;
+    statusFilter !== "all" || assigneeFilter !== "all" || priorityFilter !== "all" || !!dueFrom || !!dueTo;
 
   function resetFilters() {
     setStatusFilter("all");
@@ -85,6 +87,14 @@ function TasksPage() {
     if (dueTo && (!item.due_date || item.due_date > dueTo)) return false;
     return true;
   }
+
+  const filterCategories: { key: FilterKey; label: string }[] = [
+    { key: "status", label: "סטטוס" },
+    { key: "assignee", label: "אחראי" },
+    { key: "priority", label: "עדיפות" },
+    { key: "due", label: "תאריך יעד" },
+  ];
+
 
   async function markDone(item: any) {
     const { error } = await supabase.from("tasks").update({ status: "done" }).eq("id", item.id);
