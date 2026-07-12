@@ -182,7 +182,7 @@ function TasksPage() {
           <div className="relative mt-3">
             {filterBy === "status" && (
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="bg-white/80 border-white/60"><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
+                <SelectTrigger className="bg-white/95 border-white/80 shadow-sm"><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">כל הסטטוסים</SelectItem>
                   {statusOptions.map((o) => (
