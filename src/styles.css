@@ -142,12 +142,12 @@
 
 @utility glass-strong {
   background:
-    radial-gradient(at 8% 0%, oklch(0.78 0.12 200 / 22%) 0px, transparent 55%),
-    radial-gradient(at 92% 8%, oklch(0.48 0.07 185 / 18%) 0px, transparent 55%),
-    radial-gradient(at 80% 100%, oklch(0.72 0.13 195 / 20%) 0px, transparent 55%),
-    color-mix(in oklab, white 88%, transparent);
+    linear-gradient(135deg, oklch(0.42 0.07 185 / 55%), oklch(0.72 0.13 195 / 35%) 60%, oklch(0.78 0.12 200 / 25%)),
+    radial-gradient(at 8% 0%, oklch(0.78 0.12 200 / 45%) 0px, transparent 55%),
+    radial-gradient(at 92% 100%, oklch(0.42 0.07 185 / 40%) 0px, transparent 55%),
+    color-mix(in oklab, white 70%, transparent);
   backdrop-filter: blur(28px) saturate(160%);
-  border: 1px solid var(--color-border);
+  border: 1px solid color-mix(in oklab, oklch(0.42 0.07 185) 25%, transparent);
   box-shadow: var(--shadow-glass);
 }
 
