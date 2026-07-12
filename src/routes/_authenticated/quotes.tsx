@@ -427,6 +427,9 @@ function QuotesPage() {
                     )}
                   </div>
                   <div className="flex gap-1">
+                    <Button size="icon" variant="ghost" className="size-8" onClick={() => printQuote(item, customerMap.get(item.customer_id))} aria-label="הדפס">
+                      <Printer className="size-3.5" />
+                    </Button>
                     <Button size="icon" variant="ghost" className="size-8" onClick={() => openForEdit(item)}>
                       <Pencil className="size-3.5" />
                     </Button>
