@@ -149,8 +149,8 @@ function TasksPage() {
       onAfterSave={handleAfterSave}
       filterItems={filterItems}
       extraHeader={
-        <div className="relative overflow-hidden rounded-3xl p-4 border border-white/40 shadow-lg bg-[linear-gradient(120deg,oklch(0.95_0.04_200)_0%,oklch(0.9_0.08_195)_45%,oklch(0.86_0.11_210)_100%)]">
-          <div className="absolute inset-0 pointer-events-none opacity-70 bg-[radial-gradient(at_10%_0%,oklch(1_0_0/60%)_0px,transparent_50%),radial-gradient(at_90%_100%,oklch(0.72_0.13_195/40%)_0px,transparent_55%)]" />
+        <div className="relative overflow-hidden rounded-3xl p-4 border border-white/60 shadow-xl bg-[linear-gradient(135deg,oklch(0.93_0.06_200)_0%,oklch(0.85_0.12_195)_50%,oklch(0.78_0.15_210)_100%)]">
+          <div className="absolute inset-0 pointer-events-none opacity-90 bg-[radial-gradient(at_10%_0%,oklch(1_0_0/80%)_0px,transparent_50%),radial-gradient(at_90%_100%,oklch(0.68_0.16_195/55%)_0px,transparent_55%)]" />
           <div className="relative flex flex-wrap items-center gap-2">
             <span className="text-sm font-semibold text-foreground/80 ml-1">סנן לפי:</span>
             {filterCategories.map((c) => {
