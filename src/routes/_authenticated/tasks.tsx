@@ -205,7 +205,7 @@ function TasksPage() {
             )}
             {filterBy === "priority" && (
               <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                <SelectTrigger className="bg-white/80 border-white/60"><SelectValue placeholder="בחר עדיפות" /></SelectTrigger>
+                <SelectTrigger className="bg-white/95 border-white/80 shadow-sm"><SelectValue placeholder="בחר עדיפות" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">כל העדיפויות</SelectItem>
                   {priorityOptions.map((o) => (
