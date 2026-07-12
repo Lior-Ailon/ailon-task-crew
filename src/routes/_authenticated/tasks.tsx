@@ -5,6 +5,7 @@ import { CrudPage, StatusPill, type FieldDef } from "@/components/CrudPage";
 import { Button } from "@/components/ui/button";
 import { Calendar, Flag, User, Users, Check } from "lucide-react";
 import { toast } from "sonner";
+import { sendTaskNotification } from "@/lib/email/send-task-notification";
 
 const statusOptions = [
   { value: "todo", label: "לביצוע" },
