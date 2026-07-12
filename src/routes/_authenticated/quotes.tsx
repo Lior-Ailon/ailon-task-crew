@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import ailonLogo from "@/assets/ailon-logo.png.asset.json";
 
 type QuoteModule = { id: string; title: string; description: string; cost: number };
 
@@ -60,7 +61,10 @@ function printQuote(item: any, customerName?: string) {
 <style>
   * { box-sizing: border-box; }
   body { font-family: -apple-system, "Segoe UI", "Assistant", Arial, sans-serif; color: #111; margin: 0; padding: 32px; background: #fff; }
-  .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #111; padding-bottom: 16px; margin-bottom: 24px; }
+  .header { display: flex; justify-content: space-between; align-items: center; gap: 16px; border-bottom: 2px solid #111; padding-bottom: 16px; margin-bottom: 24px; }
+  .brand { flex: 0 0 auto; }
+  .logo { height: 72px; width: auto; display: block; }
+  .header-main { flex: 1 1 auto; }
   h1 { font-size: 24px; margin: 0 0 4px; }
   .meta { color: #555; font-size: 13px; }
   .meta div { margin: 2px 0; }
@@ -85,7 +89,10 @@ function printQuote(item: any, customerName?: string) {
     <button onclick="window.print()">הדפס / שמור כ־PDF</button>
   </div>
   <div class="header">
-    <div>
+    <div class="brand">
+      <img src="${window.location.origin}${ailonLogo.url}" alt="Ailon Task" class="logo" />
+    </div>
+    <div class="header-main">
       <h1>${esc(item.title)}</h1>
       <div class="meta">
         ${item.quote_number ? `<div>מספר הצעה: ${esc(item.quote_number)}</div>` : ""}
