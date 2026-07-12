@@ -149,61 +149,87 @@ function TasksPage() {
       onAfterSave={handleAfterSave}
       filterItems={filterItems}
       extraHeader={
-        <div className="glass-strong rounded-3xl p-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          <div className="space-y-1.5">
-            <Label className="text-xs">סטטוס</Label>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">הכל</SelectItem>
-                {statusOptions.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <div className="relative overflow-hidden rounded-3xl p-4 border border-white/40 shadow-lg bg-[linear-gradient(120deg,oklch(0.95_0.04_200)_0%,oklch(0.9_0.08_195)_45%,oklch(0.86_0.11_210)_100%)]">
+          <div className="absolute inset-0 pointer-events-none opacity-70 bg-[radial-gradient(at_10%_0%,oklch(1_0_0/60%)_0px,transparent_50%),radial-gradient(at_90%_100%,oklch(0.72_0.13_195/40%)_0px,transparent_55%)]" />
+          <div className="relative flex flex-wrap items-center gap-2">
+            <span className="text-sm font-semibold text-foreground/80 ml-1">סנן לפי:</span>
+            {filterCategories.map((c) => {
+              const active = filterBy === c.key;
+              return (
+                <button
+                  key={c.key}
+                  type="button"
+                  onClick={() => setFilterBy(c.key)}
+                  className={
+                    "px-3 py-1.5 rounded-full text-xs font-medium transition-all " +
+                    (active
+                      ? "bg-white text-primary shadow-md shadow-primary/20 ring-1 ring-primary/30"
+                      : "bg-white/40 text-foreground/70 hover:bg-white/70")
+                  }
+                >
+                  {c.label}
+                </button>
+              );
+            })}
+            <div className="flex-1" />
+            {hasFilters && (
+              <Button type="button" variant="ghost" size="sm" onClick={resetFilters} className="rounded-full">
+                <X className="size-3.5 ml-1" />
+                נקה סינון
+              </Button>
+            )}
           </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs">אחראי</Label>
-            <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">הכל</SelectItem>
-                <SelectItem value="__none__">— ללא אחראי —</SelectItem>
-                {profiles.map((p: any) => (
-                  <SelectItem key={p.id} value={p.id}>{p.full_name || p.email || "משתמש"}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs">עדיפות</Label>
-            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">הכל</SelectItem>
-                {priorityOptions.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs">תאריך יעד מ־</Label>
-            <Input type="date" value={dueFrom} onChange={(e) => setDueFrom(e.target.value)} />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs">עד</Label>
-            <div className="flex gap-2">
-              <Input type="date" value={dueTo} onChange={(e) => setDueTo(e.target.value)} />
-              {hasFilters && (
-                <Button type="button" variant="ghost" size="icon" onClick={resetFilters} title="נקה סינון">
-                  <X className="size-4" />
-                </Button>
-              )}
-            </div>
+          <div className="relative mt-3">
+            {filterBy === "status" && (
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="bg-white/80 border-white/60"><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">כל הסטטוסים</SelectItem>
+                  {statusOptions.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            {filterBy === "assignee" && (
+              <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
+                <SelectTrigger className="bg-white/80 border-white/60"><SelectValue placeholder="בחר אחראי" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">כל האחראים</SelectItem>
+                  <SelectItem value="__none__">— ללא אחראי —</SelectItem>
+                  {profiles.map((p: any) => (
+                    <SelectItem key={p.id} value={p.id}>{p.full_name || p.email || "משתמש"}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            {filterBy === "priority" && (
+              <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                <SelectTrigger className="bg-white/80 border-white/60"><SelectValue placeholder="בחר עדיפות" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">כל העדיפויות</SelectItem>
+                  {priorityOptions.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            {filterBy === "due" && (
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <Label className="text-xs text-foreground/70">מ־</Label>
+                  <Input type="date" value={dueFrom} onChange={(e) => setDueFrom(e.target.value)} className="bg-white/80 border-white/60" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-foreground/70">עד</Label>
+                  <Input type="date" value={dueTo} onChange={(e) => setDueTo(e.target.value)} className="bg-white/80 border-white/60" />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       }
+
       renderCard={(item, actions) => (
         <article key={item.id} className="glass-strong rounded-3xl p-4 hover:border-accent/40 transition-colors">
           <div className="flex justify-between items-start mb-3">
