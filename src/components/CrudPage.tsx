@@ -21,7 +21,8 @@ export type FieldDef =
   | { name: string; label: string; type: "text" | "email" | "tel" | "number" | "date" | "datetime-local" | "textarea"; required?: boolean }
   | { name: string; label: string; type: "select"; options: { value: string; label: string }[]; required?: boolean }
   | { name: string; label: string; type: "lookup"; lookupTable: "customers" | "projects" | "profiles" | "leads"; labelField: string; required?: boolean }
-  | { name: string; label: string; type: "tags"; placeholder?: string; required?: boolean };
+  | { name: string; label: string; type: "tags"; placeholder?: string; required?: boolean }
+  | { name: string; label: string; type: "user-tags"; placeholder?: string; required?: boolean };
 
 export type TableName = "leads" | "customers" | "projects" | "tasks" | "meetings" | "ideas" | "subscriptions" | "quotes";
 
