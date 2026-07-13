@@ -165,8 +165,7 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
                       placeholder={f.placeholder}
                       defaultValue={Array.isArray(editing?.[f.name]) ? editing[f.name] : []}
                     />
-                  ) : f.type === "lookup" ? null : null /* handled above */ }
-                  {false && (
+                  ) : (
                     <Input
                       id={f.name}
                       name={f.name}
