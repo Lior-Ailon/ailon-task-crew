@@ -159,7 +159,14 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
                       defaultValue={Array.isArray(editing?.[f.name]) ? editing[f.name].join("\n") : (editing?.[f.name] ?? "")}
                       rows={3}
                     />
-                  ) : (
+                  ) : f.type === "user-tags" ? (
+                    <UserTagsInput
+                      name={f.name}
+                      placeholder={f.placeholder}
+                      defaultValue={Array.isArray(editing?.[f.name]) ? editing[f.name] : []}
+                    />
+                  ) : f.type === "lookup" ? null : null /* handled above */ }
+                  {false && (
                     <Input
                       id={f.name}
                       name={f.name}
