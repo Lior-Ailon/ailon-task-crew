@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { CrudPage, StatusPill, type FieldDef } from "@/components/CrudPage";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, MapPin, Link2, Video } from "lucide-react";
+import { Calendar, MapPin, Link2, Video, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
