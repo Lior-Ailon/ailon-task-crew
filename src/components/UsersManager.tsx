@@ -43,6 +43,7 @@ export function UsersManager() {
   const createFn = useServerFn(createSystemUser);
   const setRoleFn = useServerFn(setUserRole);
   const deleteFn = useServerFn(deleteSystemUser);
+  const setPasswordFn = useServerFn(setUserPassword);
 
   const { data: users, isLoading, error } = useQuery({
     queryKey: ["system-users"],
@@ -51,6 +52,8 @@ export function UsersManager() {
 
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ email: "", password: "", full_name: "", role: "viewer" as Role });
+  const [pwUser, setPwUser] = useState<{ id: string; email: string } | null>(null);
+  const [newPassword, setNewPassword] = useState("");
 
   const createMut = useMutation({
     mutationFn: (data: typeof form) => createFn({ data }),
