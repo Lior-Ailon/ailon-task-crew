@@ -15,13 +15,15 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import { UserTagsInput } from "@/components/UserTagsInput";
 import { toast } from "sonner";
 
 export type FieldDef =
   | { name: string; label: string; type: "text" | "email" | "tel" | "number" | "date" | "datetime-local" | "textarea"; required?: boolean }
   | { name: string; label: string; type: "select"; options: { value: string; label: string }[]; required?: boolean }
   | { name: string; label: string; type: "lookup"; lookupTable: "customers" | "projects" | "profiles" | "leads"; labelField: string; required?: boolean }
-  | { name: string; label: string; type: "tags"; placeholder?: string; required?: boolean };
+  | { name: string; label: string; type: "tags"; placeholder?: string; required?: boolean }
+  | { name: string; label: string; type: "user-tags"; placeholder?: string; required?: boolean };
 
 export type TableName = "leads" | "customers" | "projects" | "tasks" | "meetings" | "ideas" | "subscriptions" | "quotes";
 
@@ -66,7 +68,7 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
     const payload: Record<string, any> = {};
     for (const f of fields) {
       const v = fd.get(f.name);
-      if (f.type === "tags") {
+      if (f.type === "tags" || f.type === "user-tags") {
         const str = String(v ?? "");
         const arr = str
           .split(/[\n,]/)
@@ -157,6 +159,12 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
                       placeholder={f.placeholder ?? "פריט בכל שורה, או מופרד בפסיקים"}
                       defaultValue={Array.isArray(editing?.[f.name]) ? editing[f.name].join("\n") : (editing?.[f.name] ?? "")}
                       rows={3}
+                    />
+                  ) : f.type === "user-tags" ? (
+                    <UserTagsInput
+                      name={f.name}
+                      placeholder={f.placeholder}
+                      defaultValue={Array.isArray(editing?.[f.name]) ? editing[f.name] : []}
                     />
                   ) : (
                     <Input
