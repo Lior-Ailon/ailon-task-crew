@@ -331,6 +331,7 @@ export type Database = {
           lead_id: string | null
           location: string | null
           meeting_url: string | null
+          participants: string[]
           project_id: string | null
           start_time: string
           status: Database["public"]["Enums"]["meeting_status"]
@@ -347,6 +348,7 @@ export type Database = {
           lead_id?: string | null
           location?: string | null
           meeting_url?: string | null
+          participants?: string[]
           project_id?: string | null
           start_time: string
           status?: Database["public"]["Enums"]["meeting_status"]
@@ -363,6 +365,7 @@ export type Database = {
           lead_id?: string | null
           location?: string | null
           meeting_url?: string | null
+          participants?: string[]
           project_id?: string | null
           start_time?: string
           status?: Database["public"]["Enums"]["meeting_status"]
