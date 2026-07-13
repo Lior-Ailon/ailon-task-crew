@@ -85,6 +85,17 @@ export function UsersManager() {
     onError: (e: any) => toast.error(e.message),
   });
 
+  const passwordMut = useMutation({
+    mutationFn: ({ user_id, password }: { user_id: string; password: string }) =>
+      setPasswordFn({ data: { user_id, password } }),
+    onSuccess: () => {
+      toast.success("הסיסמה עודכנה");
+      setPwUser(null);
+      setNewPassword("");
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   if (error) {
     return (
       <div className="glass-strong rounded-3xl p-8 text-center">
