@@ -213,6 +213,18 @@ export const Route = createFileRoute("/_authenticated/meetings")({
                 הצטרף לפגישה
               </a>
             )}
+            {Array.isArray(item.participants) && item.participants.length > 0 && (
+              <div className="flex items-start gap-1.5">
+                <Users className="size-3 mt-0.5 shrink-0" />
+                <div className="flex flex-wrap gap-1">
+                  {item.participants.map((p: string, i: number) => (
+                    <span key={i} className="px-1.5 py-0.5 rounded-md bg-muted text-[10px]">
+                      {p}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
           <div className="mt-3 pt-3 border-t border-border/50">
             <StatusPill label={statusLabel[item.status] ?? item.status} tone={statusTone[item.status]} />
