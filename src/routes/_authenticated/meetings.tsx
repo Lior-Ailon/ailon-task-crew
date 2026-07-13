@@ -6,6 +6,8 @@ import { Calendar, MapPin, Link2, Video, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { inviteMeetingParticipants } from "@/lib/email/send-meeting-invitation";
+import { toast } from "sonner";
 
 const statusOptions = [
   { value: "scheduled", label: "מתוכננת" },
