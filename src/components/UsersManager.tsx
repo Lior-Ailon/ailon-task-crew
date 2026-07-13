@@ -294,13 +294,4 @@ export function UsersManager() {
     </div>
   );
 }
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  );
-}
+
