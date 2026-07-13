@@ -80,8 +80,8 @@
   --destructive: oklch(0.62 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
 
-  --border: oklch(0.45 0.06 195 / 20%);
-  --input: oklch(0.45 0.06 195 / 16%);
+  --border: oklch(1 0 0 / 55%);
+  --input: oklch(1 0 0 / 45%);
   --ring: oklch(0.44 0.08 185);
 
   --chart-1: oklch(0.44 0.08 185);
@@ -96,7 +96,7 @@
   --sidebar-primary-foreground: oklch(0.99 0 0);
   --sidebar-accent: oklch(0.94 0.03 195);
   --sidebar-accent-foreground: oklch(0.22 0.04 200);
-  --sidebar-border: oklch(0.45 0.06 195 / 20%);
+  --sidebar-border: oklch(1 0 0 / 55%);
   --sidebar-ring: oklch(0.44 0.08 185);
 
   /* Custom design tokens */
@@ -108,7 +108,7 @@
     radial-gradient(at 92% 100%, oklch(0.40 0.08 185 / 32%) 0px, transparent 55%),
     radial-gradient(at 52% 48%, oklch(0.78 0.12 200 / 14%) 0px, transparent 60%);
   --shadow-glow: 0 10px 40px -12px oklch(0.44 0.08 185 / 40%);
-  --shadow-glass: 0 8px 28px -8px oklch(0.42 0.07 195 / 22%);
+  --shadow-glass: 0 6px 24px -10px oklch(0.42 0.07 195 / 14%);
 }
 
 @layer base {
@@ -135,20 +135,20 @@
 }
 
 @utility glass {
-  background: color-mix(in oklab, white 78%, transparent);
+  background: color-mix(in oklab, white 85%, transparent);
   backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid var(--color-border);
+  border: 1px solid oklch(1 0 0 / 65%);
   box-shadow: var(--shadow-glass);
 }
 
 @utility glass-strong {
   background:
-    linear-gradient(135deg, oklch(0.42 0.07 185 / 55%), oklch(0.72 0.13 195 / 35%) 60%, oklch(0.78 0.12 200 / 25%)),
-    radial-gradient(at 8% 0%, oklch(0.78 0.12 200 / 45%) 0px, transparent 55%),
-    radial-gradient(at 92% 100%, oklch(0.42 0.07 185 / 40%) 0px, transparent 55%),
-    color-mix(in oklab, white 70%, transparent);
+    linear-gradient(135deg, oklch(1 0 0 / 75%), oklch(0.98 0.02 195 / 60%) 60%, oklch(0.96 0.03 200 / 55%)),
+    radial-gradient(at 8% 0%, oklch(0.85 0.08 200 / 22%) 0px, transparent 55%),
+    radial-gradient(at 92% 100%, oklch(0.80 0.10 195 / 18%) 0px, transparent 55%),
+    color-mix(in oklab, white 85%, transparent);
   backdrop-filter: blur(28px) saturate(160%);
-  border: 1px solid color-mix(in oklab, oklch(0.42 0.07 185) 25%, transparent);
+  border: 1px solid oklch(1 0 0 / 70%);
   box-shadow: var(--shadow-glass);
 }
 
