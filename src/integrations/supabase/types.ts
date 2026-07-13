@@ -545,6 +545,7 @@ export type Database = {
           customer_id: string | null
           description: string | null
           id: string
+          lead_id: string | null
           modules: Json
           notes: string | null
           quote_number: string | null
@@ -560,6 +561,7 @@ export type Database = {
           customer_id?: string | null
           description?: string | null
           id?: string
+          lead_id?: string | null
           modules?: Json
           notes?: string | null
           quote_number?: string | null
@@ -575,6 +577,7 @@ export type Database = {
           customer_id?: string | null
           description?: string | null
           id?: string
+          lead_id?: string | null
           modules?: Json
           notes?: string | null
           quote_number?: string | null
@@ -591,6 +594,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
             referencedColumns: ["id"]
           },
         ]
