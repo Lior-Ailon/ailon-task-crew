@@ -348,16 +348,15 @@ function NewMeetingDialog() {
     const fd = new FormData(e.currentTarget);
     const title = String(fd.get("title") || "").trim();
     const start_time = String(fd.get("start_time") || "");
-    const end_time = String(fd.get("end_time") || "");
     const location = String(fd.get("location") || "") || null;
     const meeting_url = String(fd.get("meeting_url") || "") || null;
     const description = String(fd.get("description") || "") || null;
-    if (!title || !start_time || !end_time) return toast.error("חסרים שדות חובה");
+    if (!title || !start_time) return toast.error("חסרים שדות חובה");
 
     setSaving(true);
     const { data: userData } = await supabase.auth.getUser();
     const { error } = await supabase.from("meetings").insert({
-      title, start_time, end_time, location, meeting_url, description,
+      title, start_time, location, meeting_url, description,
       status: "scheduled", user_id: userData.user?.id ?? "",
     } as any);
     setSaving(false);
@@ -377,10 +376,7 @@ function NewMeetingDialog() {
         <DialogHeader><DialogTitle>קביעת פגישה חדשה</DialogTitle></DialogHeader>
         <form onSubmit={onSubmit} className="space-y-3">
           <div><Label>נושא *</Label><Input name="title" required /></div>
-          <div className="grid grid-cols-2 gap-3">
-            <div><Label>התחלה *</Label><Input name="start_time" type="datetime-local" required /></div>
-            <div><Label>סיום *</Label><Input name="end_time" type="datetime-local" required /></div>
-          </div>
+          <div><Label>תאריך ושעה *</Label><Input name="start_time" type="datetime-local" required /></div>
           <div><Label>מיקום</Label><Input name="location" /></div>
           <div><Label>קישור (Zoom/Meet)</Label><Input name="meeting_url" /></div>
           <div><Label>תיאור</Label><Textarea name="description" rows={3} /></div>
