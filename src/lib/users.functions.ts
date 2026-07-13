@@ -91,6 +91,24 @@ export const setUserRole = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const setUserPassword = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { user_id: string; password: string }) => {
+    if (!data.user_id) throw new Error("חסר מזהה משתמש");
+    if (!data.password || data.password.length < 6)
+      throw new Error("סיסמה חייבת להיות לפחות 6 תווים");
+    return data;
+  })
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(data.user_id, {
+      password: data.password,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const deleteSystemUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { user_id: string }) => data)

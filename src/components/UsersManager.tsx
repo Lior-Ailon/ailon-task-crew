@@ -7,6 +7,7 @@ import {
   createSystemUser,
   setUserRole,
   deleteSystemUser,
+  setUserPassword,
 } from "@/lib/users.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Shield, Pencil, Eye, Trash2, UserPlus, ShieldAlert } from "lucide-react";
+import { Shield, Pencil, Eye, Trash2, UserPlus, ShieldAlert, KeyRound } from "lucide-react";
 
 type Role = "admin" | "editor" | "viewer";
 
@@ -42,6 +43,7 @@ export function UsersManager() {
   const createFn = useServerFn(createSystemUser);
   const setRoleFn = useServerFn(setUserRole);
   const deleteFn = useServerFn(deleteSystemUser);
+  const setPasswordFn = useServerFn(setUserPassword);
 
   const { data: users, isLoading, error } = useQuery({
     queryKey: ["system-users"],
@@ -50,6 +52,8 @@ export function UsersManager() {
 
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ email: "", password: "", full_name: "", role: "viewer" as Role });
+  const [pwUser, setPwUser] = useState<{ id: string; email: string } | null>(null);
+  const [newPassword, setNewPassword] = useState("");
 
   const createMut = useMutation({
     mutationFn: (data: typeof form) => createFn({ data }),
@@ -77,6 +81,17 @@ export function UsersManager() {
     onSuccess: () => {
       toast.success("המשתמש נמחק");
       qc.invalidateQueries({ queryKey: ["system-users"] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const passwordMut = useMutation({
+    mutationFn: ({ user_id, password }: { user_id: string; password: string }) =>
+      setPasswordFn({ data: { user_id, password } }),
+    onSuccess: () => {
+      toast.success("הסיסמה עודכנה");
+      setPwUser(null);
+      setNewPassword("");
     },
     onError: (e: any) => toast.error(e.message),
   });
@@ -215,15 +230,28 @@ export function UsersManager() {
                         : "—"}
                     </td>
                     <td className="p-3 text-left">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          if (confirm(`למחוק את ${u.email}?`)) deleteMut.mutate(u.id);
-                        }}
-                      >
-                        <Trash2 className="size-4 text-destructive" />
-                      </Button>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          title="שינוי סיסמה"
+                          onClick={() => {
+                            setPwUser({ id: u.id, email: u.email });
+                            setNewPassword("");
+                          }}
+                        >
+                          <KeyRound className="size-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            if (confirm(`למחוק את ${u.email}?`)) deleteMut.mutate(u.id);
+                          }}
+                        >
+                          <Trash2 className="size-4 text-destructive" />
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -232,6 +260,38 @@ export function UsersManager() {
           </table>
         </div>
       )}
+
+      <Dialog open={!!pwUser} onOpenChange={(o) => !o && setPwUser(null)}>
+        <DialogContent dir="rtl">
+          <DialogHeader>
+            <DialogTitle>שינוי סיסמה — {pwUser?.email}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label>סיסמה חדשה</Label>
+              <Input
+                type="text"
+                dir="ltr"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="לפחות 6 תווים"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={() =>
+                pwUser && passwordMut.mutate({ user_id: pwUser.id, password: newPassword })
+              }
+              disabled={passwordMut.isPending || newPassword.length < 6}
+              className="bg-gradient-to-l from-primary to-accent text-primary-foreground"
+            >
+              {passwordMut.isPending ? "מעדכן..." : "עדכן סיסמה"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+
