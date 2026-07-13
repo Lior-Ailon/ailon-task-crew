@@ -20,7 +20,8 @@ const fields: FieldDef[] = [
   { name: "description", label: "תיאור / סדר יום", type: "textarea" },
   { name: "start_time", label: "תאריך ושעה", type: "datetime-local", required: true },
   { name: "location", label: "מיקום", type: "text" },
-  { name: "meeting_url", label: "קישור לפגישה (Zoom/Meet)", type: "text" },
+  { name: "meeting_url", label: "קישור לפגישה (Zoom / Teams / Meet)", type: "text" },
+  { name: "participants", label: "משתתפים", type: "tags", placeholder: "שם או אימייל בכל שורה" },
   { name: "status", label: "סטטוס", type: "select", options: statusOptions, required: true },
 ];
 
