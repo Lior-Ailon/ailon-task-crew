@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { inviteMeetingParticipants } from "@/lib/email/send-meeting-invitation";
 import { toast } from "sonner";
+import { createTeamsMeetingLink } from "@/lib/teams.functions";
 
 const statusOptions = [
   { value: "scheduled", label: "מתוכננת" },
@@ -194,6 +195,27 @@ export const Route = createFileRoute("/_authenticated/meetings")({
       extraHeader={<MeetingsHero />}
       onAfterSave={async (kind, item) => {
         if (kind !== "created") return;
+
+        // Auto-generate Teams meeting link if user didn't paste one
+        let meetingUrl: string | null = item.meeting_url ?? null;
+        if (!meetingUrl) {
+          try {
+            const { joinUrl } = await createTeamsMeetingLink({
+              data: { subject: item.title, startTime: item.start_time },
+            });
+            meetingUrl = joinUrl;
+            await supabase.from("meetings").update({ meeting_url: joinUrl }).eq("id", item.id);
+            toast.success("נוצר קישור Teams אוטומטי");
+          } catch (e: any) {
+            const msg = e?.message ?? "";
+            if (msg.includes("Teams לא מחובר")) {
+              toast.info("חבר את Teams בהגדרות כדי לייצר קישור אוטומטי");
+            } else {
+              toast.error(`יצירת קישור Teams נכשלה: ${msg}`);
+            }
+          }
+        }
+
         const entries: string[] = Array.isArray(item.participants) ? item.participants : [];
         const emails = entries.filter((s) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s).trim()));
         if (emails.length === 0) return;
@@ -207,7 +229,7 @@ export const Route = createFileRoute("/_authenticated/meetings")({
           meetingDescription: item.description,
           startTime: item.start_time,
           location: item.location,
-          meetingUrl: item.meeting_url,
+          meetingUrl,
           hostName: profile?.full_name ?? user?.email ?? null,
           entries,
         });
