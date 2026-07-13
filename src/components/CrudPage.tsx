@@ -66,7 +66,14 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
     const payload: Record<string, any> = {};
     for (const f of fields) {
       const v = fd.get(f.name);
-      if (v === null || v === "") {
+      if (f.type === "tags") {
+        const str = String(v ?? "");
+        const arr = str
+          .split(/[\n,]/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+        payload[f.name] = arr;
+      } else if (v === null || v === "") {
         payload[f.name] = null;
       } else if (f.type === "number") {
         payload[f.name] = Number(v);
