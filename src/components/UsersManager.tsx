@@ -7,6 +7,7 @@ import {
   createSystemUser,
   setUserRole,
   deleteSystemUser,
+  setUserPassword,
 } from "@/lib/users.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Shield, Pencil, Eye, Trash2, UserPlus, ShieldAlert } from "lucide-react";
+import { Shield, Pencil, Eye, Trash2, UserPlus, ShieldAlert, KeyRound } from "lucide-react";
 
 type Role = "admin" | "editor" | "viewer";
 
