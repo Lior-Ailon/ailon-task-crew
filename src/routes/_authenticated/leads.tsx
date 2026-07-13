@@ -45,9 +45,12 @@ function LeadsPage() {
       notes: lead.notes,
     });
     if (insertErr) return toast.error(insertErr.message);
-    await supabase.from("leads").update({ status: "converted" }).eq("id", lead.id);
+    const { error: delErr } = await supabase.from("leads").delete().eq("id", lead.id);
+    if (delErr) return toast.error(delErr.message);
     toast.success("הליד הומר ללקוח בהצלחה");
     qc.invalidateQueries({ queryKey: ["leads"] });
+    qc.invalidateQueries({ queryKey: ["count", "leads"] });
+    qc.invalidateQueries({ queryKey: ["lookup", "leads"] });
     qc.invalidateQueries({ queryKey: ["customers"] });
     qc.invalidateQueries({ queryKey: ["count", "customers"] });
     qc.invalidateQueries({ queryKey: ["lookup", "customers"] });
