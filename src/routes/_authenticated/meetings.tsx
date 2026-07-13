@@ -6,6 +6,8 @@ import { Calendar, MapPin, Link2, Video, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { inviteMeetingParticipants } from "@/lib/email/send-meeting-invitation";
+import { toast } from "sonner";
 
 const statusOptions = [
   { value: "scheduled", label: "מתוכננת" },
@@ -180,6 +182,27 @@ export const Route = createFileRoute("/_authenticated/meetings")({
       searchKeys={["title", "description", "location"]}
       orderBy="start_time"
       extraHeader={<MeetingsHero />}
+      onAfterSave={async (kind, item) => {
+        if (kind !== "created") return;
+        const entries: string[] = Array.isArray(item.participants) ? item.participants : [];
+        const emails = entries.filter((s) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s).trim()));
+        if (emails.length === 0) return;
+        const { data: { user } } = await supabase.auth.getUser();
+        const { data: profile } = user
+          ? await supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle()
+          : { data: null };
+        await inviteMeetingParticipants({
+          meetingId: item.id,
+          meetingTitle: item.title,
+          meetingDescription: item.description,
+          startTime: item.start_time,
+          location: item.location,
+          meetingUrl: item.meeting_url,
+          hostName: profile?.full_name ?? user?.email ?? null,
+          entries,
+        });
+        toast.success(`נשלחו הזמנות ל-${emails.length} משתתפים`);
+      }}
       renderCard={(item, actions) => (
         <article key={item.id} className="glass-strong rounded-3xl p-4 hover:border-accent/40 transition-colors">
           <div className="flex justify-between items-start mb-3">
