@@ -230,16 +230,70 @@ export function UsersManager() {
                         : "—"}
                     </td>
                     <td className="p-3 text-left">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          if (confirm(`למחוק את ${u.email}?`)) deleteMut.mutate(u.id);
-                        }}
-                      >
-                        <Trash2 className="size-4 text-destructive" />
-                      </Button>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          title="שינוי סיסמה"
+                          onClick={() => {
+                            setPwUser({ id: u.id, email: u.email });
+                            setNewPassword("");
+                          }}
+                        >
+                          <KeyRound className="size-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            if (confirm(`למחוק את ${u.email}?`)) deleteMut.mutate(u.id);
+                          }}
+                        >
+                          <Trash2 className="size-4 text-destructive" />
+                        </Button>
+                      </div>
                     </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <Dialog open={!!pwUser} onOpenChange={(o) => !o && setPwUser(null)}>
+        <DialogContent dir="rtl">
+          <DialogHeader>
+            <DialogTitle>שינוי סיסמה — {pwUser?.email}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label>סיסמה חדשה</Label>
+              <Input
+                type="text"
+                dir="ltr"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="לפחות 6 תווים"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={() =>
+                pwUser && passwordMut.mutate({ user_id: pwUser.id, password: newPassword })
+              }
+              disabled={passwordMut.isPending || newPassword.length < 6}
+              className="bg-gradient-to-l from-primary to-accent text-primary-foreground"
+            >
+              {passwordMut.isPending ? "מעדכן..." : "עדכן סיסמה"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
                   </tr>
                 );
               })}
