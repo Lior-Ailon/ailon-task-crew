@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UsersManager } from "@/components/UsersManager";
-import { ShieldCheck, Settings as SettingsIcon } from "lucide-react";
+import { TeamsConnectCard } from "@/components/TeamsConnectCard";
+import { ShieldCheck, Settings as SettingsIcon, Plug } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   ssr: false,
@@ -23,9 +24,15 @@ function SettingsPage() {
           <TabsTrigger value="users" className="gap-2">
             <ShieldCheck className="size-4" /> משתמשים
           </TabsTrigger>
+          <TabsTrigger value="integrations" className="gap-2">
+            <Plug className="size-4" /> אינטגרציות
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="users" className="mt-6">
           <UsersManager />
+        </TabsContent>
+        <TabsContent value="integrations" className="mt-6 space-y-4">
+          <TeamsConnectCard />
         </TabsContent>
       </Tabs>
     </div>
