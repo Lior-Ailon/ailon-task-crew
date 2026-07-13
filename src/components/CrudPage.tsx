@@ -20,7 +20,8 @@ import { toast } from "sonner";
 export type FieldDef =
   | { name: string; label: string; type: "text" | "email" | "tel" | "number" | "date" | "datetime-local" | "textarea"; required?: boolean }
   | { name: string; label: string; type: "select"; options: { value: string; label: string }[]; required?: boolean }
-  | { name: string; label: string; type: "lookup"; lookupTable: "customers" | "projects" | "profiles" | "leads"; labelField: string; required?: boolean };
+  | { name: string; label: string; type: "lookup"; lookupTable: "customers" | "projects" | "profiles" | "leads"; labelField: string; required?: boolean }
+  | { name: string; label: string; type: "tags"; placeholder?: string; required?: boolean };
 
 export type TableName = "leads" | "customers" | "projects" | "tasks" | "meetings" | "ideas" | "subscriptions" | "quotes";
 
@@ -65,7 +66,14 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
     const payload: Record<string, any> = {};
     for (const f of fields) {
       const v = fd.get(f.name);
-      if (v === null || v === "") {
+      if (f.type === "tags") {
+        const str = String(v ?? "");
+        const arr = str
+          .split(/[\n,]/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+        payload[f.name] = arr;
+      } else if (v === null || v === "") {
         payload[f.name] = null;
       } else if (f.type === "number") {
         payload[f.name] = Number(v);
@@ -141,6 +149,15 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
                     </Select>
                   ) : f.type === "lookup" ? (
                     <LookupSelect name={f.name} table={f.lookupTable} labelField={f.labelField} defaultValue={editing?.[f.name] ?? ""} />
+                  ) : f.type === "tags" ? (
+                    <Textarea
+                      id={f.name}
+                      name={f.name}
+                      required={f.required}
+                      placeholder={f.placeholder ?? "פריט בכל שורה, או מופרד בפסיקים"}
+                      defaultValue={Array.isArray(editing?.[f.name]) ? editing[f.name].join("\n") : (editing?.[f.name] ?? "")}
+                      rows={3}
+                    />
                   ) : (
                     <Input
                       id={f.name}

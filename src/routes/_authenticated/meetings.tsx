@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { CrudPage, StatusPill, type FieldDef } from "@/components/CrudPage";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, MapPin, Link2, Video } from "lucide-react";
+import { Calendar, MapPin, Link2, Video, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -20,7 +20,8 @@ const fields: FieldDef[] = [
   { name: "description", label: "תיאור / סדר יום", type: "textarea" },
   { name: "start_time", label: "תאריך ושעה", type: "datetime-local", required: true },
   { name: "location", label: "מיקום", type: "text" },
-  { name: "meeting_url", label: "קישור לפגישה (Zoom/Meet)", type: "text" },
+  { name: "meeting_url", label: "קישור לפגישה (Zoom / Teams / Meet)", type: "text" },
+  { name: "participants", label: "משתתפים", type: "tags", placeholder: "שם או אימייל בכל שורה" },
   { name: "status", label: "סטטוס", type: "select", options: statusOptions, required: true },
 ];
 
@@ -211,6 +212,18 @@ export const Route = createFileRoute("/_authenticated/meetings")({
                 <Link2 className="size-3" />
                 הצטרף לפגישה
               </a>
+            )}
+            {Array.isArray(item.participants) && item.participants.length > 0 && (
+              <div className="flex items-start gap-1.5">
+                <Users className="size-3 mt-0.5 shrink-0" />
+                <div className="flex flex-wrap gap-1">
+                  {item.participants.map((p: string, i: number) => (
+                    <span key={i} className="px-1.5 py-0.5 rounded-md bg-muted text-[10px]">
+                      {p}
+                    </span>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
           <div className="mt-3 pt-3 border-t border-border/50">
