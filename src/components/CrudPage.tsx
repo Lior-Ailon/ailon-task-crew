@@ -67,7 +67,7 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
     const payload: Record<string, any> = {};
     for (const f of fields) {
       const v = fd.get(f.name);
-      if (f.type === "tags") {
+      if (f.type === "tags" || f.type === "user-tags") {
         const str = String(v ?? "");
         const arr = str
           .split(/[\n,]/)
