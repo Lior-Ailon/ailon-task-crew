@@ -80,8 +80,8 @@
   --destructive: oklch(0.62 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
 
-  --border: oklch(0.45 0.06 195 / 20%);
-  --input: oklch(0.45 0.06 195 / 16%);
+  --border: oklch(1 0 0 / 55%);
+  --input: oklch(1 0 0 / 45%);
   --ring: oklch(0.44 0.08 185);
 
   --chart-1: oklch(0.44 0.08 185);
