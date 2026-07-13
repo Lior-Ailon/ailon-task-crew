@@ -20,7 +20,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import ailonLogo from "@/assets/ailon-logo.png.asset.json";
 
-type QuoteModule = { id: string; title: string; description: string; cost: number };
+type Frequency = "one_time" | "monthly" | "yearly";
+type QuoteModule = { id: string; title: string; description: string; cost: number; frequency: Frequency };
+
+const frequencyOptions: { value: Frequency; label: string; short: string }[] = [
+  { value: "one_time", label: "חד פעמי", short: "" },
+  { value: "monthly", label: "חודשי", short: "/חודש" },
+  { value: "yearly", label: "שנתי", short: "/שנה" },
+];
+const frequencyLabel: Record<Frequency, string> = Object.fromEntries(
+  frequencyOptions.map((f) => [f.value, f.label]),
+) as any;
+const frequencyShort: Record<Frequency, string> = Object.fromEntries(
+  frequencyOptions.map((f) => [f.value, f.short]),
+) as any;
 
 const statusOptions = [
   { value: "draft", label: "טיוטה" },
@@ -33,10 +46,10 @@ const statusTone: Record<string, any> = { draft: "slate", sent: "blue", accepted
 const statusLabel: Record<string, string> = Object.fromEntries(statusOptions.map((s) => [s.value, s.label]));
 
 function newModule(): QuoteModule {
-  return { id: crypto.randomUUID(), title: "", description: "", cost: 0 };
+  return { id: crypto.randomUUID(), title: "", description: "", cost: 0, frequency: "one_time" };
 }
 
-function printQuote(item: any, customerName?: string) {
+function printQuote(item: any, contactName?: string, contactKind?: "customer" | "lead") {
   const mods: QuoteModule[] = Array.isArray(item.modules) ? item.modules : [];
   const total = Number(item.total_amount ?? mods.reduce((s, m) => s + (Number(m.cost) || 0), 0));
   const statusLabels: Record<string, string> = {
@@ -50,8 +63,10 @@ function printQuote(item: any, customerName?: string) {
         <div class="mod-title">${esc(m.title) || "&mdash;"}</div>
         ${m.description ? `<div class="mod-desc">${esc(m.description)}</div>` : ""}
       </td>
-      <td class="num">₪${Number(m.cost || 0).toLocaleString()}</td>
+      <td class="num">₪${Number(m.cost || 0).toLocaleString()}${esc(frequencyShort[(m.frequency as Frequency) || "one_time"] || "")}</td>
     </tr>`).join("");
+
+  const contactLabel = contactKind === "lead" ? "ליד" : "לקוח";
 
   const html = `<!DOCTYPE html>
 <html dir="rtl" lang="he">
@@ -96,7 +111,7 @@ function printQuote(item: any, customerName?: string) {
       <h1>${esc(item.title)}</h1>
       <div class="meta">
         ${item.quote_number ? `<div>מספר הצעה: ${esc(item.quote_number)}</div>` : ""}
-        ${customerName ? `<div>לקוח: ${esc(customerName)}</div>` : ""}
+        ${contactName ? `<div>${contactLabel}: ${esc(contactName)}</div>` : ""}
         ${item.valid_until ? `<div>בתוקף עד: ${esc(item.valid_until)}</div>` : ""}
       </div>
     </div>
@@ -111,7 +126,7 @@ function printQuote(item: any, customerName?: string) {
   <div class="section">
     <h2>מודולים / סעיפים</h2>
     <table>
-      <thead><tr><th style="width:40px;">#</th><th>פירוט</th><th class="num" style="width:120px;">עלות</th></tr></thead>
+      <thead><tr><th style="width:40px;">#</th><th>פירוט</th><th class="num" style="width:140px;">עלות</th></tr></thead>
       <tbody>${rows || `<tr><td colspan="3" style="text-align:center;color:#999;">אין סעיפים</td></tr>`}</tbody>
     </table>
   </div>
@@ -139,7 +154,8 @@ function QuotesPage() {
   const [search, setSearch] = useState("");
 
   const [title, setTitle] = useState("");
-  const [customerId, setCustomerId] = useState<string>("__none__");
+  // encoded contact: "__none__" | "customer:<id>" | "lead:<id>"
+  const [contact, setContact] = useState<string>("__none__");
   const [quoteNumber, setQuoteNumber] = useState("");
   const [status, setStatus] = useState("draft");
   const [validUntil, setValidUntil] = useState("");
@@ -151,7 +167,12 @@ function QuotesPage() {
     queryKey: ["lookup", "customers"],
     queryFn: async () => (await supabase.from("customers").select("id, name").order("name")).data ?? [],
   });
+  const { data: leads = [] } = useQuery({
+    queryKey: ["lookup", "leads"],
+    queryFn: async () => (await supabase.from("leads").select("id, name").order("name")).data ?? [],
+  });
   const customerMap = new Map(customers.map((c: any) => [c.id, c.name]));
+  const leadMap = new Map(leads.map((l: any) => [l.id, l.name]));
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["quotes"],
@@ -175,7 +196,7 @@ function QuotesPage() {
 
   function resetForm() {
     setTitle("");
-    setCustomerId("__none__");
+    setContact("__none__");
     setQuoteNumber("");
     setStatus("draft");
     setValidUntil("");
@@ -188,7 +209,10 @@ function QuotesPage() {
   function openForEdit(item: any) {
     setEditing(item);
     setTitle(item.title ?? "");
-    setCustomerId(item.customer_id ?? "__none__");
+    setContact(
+      item.customer_id ? `customer:${item.customer_id}` :
+      item.lead_id ? `lead:${item.lead_id}` : "__none__",
+    );
     setQuoteNumber(item.quote_number ?? "");
     setStatus(item.status ?? "draft");
     setValidUntil(item.valid_until ?? "");
@@ -200,6 +224,7 @@ function QuotesPage() {
           title: m.title ?? "",
           description: m.description ?? "",
           cost: Number(m.cost) || 0,
+          frequency: (m.frequency as Frequency) ?? "one_time",
         }))
       : [newModule()];
     setModules(mods);
@@ -222,11 +247,23 @@ function QuotesPage() {
 
     const cleanModules = modules
       .filter((m) => m.title.trim() || m.description.trim() || Number(m.cost) > 0)
-      .map((m) => ({ id: m.id, title: m.title.trim(), description: m.description.trim(), cost: Number(m.cost) || 0 }));
+      .map((m) => ({
+        id: m.id,
+        title: m.title.trim(),
+        description: m.description.trim(),
+        cost: Number(m.cost) || 0,
+        frequency: m.frequency ?? "one_time",
+      }));
+
+    let customer_id: string | null = null;
+    let lead_id: string | null = null;
+    if (contact.startsWith("customer:")) customer_id = contact.slice("customer:".length);
+    else if (contact.startsWith("lead:")) lead_id = contact.slice("lead:".length);
 
     const payload: Record<string, any> = {
       title: title.trim(),
-      customer_id: customerId === "__none__" ? null : customerId,
+      customer_id,
+      lead_id,
       quote_number: quoteNumber.trim() || null,
       status,
       valid_until: validUntil || null,
@@ -262,6 +299,12 @@ function QuotesPage() {
     qc.invalidateQueries({ queryKey: ["quotes"] });
   }
 
+  function contactInfo(item: any): { name?: string; kind?: "customer" | "lead" } {
+    if (item.customer_id) return { name: customerMap.get(item.customer_id), kind: "customer" };
+    if (item.lead_id) return { name: leadMap.get(item.lead_id), kind: "lead" };
+    return {};
+  }
+
   return (
     <div className="space-y-6">
       <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
@@ -287,13 +330,26 @@ function QuotesPage() {
                   <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>לקוח</Label>
-                  <Select value={customerId} onValueChange={setCustomerId}>
+                  <Label>לקוח / ליד</Label>
+                  <Select value={contact} onValueChange={setContact}>
                     <SelectTrigger><SelectValue placeholder="בחר..." /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="__none__">— ללא —</SelectItem>
+                      {customers.length > 0 && (
+                        <div className="px-2 py-1 text-[10px] font-semibold text-emerald-600 uppercase">לקוחות</div>
+                      )}
                       {customers.map((c: any) => (
-                        <SelectItem key={c.id} value={c.id}>{c.name || "(ללא שם)"}</SelectItem>
+                        <SelectItem key={`c-${c.id}`} value={`customer:${c.id}`}>
+                          <span className="text-emerald-600 font-medium">● {c.name || "(ללא שם)"}</span>
+                        </SelectItem>
+                      ))}
+                      {leads.length > 0 && (
+                        <div className="px-2 py-1 text-[10px] font-semibold text-red-600 uppercase">לידים</div>
+                      )}
+                      {leads.map((l: any) => (
+                        <SelectItem key={`l-${l.id}`} value={`lead:${l.id}`}>
+                          <span className="text-red-600 font-medium">● {l.name || "(ללא שם)"}</span>
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -349,7 +405,7 @@ function QuotesPage() {
                           <X className="size-3.5" />
                         </Button>
                       </div>
-                      <div className="grid sm:grid-cols-[1fr_140px] gap-2">
+                      <div className="grid sm:grid-cols-[1fr_130px_130px] gap-2">
                         <div className="space-y-1.5">
                           <Label className="text-xs">כותרת / סוג</Label>
                           <Input
@@ -368,6 +424,20 @@ function QuotesPage() {
                             onChange={(e) => updateModule(m.id, { cost: Number(e.target.value) })}
                             dir="ltr"
                           />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label className="text-xs">תדירות</Label>
+                          <Select
+                            value={m.frequency}
+                            onValueChange={(v) => updateModule(m.id, { frequency: v as Frequency })}
+                          >
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              {frequencyOptions.map((f) => (
+                                <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
                       <div className="space-y-1.5">
@@ -424,6 +494,8 @@ function QuotesPage() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {filtered.map((item: any) => {
             const mods: QuoteModule[] = Array.isArray(item.modules) ? item.modules : [];
+            const c = contactInfo(item);
+            const contactColor = c.kind === "lead" ? "text-red-600" : c.kind === "customer" ? "text-emerald-600" : "";
             return (
               <article key={item.id} className="glass-strong rounded-3xl p-4 hover:border-primary/40 transition-colors">
                 <div className="flex justify-between items-start mb-3">
@@ -434,7 +506,7 @@ function QuotesPage() {
                     )}
                   </div>
                   <div className="flex gap-1">
-                    <Button size="icon" variant="ghost" className="size-8" onClick={() => printQuote(item, customerMap.get(item.customer_id))} aria-label="הדפס">
+                    <Button size="icon" variant="ghost" className="size-8" onClick={() => printQuote(item, c.name, c.kind)} aria-label="הדפס">
                       <Printer className="size-3.5" />
                     </Button>
                     <Button size="icon" variant="ghost" className="size-8" onClick={() => openForEdit(item)}>
@@ -446,8 +518,12 @@ function QuotesPage() {
                   </div>
                 </div>
                 <div className="space-y-1.5 text-xs text-muted-foreground">
-                  {item.customer_id && (
-                    <div className="flex items-center gap-2"><Users className="size-3" />{customerMap.get(item.customer_id) ?? "—"}</div>
+                  {c.name && (
+                    <div className={`flex items-center gap-2 font-medium ${contactColor}`}>
+                      <Users className="size-3" />
+                      {c.name}
+                      <span className="text-[10px] opacity-70">({c.kind === "lead" ? "ליד" : "לקוח"})</span>
+                    </div>
                   )}
                   {item.valid_until && (
                     <div className="flex items-center gap-2"><Calendar className="size-3" />בתוקף עד {item.valid_until}</div>
@@ -461,7 +537,9 @@ function QuotesPage() {
                     {mods.slice(0, 3).map((m) => (
                       <li key={m.id} className="flex justify-between gap-2">
                         <span className="truncate">{m.title || "(ללא כותרת)"}</span>
-                        <span className="text-muted-foreground shrink-0">₪{Number(m.cost).toLocaleString()}</span>
+                        <span className="text-muted-foreground shrink-0">
+                          ₪{Number(m.cost).toLocaleString()}{frequencyShort[(m.frequency as Frequency) || "one_time"]}
+                        </span>
                       </li>
                     ))}
                     {mods.length > 3 && (
