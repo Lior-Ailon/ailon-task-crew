@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import { UserTagsInput } from "@/components/UserTagsInput";
 import { toast } from "sonner";
 
 export type FieldDef =
