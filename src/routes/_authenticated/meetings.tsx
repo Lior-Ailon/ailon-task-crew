@@ -119,25 +119,35 @@ function MeetingsHero() {
               <div
                 key={i}
                 className={cn(
-                  "aspect-square rounded-lg p-1 text-xs flex flex-col",
+                  "min-h-[70px] rounded-lg p-1 text-xs flex flex-col gap-0.5",
                   cell.date ? "glass" : "opacity-0 pointer-events-none",
                   isToday && "border-2 border-accent shadow-glow",
                 )}
               >
                 {cell.date && (
                   <>
-                    <span className={cn("font-medium", isToday && "text-accent")}>{cell.date.getDate()}</span>
-                    {cell.events.length > 0 && (
-                      <div className="mt-auto flex flex-wrap gap-0.5">
-                        {cell.events.slice(0, 3).map((e: any) => (
-                          <span
-                            key={e.id}
-                            className="size-1.5 rounded-full bg-primary"
-                            title={e.title}
-                          />
-                        ))}
-                      </div>
-                    )}
+                    <span className={cn("font-medium text-[11px]", isToday && "text-accent")}>
+                      {cell.date.getDate()}
+                    </span>
+                    <div className="flex flex-col gap-0.5 overflow-hidden">
+                      {cell.events.slice(0, 2).map((e: any) => (
+                        <div
+                          key={e.id}
+                          title={`${e.title}${e.description ? ` — ${e.description}` : ""}`}
+                          className="text-[9px] leading-tight bg-primary/20 text-primary-foreground/90 rounded px-1 py-0.5 truncate border border-primary/30"
+                        >
+                          <span className="font-semibold">
+                            {new Date(e.start_time).toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}
+                          </span>{" "}
+                          {e.title}
+                        </div>
+                      ))}
+                      {cell.events.length > 2 && (
+                        <div className="text-[9px] text-muted-foreground px-1">
+                          +{cell.events.length - 2} נוספות
+                        </div>
+                      )}
+                    </div>
                   </>
                 )}
               </div>
