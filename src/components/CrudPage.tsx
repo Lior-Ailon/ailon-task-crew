@@ -149,6 +149,15 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
                     </Select>
                   ) : f.type === "lookup" ? (
                     <LookupSelect name={f.name} table={f.lookupTable} labelField={f.labelField} defaultValue={editing?.[f.name] ?? ""} />
+                  ) : f.type === "tags" ? (
+                    <Textarea
+                      id={f.name}
+                      name={f.name}
+                      required={f.required}
+                      placeholder={f.placeholder ?? "פריט בכל שורה, או מופרד בפסיקים"}
+                      defaultValue={Array.isArray(editing?.[f.name]) ? editing[f.name].join("\n") : (editing?.[f.name] ?? "")}
+                      rows={3}
+                    />
                   ) : (
                     <Input
                       id={f.name}
