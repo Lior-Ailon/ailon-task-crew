@@ -187,7 +187,7 @@ function TasksPage() {
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="bg-white border-white/60 shadow-sm text-foreground"><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">כל הסטטוסים</SelectItem>
+                  <SelectItem value="all">הכל (למעט הושלם)</SelectItem>
                   {statusOptions.map((o) => (
                     <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                   ))}
