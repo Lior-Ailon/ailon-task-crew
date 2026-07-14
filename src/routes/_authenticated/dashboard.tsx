@@ -92,6 +92,13 @@ function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      <blockquote className="glass-strong rounded-3xl p-4 sm:p-5 text-center border-s-4 border-accent/50">
+        <p className="text-lg sm:text-xl font-medium italic text-foreground">
+          "מה שלא ניתן למדוד לא ניתן לנהל, ומה שלא ניתן לנהל לא ניתן לשפר"
+        </p>
+        <footer className="mt-2 text-sm text-muted-foreground">— פיטר דרוקר</footer>
+      </blockquote>
+
       {/* Hero banner with intro video + office backdrop */}
       <header className="relative overflow-hidden rounded-3xl glass-strong">
         <img
