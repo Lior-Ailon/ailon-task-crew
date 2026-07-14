@@ -305,7 +305,7 @@ function QuotesPage() {
 
   async function handleDelete(id: string) {
     if (!confirm("האם למחוק?")) return;
-    const target = (quotes as any[]).find((q) => q.id === id);
+    const target = (items as any[]).find((q) => q.id === id);
     const { error } = await supabase.from("quotes").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("נמחק");
