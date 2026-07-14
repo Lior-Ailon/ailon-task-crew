@@ -26,7 +26,7 @@ export type FieldDef =
   | { name: string; label: string; type: "tags"; placeholder?: string; required?: boolean }
   | { name: string; label: string; type: "user-tags"; placeholder?: string; required?: boolean };
 
-export type TableName = "leads" | "customers" | "projects" | "tasks" | "meetings" | "ideas" | "subscriptions" | "quotes";
+export type TableName = "leads" | "customers" | "projects" | "tasks" | "meetings" | "ideas" | "subscriptions" | "quotes" | "shelf_products";
 
 export interface CrudPageProps {
   title: string;
