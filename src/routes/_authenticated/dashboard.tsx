@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock, Lightbulb, FileText, CalendarDays, MapPin, Plus } from "lucide-react";
+import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock, Lightbulb, FileText, CalendarDays, MapPin, Plus, Package, ExternalLink } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import logoAsset from "@/assets/ailon-logo.png.asset.json";
 import introVideo from "@/assets/ailon-intro.mp4.asset.json";
 import officeAsset from "@/assets/ailon-office.jpg.asset.json";
+import { getAppIcon } from "@/lib/shelf-product-icons";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
