@@ -247,6 +247,8 @@ function DashboardPage() {
         )}
       </section>
 
+      <ShelfProductsSection />
+
       <MeetingsCalendarSection />
     </div>
   );
