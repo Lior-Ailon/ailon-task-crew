@@ -5,6 +5,7 @@ import { CrudPage, StatusPill, type FieldDef } from "@/components/CrudPage";
 import { Mail, Phone, Building2, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { sendEntityNotification } from "@/lib/email/send-entity-notification";
 
 const statusOptions = [
   { value: "new", label: "חדש" },
