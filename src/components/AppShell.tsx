@@ -58,10 +58,6 @@ export function AppShell() {
 
       {/* Mobile Topbar */}
       <header className="lg:hidden fixed top-0 inset-x-0 z-40 glass-strong border-b h-14 flex items-center justify-between px-4">
-        <Link to="/dashboard" className="flex items-center gap-2">
-          <img src={logoAsset.url} alt="AILON TASK" className="size-9 object-contain" />
-          <span className="font-bold text-sm tracking-wider text-primary">AILON TASK</span>
-        </Link>
         <button
           onClick={() => setMobileOpen(true)}
           className="size-9 rounded-lg glass flex items-center justify-center"
@@ -69,6 +65,10 @@ export function AppShell() {
         >
           <Menu className="size-5" />
         </button>
+        <Link to="/dashboard" className="flex items-center gap-2">
+          <img src={logoAsset.url} alt="AILON TASK" className="size-9 object-contain" />
+          <span className="font-bold text-sm tracking-wider text-primary">AILON TASK</span>
+        </Link>
       </header>
 
       {/* Mobile Drawer */}
