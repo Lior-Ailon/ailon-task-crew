@@ -146,7 +146,7 @@ function TasksPage() {
   return (
     <CrudPage
       title="משימות"
-      subtitle="כל המשימות הפתוחות והסגורות שלך"
+      subtitle="כל המשימות הפתוחות שלך"
       table="tasks"
       fields={fields}
       searchKeys={["title", "description"]}
