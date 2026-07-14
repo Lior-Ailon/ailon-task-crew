@@ -23,7 +23,7 @@ function useCount(table: "leads" | "customers" | "projects" | "tasks" | "ideas" 
   return useQuery({
     queryKey: ["count", table],
     queryFn: async () => {
-      let query = supabase.from(table).select("*", { count: "exact", head: true });
+      let query: any = supabase.from(table).select("*", { count: "exact", head: true });
       if (table === "tasks") query = query.neq("status", "done");
       const { count, error } = await query;
       if (error) throw error;
