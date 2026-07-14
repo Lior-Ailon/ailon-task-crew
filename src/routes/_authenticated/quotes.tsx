@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { StatusPill } from "@/components/CrudPage";
+import { sendEntityNotification } from "@/lib/email/send-entity-notification";
 import { Users, Calendar, FileText, Plus, Pencil, Trash2, Search, X, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
