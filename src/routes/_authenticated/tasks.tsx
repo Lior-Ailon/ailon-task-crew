@@ -79,6 +79,7 @@ function TasksPage() {
   }
 
   function filterItems(item: any) {
+    if (statusFilter === "all" && item.status === "done") return false;
     if (statusFilter !== "all" && item.status !== statusFilter) return false;
     if (priorityFilter !== "all" && item.priority !== priorityFilter) return false;
     if (assigneeFilter !== "all") {
