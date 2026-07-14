@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CrudPage, StatusPill, type FieldDef } from "@/components/CrudPage";
-import { Package, Tag, Boxes } from "lucide-react";
+import { Package, Tag, Boxes, ExternalLink } from "lucide-react";
 
 const statusOptions = [
   { value: "active", label: "פעיל" },
@@ -21,6 +21,7 @@ const fields: FieldDef[] = [
   { name: "sku", label: 'מק"ט', type: "text" },
   { name: "category", label: "קטגוריה", type: "text" },
   { name: "description", label: "תיאור", type: "textarea" },
+  { name: "link", label: "קישור", type: "text" },
   { name: "price", label: "מחיר (₪)", type: "number" },
   { name: "cost", label: "עלות (₪)", type: "number" },
   { name: "stock", label: "מלאי", type: "number" },
@@ -35,7 +36,7 @@ function ShelfProductsPage() {
       subtitle="ניהול קטלוג מוצרי המדף שלך"
       table="shelf_products"
       fields={fields}
-      searchKeys={["name", "sku", "category", "description"]}
+      searchKeys={["name", "sku", "category", "description", "link"]}
       renderCard={(item, actions) => (
         <article
           key={item.id}
