@@ -192,50 +192,53 @@ function ShelfProductsPage() {
                   )}
                 </div>
               </div>
-              {actions}
+            {actions}
             </div>
-          {item.description && (
-            <p className="text-xs text-muted-foreground line-clamp-2 mb-3">{item.description}</p>
-          )}
-          <div className="space-y-1.5 text-xs text-muted-foreground">
-            {item.category && (
-              <div className="flex items-center gap-2">
-                <Tag className="size-3" />
-                {item.category}
+            <div className="relative z-10">
+              {item.description && (
+                <p className="text-xs text-muted-foreground line-clamp-2 mb-3">{item.description}</p>
+              )}
+              <div className="space-y-1.5 text-xs text-muted-foreground">
+                {item.category && (
+                  <div className="flex items-center gap-2">
+                    <Tag className="size-3" />
+                    {item.category}
+                  </div>
+                )}
+                {item.stock != null && item.stock !== 0 && (
+                  <div className="flex items-center gap-2">
+                    <Boxes className="size-3" />
+                    מלאי: {item.stock}
+                  </div>
+                )}
+                {item.link && (
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-2 text-primary hover:underline truncate"
+                  >
+                    <ExternalLink className="size-3 shrink-0" />
+                    <span className="truncate">פתח את הכלי</span>
+                  </a>
+                )}
               </div>
-            )}
-            {item.stock != null && item.stock !== 0 && (
-              <div className="flex items-center gap-2">
-                <Boxes className="size-3" />
-                מלאי: {item.stock}
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/50">
+                <StatusPill
+                  label={statusLabel[item.status] ?? item.status}
+                  tone={statusTone[item.status]}
+                />
+                {item.price != null && (
+                  <span className="text-sm font-bold gradient-text">
+                    ₪{Number(item.price).toLocaleString()}
+                  </span>
+                )}
               </div>
-            )}
-            {item.link && (
-              <a
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-2 text-primary hover:underline truncate"
-              >
-                <ExternalLink className="size-3 shrink-0" />
-                <span className="truncate">פתח את הכלי</span>
-              </a>
-            )}
-          </div>
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/50">
-            <StatusPill
-              label={statusLabel[item.status] ?? item.status}
-              tone={statusTone[item.status]}
-            />
-            {item.price != null && (
-              <span className="text-sm font-bold gradient-text">
-                ₪{Number(item.price).toLocaleString()}
-              </span>
-            )}
-          </div>
-        </article>
-      )}
+            </div>
+          </article>
+        );
+      }}
     />
   );
 }
