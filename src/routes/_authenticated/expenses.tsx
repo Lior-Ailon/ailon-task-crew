@@ -17,6 +17,7 @@ import {
 import { Plus, Pencil, Trash2, Search, Paperclip, Calendar, User, Download, Repeat } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { sendEntityNotification } from "@/lib/email/send-entity-notification";
 
 const expensesTable = () => (supabase.from as any)("expenses");
 
@@ -90,16 +91,29 @@ function ExpensesPage() {
         payload.receipt_path = path;
       }
 
+      const { data: { user } } = await supabase.auth.getUser();
+      const actor = user?.email ?? undefined;
       if (editing) {
         const { error } = await expensesTable().update(payload).eq("id", editing.id);
         if (error) throw error;
         toast.success("עודכן");
+        sendEntityNotification({
+          entityLabel: "הוצאה", action: "עודכן",
+          title: String(payload.expense_type ?? "—"),
+          entityId: editing.id, actor,
+          fields: [{ label: "סכום", value: String(payload.amount ?? "") }, { label: "תאריך", value: String(payload.expense_date ?? "") }],
+        });
       } else {
-        const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error("לא מחובר");
-        const { error } = await expensesTable().insert({ ...payload, user_id: user.id });
+        const { data: inserted, error } = await expensesTable().insert({ ...payload, user_id: user.id }).select().maybeSingle();
         if (error) throw error;
         toast.success("נוצר");
+        sendEntityNotification({
+          entityLabel: "הוצאה", action: "נוצר",
+          title: String(payload.expense_type ?? "—"),
+          entityId: inserted?.id ?? "unknown", actor,
+          fields: [{ label: "סכום", value: String(payload.amount ?? "") }, { label: "תאריך", value: String(payload.expense_date ?? "") }],
+        });
       }
       setOpen(false);
       setEditing(null);
@@ -114,9 +128,16 @@ function ExpensesPage() {
 
   async function handleDelete(id: string) {
     if (!confirm("האם למחוק?")) return;
+    const target = (items as any[]).find((i) => i.id === id);
     const { error } = await expensesTable().delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("נמחק");
+    const { data: { user } } = await supabase.auth.getUser();
+    sendEntityNotification({
+      entityLabel: "הוצאה", action: "נמחק",
+      title: String(target?.expense_type ?? "—"),
+      entityId: id, actor: user?.email ?? undefined,
+    });
     qc.invalidateQueries({ queryKey: ["expenses"] });
   }
 
