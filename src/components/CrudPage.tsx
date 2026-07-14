@@ -17,6 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { UserTagsInput } from "@/components/UserTagsInput";
 import { toast } from "sonner";
+import { sendEntityNotification, labelForTable } from "@/lib/email/send-entity-notification";
 
 export type FieldDef =
   | { name: string; label: string; type: "text" | "email" | "tel" | "number" | "date" | "datetime-local" | "textarea"; required?: boolean }
@@ -90,14 +91,18 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
       const { error } = await client.update(payload).eq("id", editing.id);
       if (error) return toast.error(error.message);
       toast.success("עודכן בהצלחה");
-      onAfterSave?.("updated", { ...previous, ...payload, id: editing.id }, previous);
+      const merged = { ...previous, ...payload, id: editing.id };
+      onAfterSave?.("updated", merged, previous);
+      if (table !== "tasks") notifyEntity("updated", merged);
     } else {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return toast.error("לא מחובר");
       const { data: inserted, error } = await client.insert({ ...payload, user_id: user.id }).select().maybeSingle();
       if (error) return toast.error(error.message);
       toast.success("נוצר בהצלחה");
-      onAfterSave?.("created", inserted ?? { ...payload, user_id: user.id }, null);
+      const created = inserted ?? { ...payload, user_id: user.id };
+      onAfterSave?.("created", created, null);
+      if (table !== "tasks") notifyEntity("created", created);
     }
     setOpen(false);
     setEditing(null);
@@ -105,11 +110,33 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
     qc.invalidateQueries({ queryKey: ["count", table] });
   }
 
+  async function notifyEntity(event: "created" | "updated" | "deleted", record: any) {
+    const { data: { user } } = await supabase.auth.getUser();
+    const actor = user?.email ?? undefined;
+    const title = record?.title ?? record?.name ?? record?.subject ?? record?.quote_number ?? "—";
+    const actionHe = event === "created" ? "נוצר" : event === "updated" ? "עודכן" : "נמחק";
+    const fields: { label: string; value: string }[] = [];
+    for (const f of ["status", "priority", "amount", "estimated_value", "total", "company", "email", "phone", "due_date", "start_time"]) {
+      const v = record?.[f];
+      if (v !== undefined && v !== null && v !== "") fields.push({ label: f, value: String(v) });
+    }
+    sendEntityNotification({
+      entityLabel: labelForTable(table),
+      action: actionHe,
+      title: String(title),
+      entityId: record?.id ?? "unknown",
+      fields,
+      actor,
+    });
+  }
+
   async function handleDelete(id: string) {
     if (!confirm("האם למחוק?")) return;
+    const target = items.find((it: any) => it.id === id);
     const { error } = await supabase.from(table).delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("נמחק");
+    if (target) notifyEntity("deleted", target);
     qc.invalidateQueries({ queryKey: [table] });
     qc.invalidateQueries({ queryKey: ["count", table] });
   }
