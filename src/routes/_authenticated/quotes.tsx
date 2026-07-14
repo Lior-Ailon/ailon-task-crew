@@ -95,6 +95,7 @@ function printQuote(item: any, contactName?: string, contactKind?: "customer" | 
   .mod-desc { font-size: 12px; color: #666; margin-top: 2px; white-space: pre-wrap; }
   .total { margin-top: 16px; display: flex; justify-content: space-between; padding: 14px 12px; background: #f5f5f5; border-radius: 6px; font-size: 16px; font-weight: 700; }
   .notes { margin-top: 24px; padding-top: 16px; border-top: 1px solid #ddd; font-size: 12px; color: #666; white-space: pre-wrap; }
+  .closing { margin-top: 32px; font-size: 14px; color: #333; }
   @media print { body { padding: 0; } .no-print { display: none; } }
   .toolbar { position: fixed; top: 12px; left: 12px; }
   .toolbar button { padding: 8px 16px; font-size: 14px; cursor: pointer; }
@@ -135,6 +136,8 @@ function printQuote(item: any, contactName?: string, contactKind?: "customer" | 
   <div class="total"><span>סכום כולל</span><span style="direction:ltr;">₪${total.toLocaleString()}</span></div>
 
   ${item.notes ? `<div class="notes"><strong>הערות:</strong><br/>${esc(item.notes)}</div>` : ""}
+
+  <div class="closing">בברכה,<br/>צוות Ailon-Task</div>
 
   <script>window.addEventListener("load", () => setTimeout(() => window.print(), 300));</script>
 </body>
