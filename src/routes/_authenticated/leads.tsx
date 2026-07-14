@@ -49,6 +49,14 @@ function LeadsPage() {
     const { error: delErr } = await supabase.from("leads").delete().eq("id", lead.id);
     if (delErr) return toast.error(delErr.message);
     toast.success("הליד הומר ללקוח בהצלחה");
+    sendEntityNotification({
+      entityLabel: "ליד", action: "הומר ללקוח", title: lead.name,
+      entityId: lead.id, actor: user.email ?? undefined,
+      fields: [
+        ...(lead.company ? [{ label: "חברה", value: String(lead.company) }] : []),
+        ...(lead.email ? [{ label: "אימייל", value: String(lead.email) }] : []),
+      ],
+    });
     qc.invalidateQueries({ queryKey: ["leads"] });
     qc.invalidateQueries({ queryKey: ["count", "leads"] });
     qc.invalidateQueries({ queryKey: ["lookup", "leads"] });
