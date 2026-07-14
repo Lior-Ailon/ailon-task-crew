@@ -27,6 +27,9 @@ const statusLabel: Record<string, string> = Object.fromEntries(statusOptions.map
 const priorityTone: Record<string, any> = { low: "slate", medium: "cyan", high: "amber", urgent: "red" };
 const priorityLabel: Record<string, string> = Object.fromEntries(priorityOptions.map((s) => [s.value, s.label]));
 
+// Completed tasks are hidden by default unless the user explicitly filters by status = "done".
+const DEFAULT_STATUS_FILTER = "all";
+
 const fields: FieldDef[] = [
   { name: "title", label: "כותרת", type: "text", required: true },
   { name: "description", label: "תיאור", type: "textarea" },
