@@ -239,7 +239,14 @@ function ExpensesPage() {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {filtered.map((item: any) => (
-            <article key={item.id} className="glass-strong rounded-3xl p-4 hover:border-primary/40 transition-colors">
+            <article
+              key={item.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => { setEditing(item); setOpen(true); }}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setEditing(item); setOpen(true); } }}
+              className="glass-strong rounded-3xl p-4 hover:border-primary/40 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
               <div className="flex justify-between items-start mb-3">
                 <div className="min-w-0">
                   <h3 className="font-semibold truncate">{item.expense_type}</h3>
@@ -252,11 +259,8 @@ function ExpensesPage() {
                     </p>
                   )}
                 </div>
-                <div className="flex gap-1">
-                  <Button size="icon" variant="ghost" className="size-8" onClick={() => { setEditing(item); setOpen(true); }}>
-                    <Pencil className="size-3.5" />
-                  </Button>
-                  <Button size="icon" variant="ghost" className="size-8 hover:text-destructive" onClick={() => handleDelete(item.id)}>
+                <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+                  <Button size="icon" variant="ghost" className="size-8 hover:text-destructive" onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}>
                     <Trash2 className="size-3.5" />
                   </Button>
                 </div>
