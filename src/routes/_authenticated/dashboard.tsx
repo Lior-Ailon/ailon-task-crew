@@ -90,12 +90,12 @@ function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Hero banner with intro video + office backdrop */}
-      <header className="relative overflow-hidden rounded-3xl glass-strong">
+      {/* Hero banner — Immersive Emerald Glass */}
+      <header className="relative overflow-hidden rounded-[2.5rem] bg-emerald-950 shadow-2xl shadow-emerald-900/30 group">
         <img
           src={officeAsset.url}
           alt=""
-          className="absolute inset-0 size-full object-cover"
+          className="absolute inset-0 size-full object-cover opacity-40 mix-blend-overlay"
         />
         <video
           src={introVideo.url}
@@ -103,19 +103,49 @@ function DashboardPage() {
           muted
           loop
           playsInline
-          className="absolute inset-0 size-full object-cover opacity-40 mix-blend-luminosity"
+          className="absolute inset-0 size-full object-cover opacity-25 mix-blend-luminosity"
         />
-        <div className="absolute inset-0 bg-gradient-to-l from-primary/90 via-primary/60 to-primary/20" />
-        <div className="relative z-10 p-6 sm:p-10 flex items-center gap-5 text-white">
-          <img src={logoAsset.url} alt="" className="size-16 sm:size-20 object-contain drop-shadow-lg shrink-0" />
-          <div className="min-w-0">
-            <div className="text-[11px] tracking-[0.3em] opacity-80">AILON TASK · CRM</div>
-            <h1 className="text-2xl sm:text-4xl font-extrabold mt-1 leading-tight">
-              Dream it. Plan it. <span className="text-accent">Achieve it.</span>
+        <div className="absolute inset-0 bg-gradient-to-l from-emerald-900/90 via-emerald-800/40 to-transparent" />
+        {/* Floating glass orbs */}
+        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-emerald-400/10 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 right-1/4 h-64 w-64 rounded-full bg-teal-500/10 blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between px-6 sm:px-10 py-8 sm:py-12 gap-6">
+          {/* Text */}
+          <div className="flex-1 space-y-3 text-right text-white">
+            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-400/10 px-4 py-1.5 text-[11px] font-semibold tracking-[0.25em] text-emerald-200 uppercase backdrop-blur-md border border-emerald-400/20">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+              AILON TASK · CRM
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight tracking-tight">
+              Dream it. Plan it.{" "}
+              <span className="italic text-transparent bg-clip-text bg-gradient-to-l from-emerald-300 to-teal-100">
+                Achieve it.
+              </span>
             </h1>
-            <p className="opacity-85 text-xs sm:text-sm mt-2">סקירה כללית של המערכת שלך</p>
+            <p className="text-sm sm:text-lg text-emerald-100/80 font-light">
+              סקירה כללית של המערכת שלך
+            </p>
+          </div>
+
+          {/* Brand visual */}
+          <div className="relative shrink-0">
+            <div className="relative flex h-32 w-32 sm:h-44 sm:w-44 items-center justify-center rounded-[2rem] bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-xl border border-white/30 shadow-2xl rotate-3 transition-transform duration-500 group-hover:rotate-0">
+              <img
+                src={logoAsset.url}
+                alt=""
+                className="h-16 w-16 sm:h-24 sm:w-24 object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+              />
+              <div className="absolute -right-4 -bottom-4 h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-emerald-400 flex items-center justify-center shadow-xl rotate-12 transition-transform duration-500 group-hover:rotate-0">
+                <div className="h-6 w-6 bg-white/20 rounded-lg" />
+              </div>
+              <div className="absolute -left-6 top-3 h-10 w-10 rounded-xl bg-teal-300/40 backdrop-blur-md border border-white/20 -rotate-12 transition-transform duration-500 group-hover:rotate-0" />
+            </div>
           </div>
         </div>
+
+        {/* Bottom shimmer strip */}
+        <div className="absolute bottom-0 inset-x-0 h-1 bg-gradient-to-l from-emerald-400 via-teal-200 to-emerald-400 opacity-40" />
       </header>
 
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
