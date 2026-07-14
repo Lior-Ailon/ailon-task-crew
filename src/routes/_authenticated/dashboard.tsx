@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock, Lightbulb, FileText, CalendarDays, MapPin, Plus } from "lucide-react";
+import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock, Lightbulb, FileText, CalendarDays, MapPin, Plus, Package, ExternalLink } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import logoAsset from "@/assets/ailon-logo.png.asset.json";
 import introVideo from "@/assets/ailon-intro.mp4.asset.json";
 import officeAsset from "@/assets/ailon-office.jpg.asset.json";
+import { getAppIcon } from "@/lib/shelf-product-icons";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
@@ -39,6 +40,31 @@ function DashboardPage() {
   const tasks = useCount("tasks");
   const ideas = useCount("ideas");
   const quotes = useCount("quotes");
+
+  const meetingsCount = useQuery({
+    queryKey: ["count", "meetings", "upcoming"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("meetings")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "scheduled")
+        .gte("start_time", new Date().toISOString());
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  const shelfProductsCount = useQuery({
+    queryKey: ["count", "shelf-products", "active"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("shelf_products")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "active");
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
 
   const recentTasks = useQuery({
     queryKey: ["recent-tasks", "open"],
@@ -88,6 +114,8 @@ function DashboardPage() {
     { label: "משימות", value: tasks.data ?? 0, icon: CheckSquare, to: "/tasks", color: "from-amber-400 to-orange-500" },
     { label: "רעיונות", value: ideas.data ?? 0, icon: Lightbulb, to: "/ideas", color: "from-yellow-400 to-amber-500" },
     { label: "הצעות מחיר", value: quotes.data ?? 0, icon: FileText, to: "/quotes", color: "from-sky-400 to-indigo-500" },
+    { label: "פגישות", value: meetingsCount.data ?? 0, icon: CalendarDays, to: "/meetings", color: "from-rose-400 to-pink-500" },
+    { label: "מוצרי מדף", value: shelfProductsCount.data ?? 0, icon: Package, to: "/shelf-products", color: "from-violet-400 to-fuchsia-500" },
   ] as const;
 
   return (
@@ -218,6 +246,8 @@ function DashboardPage() {
           <p className="text-sm text-muted-foreground">אין רעיונות עדיין — <Link to="/ideas" className="text-primary hover:underline">הוסף ראשון</Link></p>
         )}
       </section>
+
+      <ShelfProductsSection />
 
       <MeetingsCalendarSection />
     </div>
@@ -395,6 +425,68 @@ function NewMeetingDialog() {
         </form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function ShelfProductsSection() {
+  const { data: products = [] } = useQuery({
+    queryKey: ["dashboard-shelf-products"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("shelf_products")
+        .select("id, name, description, link, status")
+        .eq("status", "active")
+        .order("name", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  return (
+    <section className="glass-strong rounded-3xl p-5">
+      <div className="flex items-center gap-2 mb-4">
+        <Package className="size-5 text-accent" />
+        <h2 className="font-semibold">מוצרי מדף</h2>
+        <Link to="/shelf-products" className="text-xs text-primary hover:underline mr-auto">לכל המוצרים ←</Link>
+      </div>
+      {products.length ? (
+        <ul className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          {products.map((product: any) => {
+            const app = getAppIcon(product.name);
+            const AppIcon = app.icon;
+            return (
+              <li key={product.id} className="glass-strong rounded-2xl p-4 relative overflow-hidden isolate hover:border-primary/40 transition-colors">
+                <div className={cn("absolute -top-6 -start-6 size-32 rounded-full bg-gradient-to-br to-transparent opacity-60 blur-2xl pointer-events-none", app.watermark)} />
+                <div className="relative flex items-start gap-3 mb-2">
+                  <div className={cn("size-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm", app.gradient)}>
+                    <AppIcon className={cn("size-5", app.iconColor)} />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-semibold text-sm truncate">{product.name}</h3>
+                    {product.description && (
+                      <p className="text-xs text-muted-foreground line-clamp-2">{product.description}</p>
+                    )}
+                  </div>
+                </div>
+                {product.link && (
+                  <a
+                    href={product.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative z-10 mt-3 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <ExternalLink className="size-3" /> פתח את הכלי
+                  </a>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <p className="text-sm text-muted-foreground">אין מוצרי מדף פעילים — <Link to="/shelf-products" className="text-primary hover:underline">הוסף מוצר ראשון</Link></p>
+      )}
+    </section>
   );
 }
 
