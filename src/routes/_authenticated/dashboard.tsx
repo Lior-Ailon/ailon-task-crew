@@ -114,6 +114,8 @@ function DashboardPage() {
     { label: "משימות", value: tasks.data ?? 0, icon: CheckSquare, to: "/tasks", color: "from-amber-400 to-orange-500" },
     { label: "רעיונות", value: ideas.data ?? 0, icon: Lightbulb, to: "/ideas", color: "from-yellow-400 to-amber-500" },
     { label: "הצעות מחיר", value: quotes.data ?? 0, icon: FileText, to: "/quotes", color: "from-sky-400 to-indigo-500" },
+    { label: "פגישות", value: meetingsCount.data ?? 0, icon: CalendarDays, to: "/meetings", color: "from-rose-400 to-pink-500" },
+    { label: "מוצרי מדף", value: shelfProductsCount.data ?? 0, icon: Package, to: "/shelf-products", color: "from-violet-400 to-fuchsia-500" },
   ] as const;
 
   return (
