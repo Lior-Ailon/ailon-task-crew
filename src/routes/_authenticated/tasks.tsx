@@ -27,6 +27,9 @@ const statusLabel: Record<string, string> = Object.fromEntries(statusOptions.map
 const priorityTone: Record<string, any> = { low: "slate", medium: "cyan", high: "amber", urgent: "red" };
 const priorityLabel: Record<string, string> = Object.fromEntries(priorityOptions.map((s) => [s.value, s.label]));
 
+// Completed tasks are hidden by default unless the user explicitly filters by status = "done".
+const DEFAULT_STATUS_FILTER = "all";
+
 const fields: FieldDef[] = [
   { name: "title", label: "כותרת", type: "text", required: true },
   { name: "description", label: "תיאור", type: "textarea" },
@@ -76,6 +79,7 @@ function TasksPage() {
   }
 
   function filterItems(item: any) {
+    if (statusFilter === "all" && item.status === "done") return false;
     if (statusFilter !== "all" && item.status !== statusFilter) return false;
     if (priorityFilter !== "all" && item.priority !== priorityFilter) return false;
     if (assigneeFilter !== "all") {
@@ -142,7 +146,7 @@ function TasksPage() {
   return (
     <CrudPage
       title="משימות"
-      subtitle="כל המשימות הפתוחות והסגורות שלך"
+      subtitle="כל המשימות הפתוחות שלך"
       table="tasks"
       fields={fields}
       searchKeys={["title", "description"]}
@@ -183,7 +187,7 @@ function TasksPage() {
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="bg-white border-white/60 shadow-sm text-foreground"><SelectValue placeholder="בחר סטטוס" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">כל הסטטוסים</SelectItem>
+                  <SelectItem value="all">הכל (למעט הושלם)</SelectItem>
                   {statusOptions.map((o) => (
                     <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
                   ))}
