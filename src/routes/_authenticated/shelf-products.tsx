@@ -1,6 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CrudPage, StatusPill, type FieldDef } from "@/components/CrudPage";
-import { Package, Tag, Boxes, ExternalLink } from "lucide-react";
+import {
+  Package,
+  Tag,
+  Boxes,
+  ExternalLink,
+  GraduationCap,
+  Calculator,
+  CircleDot,
+  MessagesSquare,
+  Search,
+  CalendarCheck,
+  Compass,
+  ClipboardList,
+  CalendarDays,
+  Users,
+  Receipt,
+  DoorOpen,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const statusOptions = [
   { value: "active", label: "פעיל" },
