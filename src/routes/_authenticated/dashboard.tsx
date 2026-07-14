@@ -41,6 +41,31 @@ function DashboardPage() {
   const ideas = useCount("ideas");
   const quotes = useCount("quotes");
 
+  const meetingsCount = useQuery({
+    queryKey: ["count", "meetings", "upcoming"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("meetings")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "scheduled")
+        .gte("start_time", new Date().toISOString());
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  const shelfProductsCount = useQuery({
+    queryKey: ["count", "shelf-products", "active"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("shelf_products")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "active");
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
   const recentTasks = useQuery({
     queryKey: ["recent-tasks", "open"],
     queryFn: async () => {
