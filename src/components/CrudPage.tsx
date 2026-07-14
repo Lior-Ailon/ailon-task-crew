@@ -235,19 +235,30 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {filtered.map((item: any) =>
-            renderCard(
-              item,
-              <div className="flex gap-1">
-                <Button size="icon" variant="ghost" className="size-8" onClick={() => { setEditing(item); setOpen(true); }}>
-                  <Pencil className="size-3.5" />
-                </Button>
-                <Button size="icon" variant="ghost" className="size-8 hover:text-destructive" onClick={() => handleDelete(item.id)}>
-                  <Trash2 className="size-3.5" />
-                </Button>
-              </div>,
-            ),
-          )}
+          {filtered.map((item: any) => (
+            <div
+              key={item.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => { setEditing(item); setOpen(true); }}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setEditing(item); setOpen(true); } }}
+              className="cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-3xl"
+            >
+              {renderCard(
+                item,
+                <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="size-8 hover:text-destructive"
+                    onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
+                  >
+                    <Trash2 className="size-3.5" />
+                  </Button>
+                </div>,
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>

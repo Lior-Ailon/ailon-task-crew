@@ -518,7 +518,14 @@ function QuotesPage() {
             const c = contactInfo(item);
             const contactColor = c.kind === "lead" ? "text-red-600" : c.kind === "customer" ? "text-emerald-600" : "";
             return (
-              <article key={item.id} className="glass-strong rounded-3xl p-4 hover:border-primary/40 transition-colors">
+              <article
+                key={item.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => openForEdit(item)}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openForEdit(item); } }}
+                className="glass-strong rounded-3xl p-4 hover:border-primary/40 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
                 <div className="flex justify-between items-start mb-3">
                   <div className="min-w-0">
                     <h3 className="font-semibold truncate">{item.title}</h3>
@@ -526,14 +533,11 @@ function QuotesPage() {
                       <p className="text-xs text-muted-foreground mt-0.5">#{item.quote_number}</p>
                     )}
                   </div>
-                  <div className="flex gap-1">
-                    <Button size="icon" variant="ghost" className="size-8" onClick={() => printQuote(item, c.name, c.kind)} aria-label="הדפס">
+                  <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+                    <Button size="icon" variant="ghost" className="size-8" onClick={(e) => { e.stopPropagation(); printQuote(item, c.name, c.kind); }} aria-label="הדפס">
                       <Printer className="size-3.5" />
                     </Button>
-                    <Button size="icon" variant="ghost" className="size-8" onClick={() => openForEdit(item)}>
-                      <Pencil className="size-3.5" />
-                    </Button>
-                    <Button size="icon" variant="ghost" className="size-8 hover:text-destructive" onClick={() => handleDelete(item.id)}>
+                    <Button size="icon" variant="ghost" className="size-8 hover:text-destructive" onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}>
                       <Trash2 className="size-3.5" />
                     </Button>
                   </div>
