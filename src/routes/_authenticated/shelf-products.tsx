@@ -69,11 +69,23 @@ function ShelfProductsPage() {
                 {item.category}
               </div>
             )}
-            {item.stock != null && (
+            {item.stock != null && item.stock !== 0 && (
               <div className="flex items-center gap-2">
                 <Boxes className="size-3" />
                 מלאי: {item.stock}
               </div>
+            )}
+            {item.link && (
+              <a
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-2 text-primary hover:underline truncate"
+              >
+                <ExternalLink className="size-3 shrink-0" />
+                <span className="truncate">פתח את הכלי</span>
+              </a>
             )}
           </div>
           <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/50">
