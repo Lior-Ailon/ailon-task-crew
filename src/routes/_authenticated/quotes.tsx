@@ -274,16 +274,27 @@ function QuotesPage() {
     };
 
     const client = supabase.from("quotes") as any;
+    const { data: { user } } = await supabase.auth.getUser();
+    const actor = user?.email ?? undefined;
     if (editing) {
       const { error } = await client.update(payload).eq("id", editing.id);
       if (error) return toast.error(error.message);
       toast.success("עודכן בהצלחה");
+      sendEntityNotification({
+        entityLabel: "הצעת מחיר", action: "עודכן", title: payload.title,
+        entityId: editing.id, actor,
+        fields: [{ label: "סטטוס", value: String(payload.status) }, { label: "סכום", value: String(payload.total_amount) }],
+      });
     } else {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return toast.error("לא מחובר");
-      const { error } = await client.insert({ ...payload, user_id: user.id });
+      const { data: inserted, error } = await client.insert({ ...payload, user_id: user.id }).select().maybeSingle();
       if (error) return toast.error(error.message);
       toast.success("נוצר בהצלחה");
+      sendEntityNotification({
+        entityLabel: "הצעת מחיר", action: "נוצר", title: payload.title,
+        entityId: inserted?.id ?? "unknown", actor,
+        fields: [{ label: "סטטוס", value: String(payload.status) }, { label: "סכום", value: String(payload.total_amount) }],
+      });
     }
     setOpen(false);
     resetForm();
@@ -293,9 +304,15 @@ function QuotesPage() {
 
   async function handleDelete(id: string) {
     if (!confirm("האם למחוק?")) return;
+    const target = (quotes as any[]).find((q) => q.id === id);
     const { error } = await supabase.from("quotes").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("נמחק");
+    const { data: { user } } = await supabase.auth.getUser();
+    sendEntityNotification({
+      entityLabel: "הצעת מחיר", action: "נמחק", title: target?.title ?? "—",
+      entityId: id, actor: user?.email ?? undefined,
+    });
     qc.invalidateQueries({ queryKey: ["quotes"] });
   }
 
