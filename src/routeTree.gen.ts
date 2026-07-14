@@ -17,6 +17,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
 import { Route as AuthenticatedSubscriptionsRouteImport } from './routes/_authenticated/subscriptions'
+import { Route as AuthenticatedShelfProductsRouteImport } from './routes/_authenticated/shelf-products'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedQuotesRouteImport } from './routes/_authenticated/quotes'
 import { Route as AuthenticatedProjectsRouteImport } from './routes/_authenticated/projects'
@@ -71,6 +72,12 @@ const AuthenticatedSubscriptionsRoute =
   AuthenticatedSubscriptionsRouteImport.update({
     id: '/subscriptions',
     path: '/subscriptions',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedShelfProductsRoute =
+  AuthenticatedShelfProductsRouteImport.update({
+    id: '/shelf-products',
+    path: '/shelf-products',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
@@ -168,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/projects': typeof AuthenticatedProjectsRoute
   '/quotes': typeof AuthenticatedQuotesRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/shelf-products': typeof AuthenticatedShelfProductsRoute
   '/subscriptions': typeof AuthenticatedSubscriptionsRoute
   '/tasks': typeof AuthenticatedTasksRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
@@ -192,6 +200,7 @@ export interface FileRoutesByTo {
   '/projects': typeof AuthenticatedProjectsRoute
   '/quotes': typeof AuthenticatedQuotesRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/shelf-products': typeof AuthenticatedShelfProductsRoute
   '/subscriptions': typeof AuthenticatedSubscriptionsRoute
   '/tasks': typeof AuthenticatedTasksRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
@@ -218,6 +227,7 @@ export interface FileRoutesById {
   '/_authenticated/projects': typeof AuthenticatedProjectsRoute
   '/_authenticated/quotes': typeof AuthenticatedQuotesRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/shelf-products': typeof AuthenticatedShelfProductsRoute
   '/_authenticated/subscriptions': typeof AuthenticatedSubscriptionsRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
@@ -244,6 +254,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/quotes'
     | '/settings'
+    | '/shelf-products'
     | '/subscriptions'
     | '/tasks'
     | '/email/unsubscribe'
@@ -268,6 +279,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/quotes'
     | '/settings'
+    | '/shelf-products'
     | '/subscriptions'
     | '/tasks'
     | '/email/unsubscribe'
@@ -293,6 +305,7 @@ export interface FileRouteTypes {
     | '/_authenticated/projects'
     | '/_authenticated/quotes'
     | '/_authenticated/settings'
+    | '/_authenticated/shelf-products'
     | '/_authenticated/subscriptions'
     | '/_authenticated/tasks'
     | '/email/unsubscribe'
@@ -373,6 +386,13 @@ declare module '@tanstack/react-router' {
       path: '/subscriptions'
       fullPath: '/subscriptions'
       preLoaderRoute: typeof AuthenticatedSubscriptionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/shelf-products': {
+      id: '/_authenticated/shelf-products'
+      path: '/shelf-products'
+      fullPath: '/shelf-products'
+      preLoaderRoute: typeof AuthenticatedShelfProductsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings': {
@@ -494,6 +514,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProjectsRoute: typeof AuthenticatedProjectsRoute
   AuthenticatedQuotesRoute: typeof AuthenticatedQuotesRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedShelfProductsRoute: typeof AuthenticatedShelfProductsRoute
   AuthenticatedSubscriptionsRoute: typeof AuthenticatedSubscriptionsRoute
   AuthenticatedTasksRoute: typeof AuthenticatedTasksRoute
 }
@@ -509,6 +530,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProjectsRoute: AuthenticatedProjectsRoute,
   AuthenticatedQuotesRoute: AuthenticatedQuotesRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedShelfProductsRoute: AuthenticatedShelfProductsRoute,
   AuthenticatedSubscriptionsRoute: AuthenticatedSubscriptionsRoute,
   AuthenticatedTasksRoute: AuthenticatedTasksRoute,
 }
