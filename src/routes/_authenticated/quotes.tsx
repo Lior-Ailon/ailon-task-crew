@@ -136,6 +136,8 @@ function printQuote(item: any, contactName?: string, contactKind?: "customer" | 
 
   ${item.notes ? `<div class="notes"><strong>הערות:</strong><br/>${esc(item.notes)}</div>` : ""}
 
+  <div class="closing">בברכה,<br/>צוות Ailon-Task</div>
+
   <script>window.addEventListener("load", () => setTimeout(() => window.print(), 300));</script>
 </body>
 </html>`;
