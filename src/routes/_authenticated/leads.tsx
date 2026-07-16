@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { CrudPage, StatusPill, type FieldDef } from "@/components/CrudPage";
-import { Mail, Phone, Building2, UserCheck } from "lucide-react";
+import { Mail, Phone, Building2, UserCheck, LayoutGrid, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { sendEntityNotification } from "@/lib/email/send-entity-notification";
@@ -27,6 +27,8 @@ const fields: FieldDef[] = [
   { name: "source", label: "מקור", type: "text" },
   { name: "status", label: "סטטוס", type: "select", options: statusOptions, required: true },
   { name: "estimated_value", label: "ערך משוער (₪)", type: "number" },
+  { name: "next_follow_up_at", label: "מעקב הבא", type: "datetime-local" },
+  { name: "follow_up_note", label: "הערת מעקב", type: "text" },
   { name: "notes", label: "הערות", type: "textarea" },
 ];
 
