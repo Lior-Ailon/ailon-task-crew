@@ -95,6 +95,7 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
       const merged = { ...previous, ...payload, id: editing.id };
       onAfterSave?.("updated", merged, previous);
       if (table !== "tasks") notifyEntity("updated", merged);
+      recordActivity("updated", merged, previous);
     } else {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return toast.error("לא מחובר");
@@ -104,6 +105,7 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
       const created = inserted ?? { ...payload, user_id: user.id };
       onAfterSave?.("created", created, null);
       if (table !== "tasks") notifyEntity("created", created);
+      recordActivity("created", created, null);
     }
     setOpen(false);
     setEditing(null);
