@@ -225,6 +225,8 @@ function CustomerDetailPage() {
         </Panel>
       </div>
 
+      <ActivityTimeline entityType="customer" entityId={c.id} />
+
       {c.notes && (
         <section className="glass-strong rounded-3xl p-5">
           <h2 className="font-semibold mb-2">הערות</h2>
