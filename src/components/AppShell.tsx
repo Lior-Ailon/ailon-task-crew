@@ -18,7 +18,10 @@ import {
   TrendingDown,
   TrendingUp,
   Package,
+  BarChart3,
+  LayoutGrid,
 } from "lucide-react";
+import { GlobalSearch } from "@/components/GlobalSearch";
 import { useState } from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
