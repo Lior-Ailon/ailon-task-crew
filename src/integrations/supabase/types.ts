@@ -47,8 +47,10 @@ export type Database = {
           company: string | null
           created_at: string
           email: string | null
+          follow_up_note: string | null
           id: string
           name: string
+          next_follow_up_at: string | null
           notes: string | null
           phone: string | null
           tax_id: string | null
@@ -60,8 +62,10 @@ export type Database = {
           company?: string | null
           created_at?: string
           email?: string | null
+          follow_up_note?: string | null
           id?: string
           name: string
+          next_follow_up_at?: string | null
           notes?: string | null
           phone?: string | null
           tax_id?: string | null
@@ -73,8 +77,10 @@ export type Database = {
           company?: string | null
           created_at?: string
           email?: string | null
+          follow_up_note?: string | null
           id?: string
           name?: string
+          next_follow_up_at?: string | null
           notes?: string | null
           phone?: string | null
           tax_id?: string | null
@@ -309,8 +315,10 @@ export type Database = {
           created_at: string
           email: string | null
           estimated_value: number | null
+          follow_up_note: string | null
           id: string
           name: string
+          next_follow_up_at: string | null
           notes: string | null
           phone: string | null
           source: string | null
@@ -323,8 +331,10 @@ export type Database = {
           created_at?: string
           email?: string | null
           estimated_value?: number | null
+          follow_up_note?: string | null
           id?: string
           name: string
+          next_follow_up_at?: string | null
           notes?: string | null
           phone?: string | null
           source?: string | null
@@ -337,8 +347,10 @@ export type Database = {
           created_at?: string
           email?: string | null
           estimated_value?: number | null
+          follow_up_note?: string | null
           id?: string
           name?: string
+          next_follow_up_at?: string | null
           notes?: string | null
           phone?: string | null
           source?: string | null

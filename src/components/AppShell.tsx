@@ -27,6 +27,7 @@ import logoAsset from "@/assets/ailon-logo.png.asset.json";
 const navItems = [
   { to: "/dashboard", label: "דשבורד", icon: LayoutDashboard, admin: false },
   { to: "/leads", label: "לידים", icon: UserPlus, admin: false },
+  { to: "/leads-board", label: "לוח לידים", icon: FolderKanban, admin: false },
   { to: "/customers", label: "לקוחות", icon: Users, admin: false },
   { to: "/projects", label: "פרויקטים", icon: FolderKanban, admin: false },
   { to: "/tasks", label: "משימות", icon: CheckSquare, admin: false },

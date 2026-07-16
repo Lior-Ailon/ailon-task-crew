@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock, Lightbulb, FileText, CalendarDays, MapPin, Plus, Package, ExternalLink } from "lucide-react";
+import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock, Lightbulb, FileText, CalendarDays, MapPin, Plus, Package, ExternalLink, Bell, LayoutGrid } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -171,11 +171,18 @@ function DashboardPage() {
         ))}
       </section>
 
+      <FollowUpsSection />
+
       <div className="grid lg:grid-cols-2 gap-4">
         <section className="glass-strong rounded-3xl p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="size-5 text-accent" />
-            <h2 className="font-semibold">לידים פתוחים</h2>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="size-5 text-accent" />
+              <h2 className="font-semibold">לידים פתוחים</h2>
+            </div>
+            <Link to="/leads-board" className="text-xs text-primary hover:underline inline-flex items-center gap-1">
+              <LayoutGrid className="size-3" /> לוח Kanban ←
+            </Link>
           </div>
           {openLeads.data?.length ? (
             <ul className="space-y-2">
@@ -253,6 +260,107 @@ function DashboardPage() {
     </div>
   );
 }
+
+function FollowUpsSection() {
+  const nowIso = new Date().toISOString();
+  const in7 = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  const leadsFollow = useQuery({
+    queryKey: ["follow-ups", "leads"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("leads")
+        .select("id, name, company, next_follow_up_at, follow_up_note")
+        .not("next_follow_up_at", "is", null)
+        .lte("next_follow_up_at", in7)
+        .order("next_follow_up_at", { ascending: true })
+        .limit(20);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const customersFollow = useQuery({
+    queryKey: ["follow-ups", "customers"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("customers")
+        .select("id, name, company, next_follow_up_at, follow_up_note")
+        .not("next_follow_up_at", "is", null)
+        .lte("next_follow_up_at", in7)
+        .order("next_follow_up_at", { ascending: true })
+        .limit(20);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const combined = [
+    ...(leadsFollow.data ?? []).map((x: any) => ({ ...x, kind: "lead" as const })),
+    ...(customersFollow.data ?? []).map((x: any) => ({ ...x, kind: "customer" as const })),
+  ].sort((a, b) => new Date(a.next_follow_up_at).getTime() - new Date(b.next_follow_up_at).getTime());
+
+  const overdue = combined.filter((x) => x.next_follow_up_at < nowIso);
+  const upcoming = combined.filter((x) => x.next_follow_up_at >= nowIso);
+
+  return (
+    <section className="glass-strong rounded-3xl p-5">
+      <div className="flex items-center gap-2 mb-4">
+        <Bell className="size-5 text-accent" />
+        <h2 className="font-semibold">מעקבים דחופים</h2>
+        <span className="text-xs text-muted-foreground">7 הימים הקרובים</span>
+        {overdue.length > 0 && (
+          <span className="mr-auto text-[11px] font-bold bg-red-100 text-red-700 border border-red-200 px-2 py-0.5 rounded-full">
+            {overdue.length} באיחור
+          </span>
+        )}
+      </div>
+      {combined.length === 0 ? (
+        <p className="text-sm text-muted-foreground text-center py-4">
+          אין מעקבים מתוזמנים. הגדר תאריך "מעקב הבא" על ליד או לקוח כדי לא לשכוח לחזור אליהם.
+        </p>
+      ) : (
+        <ul className="grid sm:grid-cols-2 gap-2">
+          {combined.slice(0, 8).map((item: any) => {
+            const date = new Date(item.next_follow_up_at);
+            const isOverdue = date < new Date();
+            const href = item.kind === "customer" ? `/customers/${item.id}` : "/leads";
+            return (
+              <li key={`${item.kind}-${item.id}`} className={cn(
+                "p-3 rounded-xl border flex items-start gap-2",
+                isOverdue ? "bg-red-500/5 border-red-500/30" : "bg-muted/30 border-border/40",
+              )}>
+                <div className={cn(
+                  "size-8 rounded-lg flex items-center justify-center shrink-0",
+                  item.kind === "customer" ? "bg-cyan-500/20 text-cyan-600" : "bg-fuchsia-500/20 text-fuchsia-600",
+                )}>
+                  {item.kind === "customer" ? <Users className="size-4" /> : <UserPlus className="size-4" />}
+                </div>
+                <Link to={href} className="min-w-0 flex-1 hover:opacity-80">
+                  <div className="font-medium text-sm truncate">{item.name}</div>
+                  {item.company && <div className="text-[11px] text-muted-foreground truncate">{item.company}</div>}
+                  {item.follow_up_note && (
+                    <div className="text-xs mt-1 line-clamp-1">{item.follow_up_note}</div>
+                  )}
+                  <div className={cn(
+                    "text-[10px] mt-1 font-medium",
+                    isOverdue ? "text-red-600" : "text-amber-600",
+                  )}>
+                    {isOverdue ? "באיחור: " : ""}{date.toLocaleDateString("he-IL")} {date.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}
+                  </div>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      {upcoming.length > 8 && (
+        <p className="text-xs text-muted-foreground text-center mt-3">+ {upcoming.length - 8} מעקבים נוספים</p>
+      )}
+    </section>
+  );
+}
+
 
 function MeetingsCalendarSection() {
   const { data: meetings = [] } = useQuery({
