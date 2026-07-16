@@ -150,10 +150,10 @@ function CustomerDetailPage() {
               {quotes.data.slice(0, 5).map((q: any) => (
                 <li key={q.id} className="p-3 rounded-xl bg-muted/30 flex justify-between items-center gap-2">
                   <div className="min-w-0">
-                    <div className="font-medium text-sm truncate">{q.quote_number ?? q.subject ?? "הצעה"}</div>
+                    <div className="font-medium text-sm truncate">{q.quote_number ?? q.title ?? "הצעה"}</div>
                     <div className="text-xs text-muted-foreground">{q.status ?? "—"}</div>
                   </div>
-                  {q.total && <span className="text-xs font-bold gradient-text shrink-0">₪{Number(q.total).toLocaleString()}</span>}
+                  {q.total_amount && <span className="text-xs font-bold gradient-text shrink-0">₪{Number(q.total_amount).toLocaleString()}</span>}
                 </li>
               ))}
             </ul>
