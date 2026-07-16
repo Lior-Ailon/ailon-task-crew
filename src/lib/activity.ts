@@ -33,7 +33,7 @@ export async function logActivity(input: LogActivityInput) {
       entity_id: input.entityId,
       action: input.action,
       description: input.description ?? null,
-      metadata: input.metadata ?? {},
+      metadata: (input.metadata ?? {}) as any,
     });
   } catch (err) {
     console.warn("logActivity failed", err);
