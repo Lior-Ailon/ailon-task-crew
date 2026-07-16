@@ -113,6 +113,33 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
     qc.invalidateQueries({ queryKey: ["count", table] });
   }
 
+  async function recordActivity(event: "created" | "updated" | "deleted", record: any, previous: any | null) {
+    const entityType = entityTypeFromTable(table);
+    if (!entityType || !record?.id) return;
+    const title = record?.title ?? record?.name ?? record?.subject ?? record?.quote_number ?? "—";
+    if (event === "updated" && previous) {
+      const changes = diffFields(previous, record);
+      const statusChange = changes.find((c) => c.field === "status");
+      if (statusChange) {
+        await logActivity({
+          entityType, entityId: record.id, action: "status_changed",
+          description: `שינוי סטטוס: ${String(title)}`,
+          metadata: { from: String(statusChange.from ?? "—"), to: String(statusChange.to ?? "—") },
+        });
+        return;
+      }
+      const summary = changes.slice(0, 3).map((c) => c.field).join(", ");
+      await logActivity({
+        entityType, entityId: record.id, action: "updated",
+        description: summary ? `שדות: ${summary}` : String(title),
+      });
+    } else if (event === "created") {
+      await logActivity({ entityType, entityId: record.id, action: "created", description: String(title) });
+    } else {
+      await logActivity({ entityType, entityId: record.id, action: "deleted", description: String(title) });
+    }
+  }
+
   async function notifyEntity(event: "created" | "updated" | "deleted", record: any) {
     const { data: { user } } = await supabase.auth.getUser();
     const actor = user?.email ?? undefined;
