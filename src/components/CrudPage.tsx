@@ -18,6 +18,7 @@ import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { UserTagsInput } from "@/components/UserTagsInput";
 import { toast } from "sonner";
 import { sendEntityNotification, labelForTable } from "@/lib/email/send-entity-notification";
+import { logActivity, diffFields, entityTypeFromTable } from "@/lib/activity";
 
 export type FieldDef =
   | { name: string; label: string; type: "text" | "email" | "tel" | "number" | "date" | "datetime-local" | "textarea"; required?: boolean }
