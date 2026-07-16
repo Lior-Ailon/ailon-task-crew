@@ -182,7 +182,7 @@ function CustomerDetailPage() {
               {incomes.data.slice(0, 5).map((i: any) => (
                 <li key={i.id} className="p-3 rounded-xl bg-muted/30 flex justify-between items-center gap-2">
                   <div className="min-w-0">
-                    <div className="font-medium text-sm truncate">{i.description ?? i.source ?? "הכנסה"}</div>
+                    <div className="font-medium text-sm truncate">{i.customer_name ?? i.notes ?? "הכנסה"}</div>
                     <div className="text-xs text-muted-foreground">{i.income_date}</div>
                   </div>
                   <span className="text-xs font-bold gradient-text shrink-0">₪{Number(i.amount).toLocaleString()}</span>
