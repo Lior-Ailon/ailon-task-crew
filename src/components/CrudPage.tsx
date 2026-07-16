@@ -18,6 +18,7 @@ import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { UserTagsInput } from "@/components/UserTagsInput";
 import { toast } from "sonner";
 import { sendEntityNotification, labelForTable } from "@/lib/email/send-entity-notification";
+import { logActivity, diffFields, entityTypeFromTable } from "@/lib/activity";
 
 export type FieldDef =
   | { name: string; label: string; type: "text" | "email" | "tel" | "number" | "date" | "datetime-local" | "textarea"; required?: boolean }
@@ -94,6 +95,7 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
       const merged = { ...previous, ...payload, id: editing.id };
       onAfterSave?.("updated", merged, previous);
       if (table !== "tasks") notifyEntity("updated", merged);
+      recordActivity("updated", merged, previous);
     } else {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return toast.error("לא מחובר");
@@ -103,11 +105,39 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
       const created = inserted ?? { ...payload, user_id: user.id };
       onAfterSave?.("created", created, null);
       if (table !== "tasks") notifyEntity("created", created);
+      recordActivity("created", created, null);
     }
     setOpen(false);
     setEditing(null);
     qc.invalidateQueries({ queryKey: [table] });
     qc.invalidateQueries({ queryKey: ["count", table] });
+  }
+
+  async function recordActivity(event: "created" | "updated" | "deleted", record: any, previous: any | null) {
+    const entityType = entityTypeFromTable(table);
+    if (!entityType || !record?.id) return;
+    const title = record?.title ?? record?.name ?? record?.subject ?? record?.quote_number ?? "—";
+    if (event === "updated" && previous) {
+      const changes = diffFields(previous, record);
+      const statusChange = changes.find((c) => c.field === "status");
+      if (statusChange) {
+        await logActivity({
+          entityType, entityId: record.id, action: "status_changed",
+          description: `שינוי סטטוס: ${String(title)}`,
+          metadata: { from: String(statusChange.from ?? "—"), to: String(statusChange.to ?? "—") },
+        });
+        return;
+      }
+      const summary = changes.slice(0, 3).map((c) => c.field).join(", ");
+      await logActivity({
+        entityType, entityId: record.id, action: "updated",
+        description: summary ? `שדות: ${summary}` : String(title),
+      });
+    } else if (event === "created") {
+      await logActivity({ entityType, entityId: record.id, action: "created", description: String(title) });
+    } else {
+      await logActivity({ entityType, entityId: record.id, action: "deleted", description: String(title) });
+    }
   }
 
   async function notifyEntity(event: "created" | "updated" | "deleted", record: any) {
@@ -136,7 +166,7 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
     const { error } = await supabase.from(table).delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("נמחק");
-    if (target) notifyEntity("deleted", target);
+    if (target) { notifyEntity("deleted", target); recordActivity("deleted", target, null); }
     qc.invalidateQueries({ queryKey: [table] });
     qc.invalidateQueries({ queryKey: ["count", table] });
   }

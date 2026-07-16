@@ -18,7 +18,10 @@ import {
   TrendingDown,
   TrendingUp,
   Package,
+  BarChart3,
+  LayoutGrid,
 } from "lucide-react";
+import { GlobalSearch } from "@/components/GlobalSearch";
 import { useState } from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -26,8 +29,9 @@ import logoAsset from "@/assets/ailon-logo.png.asset.json";
 
 const navItems = [
   { to: "/dashboard", label: "דשבורד", icon: LayoutDashboard, admin: false },
+  { to: "/analytics", label: "אנליטיקה", icon: BarChart3, admin: false },
   { to: "/leads", label: "לידים", icon: UserPlus, admin: false },
-  { to: "/leads-board", label: "לוח לידים", icon: FolderKanban, admin: false },
+  { to: "/leads-board", label: "לוח לידים", icon: LayoutGrid, admin: false },
   { to: "/customers", label: "לקוחות", icon: Users, admin: false },
   { to: "/projects", label: "פרויקטים", icon: FolderKanban, admin: false },
   { to: "/tasks", label: "משימות", icon: CheckSquare, admin: false },
@@ -97,7 +101,10 @@ export function AppShell() {
 
       {/* Main */}
       <main className="flex-1 lg:mr-64 pt-14 lg:pt-0 min-h-screen">
-        <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+        <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-4">
+          <div className="hidden lg:flex justify-end">
+            <GlobalSearch />
+          </div>
           <Outlet />
         </div>
       </main>

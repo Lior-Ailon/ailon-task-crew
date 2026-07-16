@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusPill } from "@/components/CrudPage";
+import { ActivityTimeline } from "@/components/ActivityTimeline";
 
 function daysUntil(iso?: string | null) {
   if (!iso) return null;
@@ -223,6 +224,8 @@ function CustomerDetailPage() {
           ) : <Empty label="אין משימות" />}
         </Panel>
       </div>
+
+      <ActivityTimeline entityType="customer" entityId={c.id} />
 
       {c.notes && (
         <section className="glass-strong rounded-3xl p-5">
