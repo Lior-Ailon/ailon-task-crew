@@ -171,11 +171,18 @@ function DashboardPage() {
         ))}
       </section>
 
+      <FollowUpsSection />
+
       <div className="grid lg:grid-cols-2 gap-4">
         <section className="glass-strong rounded-3xl p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="size-5 text-accent" />
-            <h2 className="font-semibold">לידים פתוחים</h2>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="size-5 text-accent" />
+              <h2 className="font-semibold">לידים פתוחים</h2>
+            </div>
+            <Link to="/leads-board" className="text-xs text-primary hover:underline inline-flex items-center gap-1">
+              <LayoutGrid className="size-3" /> לוח Kanban ←
+            </Link>
           </div>
           {openLeads.data?.length ? (
             <ul className="space-y-2">
