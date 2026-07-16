@@ -101,7 +101,10 @@ export function AppShell() {
 
       {/* Main */}
       <main className="flex-1 lg:mr-64 pt-14 lg:pt-0 min-h-screen">
-        <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+        <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-4">
+          <div className="hidden lg:flex justify-end">
+            <GlobalSearch />
+          </div>
           <Outlet />
         </div>
       </main>
