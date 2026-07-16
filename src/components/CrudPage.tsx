@@ -166,7 +166,7 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
     const { error } = await supabase.from(table).delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("נמחק");
-    if (target) notifyEntity("deleted", target);
+    if (target) { notifyEntity("deleted", target); recordActivity("deleted", target, null); }
     qc.invalidateQueries({ queryKey: [table] });
     qc.invalidateQueries({ queryKey: ["count", table] });
   }
