@@ -22,6 +22,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedQuotesRouteImport } from './routes/_authenticated/quotes'
 import { Route as AuthenticatedProjectsRouteImport } from './routes/_authenticated/projects'
 import { Route as AuthenticatedMeetingsRouteImport } from './routes/_authenticated/meetings'
+import { Route as AuthenticatedLeadsBoardRouteImport } from './routes/_authenticated/leads-board'
 import { Route as AuthenticatedLeadsRouteImport } from './routes/_authenticated/leads'
 import { Route as AuthenticatedIncomesRouteImport } from './routes/_authenticated/incomes'
 import { Route as AuthenticatedIdeasRouteImport } from './routes/_authenticated/ideas'
@@ -29,6 +30,7 @@ import { Route as AuthenticatedExpensesRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCustomersRouteImport } from './routes/_authenticated/customers'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
+import { Route as AuthenticatedCustomersIdRouteImport } from './routes/_authenticated/customers.$id'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -100,6 +102,11 @@ const AuthenticatedMeetingsRoute = AuthenticatedMeetingsRouteImport.update({
   path: '/meetings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedLeadsBoardRoute = AuthenticatedLeadsBoardRouteImport.update({
+  id: '/leads-board',
+  path: '/leads-board',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedLeadsRoute = AuthenticatedLeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
@@ -135,6 +142,12 @@ const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   path: '/lovable/email/suppression',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCustomersIdRoute =
+  AuthenticatedCustomersIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedCustomersRoute,
+  } as any)
 const LovableEmailTransactionalSendRoute =
   LovableEmailTransactionalSendRouteImport.update({
     id: '/lovable/email/transactional/send',
@@ -165,12 +178,13 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/meeting-invite': typeof MeetingInviteRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/customers': typeof AuthenticatedCustomersRoute
+  '/customers': typeof AuthenticatedCustomersRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/expenses': typeof AuthenticatedExpensesRoute
   '/ideas': typeof AuthenticatedIdeasRoute
   '/incomes': typeof AuthenticatedIncomesRoute
   '/leads': typeof AuthenticatedLeadsRoute
+  '/leads-board': typeof AuthenticatedLeadsBoardRoute
   '/meetings': typeof AuthenticatedMeetingsRoute
   '/projects': typeof AuthenticatedProjectsRoute
   '/quotes': typeof AuthenticatedQuotesRoute
@@ -179,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/subscriptions': typeof AuthenticatedSubscriptionsRoute
   '/tasks': typeof AuthenticatedTasksRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/meetings/respond': typeof ApiPublicMeetingsRespondRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -190,12 +205,13 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/meeting-invite': typeof MeetingInviteRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/customers': typeof AuthenticatedCustomersRoute
+  '/customers': typeof AuthenticatedCustomersRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/expenses': typeof AuthenticatedExpensesRoute
   '/ideas': typeof AuthenticatedIdeasRoute
   '/incomes': typeof AuthenticatedIncomesRoute
   '/leads': typeof AuthenticatedLeadsRoute
+  '/leads-board': typeof AuthenticatedLeadsBoardRoute
   '/meetings': typeof AuthenticatedMeetingsRoute
   '/projects': typeof AuthenticatedProjectsRoute
   '/quotes': typeof AuthenticatedQuotesRoute
@@ -204,6 +220,7 @@ export interface FileRoutesByTo {
   '/subscriptions': typeof AuthenticatedSubscriptionsRoute
   '/tasks': typeof AuthenticatedTasksRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/meetings/respond': typeof ApiPublicMeetingsRespondRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -217,12 +234,13 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/meeting-invite': typeof MeetingInviteRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/_authenticated/customers': typeof AuthenticatedCustomersRoute
+  '/_authenticated/customers': typeof AuthenticatedCustomersRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/expenses': typeof AuthenticatedExpensesRoute
   '/_authenticated/ideas': typeof AuthenticatedIdeasRoute
   '/_authenticated/incomes': typeof AuthenticatedIncomesRoute
   '/_authenticated/leads': typeof AuthenticatedLeadsRoute
+  '/_authenticated/leads-board': typeof AuthenticatedLeadsBoardRoute
   '/_authenticated/meetings': typeof AuthenticatedMeetingsRoute
   '/_authenticated/projects': typeof AuthenticatedProjectsRoute
   '/_authenticated/quotes': typeof AuthenticatedQuotesRoute
@@ -231,6 +249,7 @@ export interface FileRoutesById {
   '/_authenticated/subscriptions': typeof AuthenticatedSubscriptionsRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/_authenticated/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/meetings/respond': typeof ApiPublicMeetingsRespondRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -250,6 +269,7 @@ export interface FileRouteTypes {
     | '/ideas'
     | '/incomes'
     | '/leads'
+    | '/leads-board'
     | '/meetings'
     | '/projects'
     | '/quotes'
@@ -258,6 +278,7 @@ export interface FileRouteTypes {
     | '/subscriptions'
     | '/tasks'
     | '/email/unsubscribe'
+    | '/customers/$id'
     | '/lovable/email/suppression'
     | '/api/public/meetings/respond'
     | '/lovable/email/queue/process'
@@ -275,6 +296,7 @@ export interface FileRouteTypes {
     | '/ideas'
     | '/incomes'
     | '/leads'
+    | '/leads-board'
     | '/meetings'
     | '/projects'
     | '/quotes'
@@ -283,6 +305,7 @@ export interface FileRouteTypes {
     | '/subscriptions'
     | '/tasks'
     | '/email/unsubscribe'
+    | '/customers/$id'
     | '/lovable/email/suppression'
     | '/api/public/meetings/respond'
     | '/lovable/email/queue/process'
@@ -301,6 +324,7 @@ export interface FileRouteTypes {
     | '/_authenticated/ideas'
     | '/_authenticated/incomes'
     | '/_authenticated/leads'
+    | '/_authenticated/leads-board'
     | '/_authenticated/meetings'
     | '/_authenticated/projects'
     | '/_authenticated/quotes'
@@ -309,6 +333,7 @@ export interface FileRouteTypes {
     | '/_authenticated/subscriptions'
     | '/_authenticated/tasks'
     | '/email/unsubscribe'
+    | '/_authenticated/customers/$id'
     | '/lovable/email/suppression'
     | '/api/public/meetings/respond'
     | '/lovable/email/queue/process'
@@ -423,6 +448,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMeetingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/leads-board': {
+      id: '/_authenticated/leads-board'
+      path: '/leads-board'
+      fullPath: '/leads-board'
+      preLoaderRoute: typeof AuthenticatedLeadsBoardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/leads': {
       id: '/_authenticated/leads'
       path: '/leads'
@@ -472,6 +504,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailSuppressionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/customers/$id': {
+      id: '/_authenticated/customers/$id'
+      path: '/$id'
+      fullPath: '/customers/$id'
+      preLoaderRoute: typeof AuthenticatedCustomersIdRouteImport
+      parentRoute: typeof AuthenticatedCustomersRoute
+    }
     '/lovable/email/transactional/send': {
       id: '/lovable/email/transactional/send'
       path: '/lovable/email/transactional/send'
@@ -503,13 +542,28 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedCustomersRouteChildren {
+  AuthenticatedCustomersIdRoute: typeof AuthenticatedCustomersIdRoute
+}
+
+const AuthenticatedCustomersRouteChildren: AuthenticatedCustomersRouteChildren =
+  {
+    AuthenticatedCustomersIdRoute: AuthenticatedCustomersIdRoute,
+  }
+
+const AuthenticatedCustomersRouteWithChildren =
+  AuthenticatedCustomersRoute._addFileChildren(
+    AuthenticatedCustomersRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedCustomersRoute: typeof AuthenticatedCustomersRoute
+  AuthenticatedCustomersRoute: typeof AuthenticatedCustomersRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExpensesRoute: typeof AuthenticatedExpensesRoute
   AuthenticatedIdeasRoute: typeof AuthenticatedIdeasRoute
   AuthenticatedIncomesRoute: typeof AuthenticatedIncomesRoute
   AuthenticatedLeadsRoute: typeof AuthenticatedLeadsRoute
+  AuthenticatedLeadsBoardRoute: typeof AuthenticatedLeadsBoardRoute
   AuthenticatedMeetingsRoute: typeof AuthenticatedMeetingsRoute
   AuthenticatedProjectsRoute: typeof AuthenticatedProjectsRoute
   AuthenticatedQuotesRoute: typeof AuthenticatedQuotesRoute
@@ -520,12 +574,13 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedCustomersRoute: AuthenticatedCustomersRoute,
+  AuthenticatedCustomersRoute: AuthenticatedCustomersRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExpensesRoute: AuthenticatedExpensesRoute,
   AuthenticatedIdeasRoute: AuthenticatedIdeasRoute,
   AuthenticatedIncomesRoute: AuthenticatedIncomesRoute,
   AuthenticatedLeadsRoute: AuthenticatedLeadsRoute,
+  AuthenticatedLeadsBoardRoute: AuthenticatedLeadsBoardRoute,
   AuthenticatedMeetingsRoute: AuthenticatedMeetingsRoute,
   AuthenticatedProjectsRoute: AuthenticatedProjectsRoute,
   AuthenticatedQuotesRoute: AuthenticatedQuotesRoute,
