@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock, Lightbulb, FileText, CalendarDays, MapPin, Plus, Package, ExternalLink } from "lucide-react";
+import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock, Lightbulb, FileText, CalendarDays, MapPin, Plus, Package, ExternalLink, Bell, LayoutGrid } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
