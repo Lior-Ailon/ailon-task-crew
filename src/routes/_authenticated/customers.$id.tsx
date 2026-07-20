@@ -94,9 +94,10 @@ function CustomerDetailPage() {
               <Building2 className="size-3.5" /> {c.company}
             </p>
           )}
+          <div className="mt-3">
+            <QuickContactActions email={c.email} phone={c.phone} />
+          </div>
           <div className="flex flex-wrap gap-3 mt-3 text-xs text-muted-foreground">
-            {c.email && <span className="flex items-center gap-1" dir="ltr"><Mail className="size-3" />{c.email}</span>}
-            {c.phone && <span className="flex items-center gap-1" dir="ltr"><Phone className="size-3" />{c.phone}</span>}
             {c.address && <span className="flex items-center gap-1"><MapPin className="size-3" />{c.address}</span>}
             {c.tax_id && <span className="flex items-center gap-1"><FileText className="size-3" />{c.tax_id}</span>}
           </div>
