@@ -41,12 +41,16 @@ function LeadDetailPage() {
   });
   const tasks = useQuery({
     queryKey: ["lead-tasks", id],
-    queryFn: async () => (await supabase.from("tasks").select("*").eq("lead_id", id as any).order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => {
+      // tasks has no lead_id column; return empty to keep panel consistent
+      return [] as any[];
+    },
   });
+  const assigneeId = lead.data?.assigned_to as string | null | undefined;
   const assignee = useQuery({
-    queryKey: ["profile", lead.data?.assigned_to],
-    enabled: !!lead.data?.assigned_to,
-    queryFn: async () => (await supabase.from("profiles").select("id, full_name, email").eq("id", lead.data!.assigned_to).maybeSingle()).data,
+    queryKey: ["profile", assigneeId],
+    enabled: !!assigneeId,
+    queryFn: async () => (await supabase.from("profiles").select("id, full_name, email").eq("id", assigneeId!).maybeSingle()).data,
   });
 
   const l = lead.data;
