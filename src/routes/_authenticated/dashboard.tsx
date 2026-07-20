@@ -324,7 +324,6 @@ function FollowUpsSection() {
           {combined.slice(0, 8).map((item: any) => {
             const date = new Date(item.next_follow_up_at);
             const isOverdue = date < new Date();
-            const href = item.kind === "customer" ? `/customers/${item.id}` : "/leads";
             return (
               <li key={`${item.kind}-${item.id}`} className={cn(
                 "p-3 rounded-xl border flex items-start gap-2",
@@ -336,19 +335,15 @@ function FollowUpsSection() {
                 )}>
                   {item.kind === "customer" ? <Users className="size-4" /> : <UserPlus className="size-4" />}
                 </div>
-                <Link to={href} className="min-w-0 flex-1 hover:opacity-80">
-                  <div className="font-medium text-sm truncate">{item.name}</div>
-                  {item.company && <div className="text-[11px] text-muted-foreground truncate">{item.company}</div>}
-                  {item.follow_up_note && (
-                    <div className="text-xs mt-1 line-clamp-1">{item.follow_up_note}</div>
-                  )}
-                  <div className={cn(
-                    "text-[10px] mt-1 font-medium",
-                    isOverdue ? "text-red-600" : "text-amber-600",
-                  )}>
-                    {isOverdue ? "באיחור: " : ""}{date.toLocaleDateString("he-IL")} {date.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}
-                  </div>
-                </Link>
+                {item.kind === "customer" ? (
+                  <Link to="/customers/$id" params={{ id: item.id }} className="min-w-0 flex-1 hover:opacity-80">
+                    <FollowUpBody item={item} date={date} isOverdue={isOverdue} />
+                  </Link>
+                ) : (
+                  <Link to="/leads/$id" params={{ id: item.id }} className="min-w-0 flex-1 hover:opacity-80">
+                    <FollowUpBody item={item} date={date} isOverdue={isOverdue} />
+                  </Link>
+                )}
               </li>
             );
           })}
