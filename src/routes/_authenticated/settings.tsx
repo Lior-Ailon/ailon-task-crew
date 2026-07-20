@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UsersManager } from "@/components/UsersManager";
 import { TeamsConnectCard } from "@/components/TeamsConnectCard";
-import { ShieldCheck, Settings as SettingsIcon, Plug } from "lucide-react";
+import { MonthlyTargetEditor } from "@/components/MonthlyTarget";
+import { ShieldCheck, Settings as SettingsIcon, Plug, Target } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   ssr: false,
