@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UsersManager } from "@/components/UsersManager";
 import { TeamsConnectCard } from "@/components/TeamsConnectCard";
-import { ShieldCheck, Settings as SettingsIcon, Plug } from "lucide-react";
+import { MonthlyTargetEditor } from "@/components/MonthlyTarget";
+import { ShieldCheck, Settings as SettingsIcon, Plug, Target } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   ssr: false,
@@ -27,12 +28,18 @@ function SettingsPage() {
           <TabsTrigger value="integrations" className="gap-2">
             <Plug className="size-4" /> אינטגרציות
           </TabsTrigger>
+          <TabsTrigger value="goals" className="gap-2">
+            <Target className="size-4" /> יעדים
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="users" className="mt-6">
           <UsersManager />
         </TabsContent>
         <TabsContent value="integrations" className="mt-6 space-y-4">
           <TeamsConnectCard />
+        </TabsContent>
+        <TabsContent value="goals" className="mt-6 space-y-4">
+          <MonthlyTargetEditor />
         </TabsContent>
       </Tabs>
     </div>

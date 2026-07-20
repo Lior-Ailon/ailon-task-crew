@@ -1,12 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { BarChart3, TrendingUp, Target, Trophy, Percent, Wallet } from "lucide-react";
+import { BarChart3, TrendingUp, Target, Trophy, Percent, Wallet, XCircle } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
   LineChart, Line, CartesianGrid, Legend,
 } from "recharts";
 import { useMemo } from "react";
+import { MonthlyTargetCard } from "@/components/MonthlyTarget";
+import { LOST_REASON_LABEL } from "@/lib/lead-utils";
 
 export const Route = createFileRoute("/_authenticated/analytics")({
   component: AnalyticsPage,
@@ -22,7 +24,7 @@ const leadStatusColors: Record<string, string> = {
 function AnalyticsPage() {
   const leads = useQuery({
     queryKey: ["analytics-leads"],
-    queryFn: async () => (await supabase.from("leads").select("id, status, estimated_value, created_at")).data ?? [],
+    queryFn: async () => (await supabase.from("leads").select("id, status, estimated_value, created_at, converted_at, lost_reason")).data ?? [],
   });
   const customers = useQuery({
     queryKey: ["analytics-customers"],
@@ -132,6 +134,8 @@ function AnalyticsPage() {
         <KPI icon={BarChart3} label="רווח נטו" value={`₪${kpis.netProfit.toLocaleString()}`} color={kpis.netProfit >= 0 ? "from-emerald-500 to-teal-500" : "from-red-500 to-rose-600"} />
       </section>
 
+      <MonthlyTargetCard />
+
       {/* Sales Funnel */}
       <section className="glass-strong rounded-3xl p-5">
         <div className="flex items-center gap-2 mb-4">
@@ -154,6 +158,7 @@ function AnalyticsPage() {
             </BarChart>
           </ResponsiveContainer>
         </div>
+        <FunnelStageDetails leads={leads.data ?? []} funnelData={funnelData} />
       </section>
 
       <div className="grid lg:grid-cols-2 gap-4">
@@ -238,6 +243,50 @@ function KPI({ icon: Icon, label, value, sub, color }: any) {
       <div className="text-2xl font-bold">{value}</div>
       <div className="text-xs text-muted-foreground mt-1">{label}</div>
       {sub && <div className="text-[10px] text-muted-foreground/70 mt-0.5">{sub}</div>}
+    </div>
+  );
+}
+
+function FunnelStageDetails({ leads, funnelData }: { leads: any[]; funnelData: any[] }) {
+  const total = funnelData.reduce((s, f) => s + f.value, 0);
+  const converted = leads.filter((l) => l.status === "converted" && l.converted_at);
+  const avgDays = converted.length
+    ? Math.round(
+        converted.reduce((s, l) => s + (new Date(l.converted_at).getTime() - new Date(l.created_at).getTime()) / (1000 * 60 * 60 * 24), 0) /
+          converted.length,
+      )
+    : 0;
+  const lostByReason: Record<string, number> = {};
+  leads.filter((l) => l.status === "lost" && l.lost_reason).forEach((l) => {
+    lostByReason[l.lost_reason] = (lostByReason[l.lost_reason] ?? 0) + 1;
+  });
+  return (
+    <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+      {funnelData.map((f) => (
+        <div key={f.name} className="glass rounded-2xl p-3 border border-border/40">
+          <div className="font-medium">{f.name}</div>
+          <div className="text-muted-foreground mt-1">
+            {f.value} לידים · {total > 0 ? Math.round((f.value / total) * 100) : 0}%
+          </div>
+          <div className="text-muted-foreground">₪{f.total.toLocaleString()}</div>
+        </div>
+      ))}
+      <div className="glass rounded-2xl p-3 border border-border/40">
+        <div className="font-medium">זמן ממוצע להמרה</div>
+        <div className="text-muted-foreground mt-1">{avgDays} ימים</div>
+      </div>
+      {Object.keys(lostByReason).length > 0 && (
+        <div className="glass rounded-2xl p-3 border border-border/40 sm:col-span-2">
+          <div className="font-medium flex items-center gap-1"><XCircle className="size-3" /> סיבות אובדן</div>
+          <div className="mt-1 flex flex-wrap gap-1">
+            {Object.entries(lostByReason).map(([k, v]) => (
+              <span key={k} className="px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200">
+                {LOST_REASON_LABEL[k] ?? k}: {v}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
