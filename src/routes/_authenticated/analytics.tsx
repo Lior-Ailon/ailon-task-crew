@@ -1,12 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { BarChart3, TrendingUp, Target, Trophy, Percent, Wallet } from "lucide-react";
+import { BarChart3, TrendingUp, Target, Trophy, Percent, Wallet, XCircle } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
   LineChart, Line, CartesianGrid, Legend,
 } from "recharts";
 import { useMemo } from "react";
+import { MonthlyTargetCard } from "@/components/MonthlyTarget";
+import { LOST_REASON_LABEL } from "@/lib/lead-utils";
 
 export const Route = createFileRoute("/_authenticated/analytics")({
   component: AnalyticsPage,
