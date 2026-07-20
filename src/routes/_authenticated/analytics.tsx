@@ -134,6 +134,8 @@ function AnalyticsPage() {
         <KPI icon={BarChart3} label="רווח נטו" value={`₪${kpis.netProfit.toLocaleString()}`} color={kpis.netProfit >= 0 ? "from-emerald-500 to-teal-500" : "from-red-500 to-rose-600"} />
       </section>
 
+      <MonthlyTargetCard />
+
       {/* Sales Funnel */}
       <section className="glass-strong rounded-3xl p-5">
         <div className="flex items-center gap-2 mb-4">
@@ -156,6 +158,7 @@ function AnalyticsPage() {
             </BarChart>
           </ResponsiveContainer>
         </div>
+        <FunnelStageDetails leads={leads.data ?? []} funnelData={funnelData} />
       </section>
 
       <div className="grid lg:grid-cols-2 gap-4">
