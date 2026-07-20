@@ -47,6 +47,24 @@ export type Database = {
         }
         Relationships: []
       }
+      app_settings: {
+        Row: {
+          id: string
+          monthly_sales_target: number | null
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          monthly_sales_target?: number | null
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          monthly_sales_target?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       app_user_connections: {
         Row: {
           connection_key_ciphertext: string
@@ -80,12 +98,15 @@ export type Database = {
           company: string | null
           created_at: string
           email: string | null
+          estimated_value: number | null
           follow_up_note: string | null
           id: string
+          lead_id: string | null
           name: string
           next_follow_up_at: string | null
           notes: string | null
           phone: string | null
+          source: string | null
           tax_id: string | null
           updated_at: string
           user_id: string
@@ -95,12 +116,15 @@ export type Database = {
           company?: string | null
           created_at?: string
           email?: string | null
+          estimated_value?: number | null
           follow_up_note?: string | null
           id?: string
+          lead_id?: string | null
           name: string
           next_follow_up_at?: string | null
           notes?: string | null
           phone?: string | null
+          source?: string | null
           tax_id?: string | null
           updated_at?: string
           user_id: string
@@ -110,17 +134,28 @@ export type Database = {
           company?: string | null
           created_at?: string
           email?: string | null
+          estimated_value?: number | null
           follow_up_note?: string | null
           id?: string
+          lead_id?: string | null
           name?: string
           next_follow_up_at?: string | null
           notes?: string | null
           phone?: string | null
+          source?: string | null
           tax_id?: string | null
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "customers_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_send_log: {
         Row: {
@@ -344,12 +379,17 @@ export type Database = {
       }
       leads: {
         Row: {
+          assigned_to: string | null
           company: string | null
+          converted_at: string | null
           created_at: string
+          customer_id: string | null
           email: string | null
           estimated_value: number | null
           follow_up_note: string | null
           id: string
+          lost_reason: string | null
+          lost_reason_note: string | null
           name: string
           next_follow_up_at: string | null
           notes: string | null
@@ -360,12 +400,17 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          assigned_to?: string | null
           company?: string | null
+          converted_at?: string | null
           created_at?: string
+          customer_id?: string | null
           email?: string | null
           estimated_value?: number | null
           follow_up_note?: string | null
           id?: string
+          lost_reason?: string | null
+          lost_reason_note?: string | null
           name: string
           next_follow_up_at?: string | null
           notes?: string | null
@@ -376,12 +421,17 @@ export type Database = {
           user_id: string
         }
         Update: {
+          assigned_to?: string | null
           company?: string | null
+          converted_at?: string | null
           created_at?: string
+          customer_id?: string | null
           email?: string | null
           estimated_value?: number | null
           follow_up_note?: string | null
           id?: string
+          lost_reason?: string | null
+          lost_reason_note?: string | null
           name?: string
           next_follow_up_at?: string | null
           notes?: string | null
@@ -391,7 +441,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "leads_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       meeting_participants: {
         Row: {
