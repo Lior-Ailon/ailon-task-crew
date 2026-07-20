@@ -55,7 +55,7 @@ function LeadDetailPage() {
 
   const l = lead.data;
   const followUpDays = daysUntil(l?.next_follow_up_at);
-  const meta = statusMeta[l?.status] ?? { label: l?.status ?? "—", tone: "default" };
+  const meta = statusMeta[l?.status ?? ""] ?? { label: l?.status ?? "—", tone: "default" };
 
   if (lead.isLoading) return <div className="text-center py-12 text-muted-foreground">טוען...</div>;
   if (!l) {
