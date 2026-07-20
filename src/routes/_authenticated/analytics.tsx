@@ -24,7 +24,7 @@ const leadStatusColors: Record<string, string> = {
 function AnalyticsPage() {
   const leads = useQuery({
     queryKey: ["analytics-leads"],
-    queryFn: async () => (await supabase.from("leads").select("id, status, estimated_value, created_at")).data ?? [],
+    queryFn: async () => (await supabase.from("leads").select("id, status, estimated_value, created_at, converted_at, lost_reason")).data ?? [],
   });
   const customers = useQuery({
     queryKey: ["analytics-customers"],
