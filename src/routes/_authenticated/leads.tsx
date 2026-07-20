@@ -110,12 +110,12 @@ function LeadsPage() {
     }
   }
 
-  async function applyLostReason(reason: string, note: string) {
+  async function applyLostReason(reason: string, note: string): Promise<void> {
     if (!lostTarget) return;
     const { error } = await supabase.from("leads").update({
       lost_reason: reason, lost_reason_note: note || null,
     } as any).eq("id", lostTarget.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("סיבת האובדן נשמרה");
     qc.invalidateQueries({ queryKey: ["leads"] });
     setLostTarget(null);
