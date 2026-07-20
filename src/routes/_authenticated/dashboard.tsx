@@ -171,6 +171,7 @@ function DashboardPage() {
         ))}
       </section>
 
+      <MonthlyTargetCard compact />
       <FollowUpsSection />
 
       <div className="grid lg:grid-cols-2 gap-4">
