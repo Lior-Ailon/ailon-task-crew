@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { StatusPill } from "@/components/CrudPage";
 import { ActivityTimeline } from "@/components/ActivityTimeline";
+import { QuickContactActions } from "@/components/QuickContactActions";
 
 function daysUntil(iso?: string | null) {
   if (!iso) return null;
