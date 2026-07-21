@@ -9,6 +9,7 @@ import {
   deleteSystemUser,
   setUserPassword,
 } from "@/lib/users.functions";
+import { confirmDialog } from "@/components/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -245,8 +246,9 @@ export function UsersManager() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => {
-                            if (confirm(`למחוק את ${u.email}?`)) deleteMut.mutate(u.id);
+                          onClick={async () => {
+                            const ok = await confirmDialog({ title: "מחיקת משתמש", description: `למחוק את ${u.email}?`, confirmText: "מחק", destructive: true });
+                            if (ok) deleteMut.mutate(u.id);
                           }}
                         >
                           <Trash2 className="size-4 text-destructive" />

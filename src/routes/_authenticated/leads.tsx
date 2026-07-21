@@ -21,9 +21,9 @@ import { Label } from "@/components/ui/label";
 const statusOptions = [
   { value: "new", label: "חדש" },
   { value: "contacted", label: "יצרנו קשר" },
-  { value: "qualified", label: "מוכשר" },
-  { value: "converted", label: "המיר" },
-  { value: "lost", label: "אבוד" },
+  { value: "qualified", label: "רלוונטי" },
+  { value: "converted", label: "הפך ללקוח" },
+  { value: "lost", label: "לא רלוונטי" },
 ];
 const statusTone: Record<string, any> = {
   new: "blue", contacted: "purple", qualified: "cyan", converted: "emerald", lost: "red",
@@ -269,7 +269,7 @@ function LeadsPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>המרת ליד ללקוח</AlertDialogTitle>
             <AlertDialogDescription>
-              האם להמיר את "{convertTarget?.name}" ללקוח? הליד יישמר במערכת עם סטטוס "המיר" ויקושר לרשומת הלקוח שנוצרת.
+              האם להמיר את "{convertTarget?.name}" ללקוח? הליד יישמר במערכת עם סטטוס "הפך ללקוח" ויקושר לרשומת הלקוח שנוצרת.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock, Lightbulb, FileText, CalendarDays, MapPin, Plus, Package, ExternalLink, Bell, LayoutGrid } from "lucide-react";
+import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock, Lightbulb, FileText, CalendarDays, MapPin, Plus, Package, ExternalLink, Bell, LayoutGrid, ChevronRight, ChevronLeft } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -16,6 +16,7 @@ import logoAsset from "@/assets/ailon-logo.png.asset.json";
 import introVideo from "@/assets/ailon-intro.mp4.asset.json";
 import officeAsset from "@/assets/ailon-office.jpg.asset.json";
 import { getAppIcon } from "@/lib/shelf-product-icons";
+import { LEAD_STATUS_LABEL, LEAD_STATUS_TONE, TASK_STATUS_LABEL, TASK_STATUS_TONE, STATUS_TONE_CLASS, SOFT_OVERDUE } from "@/lib/status-colors";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
@@ -128,7 +129,7 @@ function DashboardPage() {
         <footer className="mt-2 text-sm text-muted-foreground">— פיטר דרוקר</footer>
       </blockquote>
 
-      {/* Hero banner with intro video + office backdrop */}
+      {/* Hero banner with intro video + office backdrop (shrunk; video desktop-only) */}
       <header className="relative overflow-hidden rounded-3xl glass-strong">
         <img
           src={officeAsset.url}
@@ -141,20 +142,24 @@ function DashboardPage() {
           muted
           loop
           playsInline
-          className="absolute inset-0 size-full object-cover opacity-40 mix-blend-luminosity"
+          preload="none"
+          className="absolute inset-0 size-full object-cover opacity-40 mix-blend-luminosity hidden md:block"
         />
         <div className="absolute inset-0 bg-gradient-to-l from-primary/90 via-primary/60 to-primary/20" />
-        <div className="relative z-10 p-6 sm:p-10 flex items-center gap-5 text-white">
-          <img src={logoAsset.url} alt="" className="size-16 sm:size-20 object-contain drop-shadow-lg shrink-0" />
+        <div className="relative z-10 p-4 sm:p-6 flex items-center gap-4 text-white">
+          <img src={logoAsset.url} alt="" className="size-12 sm:size-14 object-contain drop-shadow-lg shrink-0" />
           <div className="min-w-0">
-            <div className="text-[11px] tracking-[0.3em] opacity-80">AILON TASK · CRM</div>
-            <h1 className="text-2xl sm:text-4xl font-extrabold mt-1 leading-tight">
+            <div className="text-xs tracking-[0.3em] opacity-80">AILON TASK · CRM</div>
+            <h1 className="text-xl sm:text-2xl font-extrabold mt-0.5 leading-tight">
               Dream it. Plan it. <span className="text-accent">Achieve it.</span>
             </h1>
-            <p className="opacity-85 text-xs sm:text-sm mt-2">סקירה כללית של המערכת שלך</p>
           </div>
         </div>
       </header>
+
+      {/* Follow-ups first: most time-critical */}
+      <MonthlyTargetCard compact />
+      <FollowUpsSection />
 
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {stats.map((s) => (
@@ -172,8 +177,6 @@ function DashboardPage() {
         ))}
       </section>
 
-      <MonthlyTargetCard compact />
-      <FollowUpsSection />
 
       <div className="grid lg:grid-cols-2 gap-4">
         <section className="glass-strong rounded-3xl p-5">
@@ -312,7 +315,7 @@ function FollowUpsSection() {
         <h2 className="font-semibold">מעקבים דחופים</h2>
         <span className="text-xs text-muted-foreground">7 הימים הקרובים</span>
         {overdue.length > 0 && (
-          <span className="mr-auto text-[11px] font-bold bg-red-100 text-red-700 border border-red-200 px-2 py-0.5 rounded-full">
+          <span className={cn("mr-auto text-xs font-bold px-2 py-0.5 rounded-full", SOFT_OVERDUE)}>
             {overdue.length} באיחור
           </span>
         )}
@@ -364,7 +367,7 @@ function FollowUpBody({ item, date, isOverdue }: { item: any; date: Date; isOver
       <div className="font-medium text-sm truncate">{item.name}</div>
       {item.company && <div className="text-[11px] text-muted-foreground truncate">{item.company}</div>}
       {item.follow_up_note && <div className="text-xs mt-1 line-clamp-1">{item.follow_up_note}</div>}
-      <div className={cn("text-[10px] mt-1 font-medium", isOverdue ? "text-red-600" : "text-amber-600")}>
+      <div className={cn("text-xs mt-1 font-medium", isOverdue ? "text-red-600" : "text-amber-600")}>
         {isOverdue ? "באיחור: " : ""}{date.toLocaleDateString("he-IL")} {date.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}
       </div>
     </>
@@ -434,9 +437,13 @@ function MeetingsCalendarSection() {
       <div className="grid lg:grid-cols-[1fr_280px] gap-4">
         <div>
           <div className="flex items-center justify-between mb-3">
-            <Button variant="ghost" size="sm" onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))}>›</Button>
+            <Button variant="ghost" size="icon" aria-label="חודש קודם" onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))}>
+              <ChevronRight className="size-4" />
+            </Button>
             <h3 className="font-medium text-sm">{monthLabel}</h3>
-            <Button variant="ghost" size="sm" onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}>‹</Button>
+            <Button variant="ghost" size="icon" aria-label="חודש הבא" onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}>
+              <ChevronLeft className="size-4" />
+            </Button>
           </div>
           <div className="grid grid-cols-7 gap-1 text-center text-[10px] text-muted-foreground mb-1">
             {weekdayLabels.map((d) => <div key={d} className="py-1 font-medium">{d}</div>)}
@@ -609,16 +616,7 @@ function ShelfProductsSection() {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, { label: string; cls: string }> = {
-    new: { label: "חדש", cls: "bg-sky-100 text-sky-700 border border-sky-200" },
-    contacted: { label: "יצרנו קשר", cls: "bg-violet-100 text-violet-700 border border-violet-200" },
-    qualified: { label: "מוכשר", cls: "bg-cyan-100 text-cyan-700 border border-cyan-200" },
-    converted: { label: "המיר", cls: "bg-emerald-100 text-emerald-700 border border-emerald-200" },
-    lost: { label: "אבוד", cls: "bg-red-100 text-red-700 border border-red-200" },
-    todo: { label: "לביצוע", cls: "bg-slate-100 text-slate-700 border border-slate-200" },
-    in_progress: { label: "בתהליך", cls: "bg-amber-100 text-amber-700 border border-amber-200" },
-    done: { label: "הושלם", cls: "bg-emerald-100 text-emerald-700 border border-emerald-200" },
-  };
-  const info = map[status] ?? { label: status, cls: "bg-muted text-muted-foreground border border-border" };
-  return <span className={`text-[10px] font-medium px-2 py-1 rounded-full ${info.cls}`}>{info.label}</span>;
+  const label = LEAD_STATUS_LABEL[status] ?? TASK_STATUS_LABEL[status] ?? status;
+  const tone = LEAD_STATUS_TONE[status] ?? TASK_STATUS_TONE[status] ?? "default";
+  return <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_TONE_CLASS[tone]}`}>{label}</span>;
 }

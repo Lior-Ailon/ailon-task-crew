@@ -19,6 +19,8 @@ import { UserTagsInput } from "@/components/UserTagsInput";
 import { toast } from "sonner";
 import { sendEntityNotification, labelForTable } from "@/lib/email/send-entity-notification";
 import { logActivity, diffFields, entityTypeFromTable } from "@/lib/activity";
+import { STATUS_TONE_CLASS, type StatusTone } from "@/lib/status-colors";
+import { confirmDialog } from "@/components/confirm-dialog";
 
 export type FieldDef =
   | { name: string; label: string; type: "text" | "email" | "tel" | "number" | "date" | "datetime-local" | "textarea"; required?: boolean }
@@ -162,7 +164,8 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("האם למחוק?")) return;
+    const ok = await confirmDialog({ title: "מחיקה", description: "האם למחוק את הרשומה?", confirmText: "מחק", destructive: true });
+    if (!ok) return;
     const target = items.find((it: any) => it.id === id);
     const { error } = await supabase.from(table).delete().eq("id", id);
     if (error) return toast.error(error.message);
@@ -313,18 +316,8 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
   );
 }
 
-export function StatusPill({ label, tone = "default" }: { label: string; tone?: "default" | "blue" | "purple" | "cyan" | "emerald" | "red" | "amber" | "slate" }) {
-  const tones = {
-    default: "bg-muted text-muted-foreground border border-border",
-    blue: "bg-sky-100 text-sky-700 border border-sky-200",
-    purple: "bg-violet-100 text-violet-700 border border-violet-200",
-    cyan: "bg-cyan-100 text-cyan-700 border border-cyan-200",
-    emerald: "bg-emerald-100 text-emerald-700 border border-emerald-200",
-    red: "bg-red-100 text-red-700 border border-red-200",
-    amber: "bg-amber-100 text-amber-700 border border-amber-200",
-    slate: "bg-slate-100 text-slate-700 border border-slate-200",
-  };
-  return <span className={`text-[10px] font-medium px-2 py-1 rounded-full ${tones[tone]}`}>{label}</span>;
+export function StatusPill({ label, tone = "default" }: { label: string; tone?: StatusTone }) {
+  return <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_TONE_CLASS[tone]}`}>{label}</span>;
 }
 
 function LookupSelect({ name, table, labelField, defaultValue }: { name: string; table: "customers" | "projects" | "profiles" | "leads"; labelField: string; defaultValue?: string }) {

@@ -26,7 +26,7 @@ const navItems = [
   { to: "/ideas", label: "רעיונות", icon: Lightbulb },
 ] as const;
 
-export function GlobalSearch() {
+export function GlobalSearch({ compact = false }: { compact?: boolean } = {}) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const navigate = useNavigate();
@@ -70,15 +70,25 @@ export function GlobalSearch() {
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className="flex items-center gap-2 px-3 h-9 rounded-lg glass border border-border/40 text-sm text-muted-foreground hover:text-foreground hover:border-accent/40 transition-colors w-full max-w-xs"
-        aria-label="חיפוש"
-      >
-        <Search className="size-4" />
-        <span className="flex-1 text-right">חיפוש...</span>
-        <kbd className="hidden sm:inline-flex text-[10px] px-1.5 py-0.5 rounded bg-muted/60 border border-border/40 font-mono">⌘K</kbd>
-      </button>
+      {compact ? (
+        <button
+          onClick={() => setOpen(true)}
+          className="size-9 rounded-lg glass flex items-center justify-center"
+          aria-label="חיפוש"
+        >
+          <Search className="size-5" />
+        </button>
+      ) : (
+        <button
+          onClick={() => setOpen(true)}
+          className="flex items-center gap-2 px-3 h-9 rounded-lg glass border border-border/40 text-sm text-muted-foreground hover:text-foreground hover:border-accent/40 transition-colors w-full max-w-xs"
+          aria-label="חיפוש"
+        >
+          <Search className="size-4" />
+          <span className="flex-1 text-right">חיפוש...</span>
+          <kbd className="hidden sm:inline-flex text-xs px-1.5 py-0.5 rounded bg-muted/60 border border-border/40 font-mono">⌘K</kbd>
+        </button>
+      )}
 
       <CommandDialog open={open} onOpenChange={setOpen}>
         <Command shouldFilter={false}>
