@@ -164,7 +164,8 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("האם למחוק?")) return;
+    const ok = await confirmDialog({ title: "מחיקה", description: "האם למחוק את הרשומה?", confirmText: "מחק", destructive: true });
+    if (!ok) return;
     const target = items.find((it: any) => it.id === id);
     const { error } = await supabase.from(table).delete().eq("id", id);
     if (error) return toast.error(error.message);
@@ -315,8 +316,7 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
   );
 }
 
-export function StatusPill({ label, tone = "default" }: { label: string; tone?: import("@/lib/status-colors").StatusTone }) {
-  const { STATUS_TONE_CLASS } = require("@/lib/status-colors") as typeof import("@/lib/status-colors");
+export function StatusPill({ label, tone = "default" }: { label: string; tone?: StatusTone }) {
   return <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_TONE_CLASS[tone]}`}>{label}</span>;
 }
 
