@@ -19,6 +19,8 @@ import { UserTagsInput } from "@/components/UserTagsInput";
 import { toast } from "sonner";
 import { sendEntityNotification, labelForTable } from "@/lib/email/send-entity-notification";
 import { logActivity, diffFields, entityTypeFromTable } from "@/lib/activity";
+import { STATUS_TONE_CLASS, type StatusTone } from "@/lib/status-colors";
+import { confirmDialog } from "@/components/confirm-dialog";
 
 export type FieldDef =
   | { name: string; label: string; type: "text" | "email" | "tel" | "number" | "date" | "datetime-local" | "textarea"; required?: boolean }
