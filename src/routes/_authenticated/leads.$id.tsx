@@ -14,9 +14,9 @@ import { LOST_REASON_LABEL } from "@/lib/lead-utils";
 const statusMeta: Record<string, { label: string; tone: any }> = {
   new: { label: "חדש", tone: "blue" },
   contacted: { label: "יצרנו קשר", tone: "purple" },
-  qualified: { label: "מוכשר", tone: "cyan" },
-  converted: { label: "המיר", tone: "emerald" },
-  lost: { label: "אבוד", tone: "red" },
+  qualified: { label: "רלוונטי", tone: "cyan" },
+  converted: { label: "הפך ללקוח", tone: "emerald" },
+  lost: { label: "לא רלוונטי", tone: "red" },
 };
 
 function daysUntil(iso?: string | null) {

@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/analytics")({
 });
 
 const leadStatusLabels: Record<string, string> = {
-  new: "חדש", contacted: "יצרנו קשר", qualified: "מוכשר", converted: "המיר", lost: "אבוד",
+  new: "חדש", contacted: "יצרנו קשר", qualified: "רלוונטי", converted: "הפך ללקוח", lost: "לא רלוונטי",
 };
 const leadStatusColors: Record<string, string> = {
   new: "#38bdf8", contacted: "#a78bfa", qualified: "#22d3ee", converted: "#10b981", lost: "#ef4444",

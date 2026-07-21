@@ -23,7 +23,7 @@ export function LostReasonDialog({ open, onOpenChange, leadName, onConfirm, onCa
     <Dialog open={open} onOpenChange={(o) => { if (!o) onCancel?.(); onOpenChange(o); }}>
       <DialogContent className="glass-strong">
         <DialogHeader>
-          <DialogTitle>סימון ליד כאבוד{leadName ? ` — ${leadName}` : ""}</DialogTitle>
+          <DialogTitle>סימון ליד כלא רלוונטי{leadName ? ` — ${leadName}` : ""}</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
           <div className="space-y-1.5">
