@@ -313,18 +313,9 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
   );
 }
 
-export function StatusPill({ label, tone = "default" }: { label: string; tone?: "default" | "blue" | "purple" | "cyan" | "emerald" | "red" | "amber" | "slate" }) {
-  const tones = {
-    default: "bg-muted text-muted-foreground border border-border",
-    blue: "bg-sky-100 text-sky-700 border border-sky-200",
-    purple: "bg-violet-100 text-violet-700 border border-violet-200",
-    cyan: "bg-cyan-100 text-cyan-700 border border-cyan-200",
-    emerald: "bg-emerald-100 text-emerald-700 border border-emerald-200",
-    red: "bg-red-100 text-red-700 border border-red-200",
-    amber: "bg-amber-100 text-amber-700 border border-amber-200",
-    slate: "bg-slate-100 text-slate-700 border border-slate-200",
-  };
-  return <span className={`text-[10px] font-medium px-2 py-1 rounded-full ${tones[tone]}`}>{label}</span>;
+export function StatusPill({ label, tone = "default" }: { label: string; tone?: import("@/lib/status-colors").StatusTone }) {
+  const { STATUS_TONE_CLASS } = require("@/lib/status-colors") as typeof import("@/lib/status-colors");
+  return <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_TONE_CLASS[tone]}`}>{label}</span>;
 }
 
 function LookupSelect({ name, table, labelField, defaultValue }: { name: string; table: "customers" | "projects" | "profiles" | "leads"; labelField: string; defaultValue?: string }) {
