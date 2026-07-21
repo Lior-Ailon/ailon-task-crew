@@ -5,6 +5,7 @@ import { CrudPage, StatusPill, type FieldDef } from "@/components/CrudPage";
 import { Lightbulb, Tag, UserPlus, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { confirmDialog } from "@/components/confirm-dialog";
 
 const statusOptions = [
   { value: "new", label: "חדש" },
@@ -45,7 +46,8 @@ function IdeasPage() {
   const leadMap = new Map(leads.map((l: any) => [l.id, l.name]));
 
   async function convertToProject(item: any) {
-    if (!confirm(`להפוך את הרעיון "${item.title}" לפרויקט חדש?`)) return;
+    const ok = await confirmDialog({ title: "המרת רעיון לפרויקט", description: `להפוך את הרעיון "${item.title}" לפרויקט חדש?`, confirmText: "המר" });
+    if (!ok) return;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return toast.error("לא מחובר");
     const { error: pErr } = await supabase.from("projects").insert({

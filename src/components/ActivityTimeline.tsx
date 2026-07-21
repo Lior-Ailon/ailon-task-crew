@@ -61,7 +61,7 @@ export function ActivityTimeline({ entityType, entityId, limit = 20 }: Props) {
                 <div className="glass rounded-2xl p-3 border border-border/40">
                   <div className="flex items-center justify-between gap-2">
                     <div className="font-medium text-sm">{meta.label}</div>
-                    <time className="text-[10px] text-muted-foreground shrink-0">
+                    <time className="text-xs text-muted-foreground shrink-0">
                       {new Date(a.created_at).toLocaleString("he-IL", {
                         day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
                       })}
@@ -71,7 +71,7 @@ export function ActivityTimeline({ entityType, entityId, limit = 20 }: Props) {
                   {a.metadata && typeof a.metadata === "object" && Object.keys(a.metadata).length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-1">
                       {Object.entries(a.metadata).map(([k, v]) => (
-                        <span key={k} className="text-[10px] px-2 py-0.5 rounded-full bg-muted/40 border border-border/40">
+                        <span key={k} className="text-xs px-2 py-0.5 rounded-full bg-muted/40 border border-border/40">
                           <span className="text-muted-foreground">{k}:</span> {String(v)}
                         </span>
                       ))}

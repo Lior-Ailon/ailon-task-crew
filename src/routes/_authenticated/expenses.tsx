@@ -127,7 +127,9 @@ function ExpensesPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("האם למחוק?")) return;
+    const { confirmDialog } = await import("@/components/confirm-dialog");
+    const ok = await confirmDialog({ title: "מחיקה", description: "האם למחוק את ההוצאה?", confirmText: "מחק", destructive: true });
+    if (!ok) return;
     const target = (items as any[]).find((i) => i.id === id);
     const { error } = await expensesTable().delete().eq("id", id);
     if (error) return toast.error(error.message);
