@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Building2, LayoutGrid, List, Filter, XCircle, UserCircle2 } from "lucide-react";
+import { Building2, LayoutGrid, List, Filter, XCircle, UserCircle2, MoreVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -11,15 +11,16 @@ import { Label } from "@/components/ui/label";
 import { QuickContactActions } from "@/components/QuickContactActions";
 import { LostReasonDialog } from "@/components/LostReasonDialog";
 import { LOST_REASON_LABEL } from "@/lib/lead-utils";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 
 type LeadStatus = "new" | "contacted" | "qualified" | "converted" | "lost";
 
 const columns: { key: LeadStatus; label: string; gradient: string; ring: string }[] = [
   { key: "new", label: "חדש", gradient: "from-sky-500/20 to-sky-500/5", ring: "ring-sky-400/40" },
   { key: "contacted", label: "יצרנו קשר", gradient: "from-violet-500/20 to-violet-500/5", ring: "ring-violet-400/40" },
-  { key: "qualified", label: "מוכשר", gradient: "from-cyan-500/20 to-cyan-500/5", ring: "ring-cyan-400/40" },
-  { key: "converted", label: "המיר", gradient: "from-emerald-500/20 to-emerald-500/5", ring: "ring-emerald-400/40" },
-  { key: "lost", label: "אבוד", gradient: "from-red-500/20 to-red-500/5", ring: "ring-red-400/40" },
+  { key: "qualified", label: "רלוונטי", gradient: "from-cyan-500/20 to-cyan-500/5", ring: "ring-cyan-400/40" },
+  { key: "converted", label: "הפך ללקוח", gradient: "from-emerald-500/20 to-emerald-500/5", ring: "ring-emerald-400/40" },
+  { key: "lost", label: "לא רלוונטי", gradient: "from-red-500/20 to-red-500/5", ring: "ring-red-400/40" },
 ];
 
 function LeadsBoardPage() {
