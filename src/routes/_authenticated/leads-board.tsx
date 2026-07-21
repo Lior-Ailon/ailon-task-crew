@@ -129,7 +129,7 @@ function LeadsBoardPage() {
                 <div className="flex items-center justify-between px-2 pb-3 border-b border-border/40 mb-3">
                   <div>
                     <h2 className="font-semibold text-sm">{col.label}</h2>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       {items.length} לידים {value > 0 && `· ₪${value.toLocaleString()}`}
                     </p>
                   </div>
@@ -138,7 +138,7 @@ function LeadsBoardPage() {
 
                 <div className="space-y-2 flex-1 overflow-y-auto max-h-[70vh] pr-1">
                   {items.length === 0 ? (
-                    <div className="text-center text-[11px] text-muted-foreground py-8 opacity-60">גרור לכאן</div>
+                    <div className="text-center text-xs text-muted-foreground py-8 opacity-60">גרור או השתמש בתפריט</div>
                   ) : (
                     items.map((lead: any) => {
                       const assignee = lead.assigned_to ? profileById[lead.assigned_to] : null;
@@ -151,20 +151,41 @@ function LeadsBoardPage() {
                             e.dataTransfer.effectAllowed = "move";
                           }}
                           onClick={() => navigate({ to: "/leads/$id", params: { id: lead.id } })}
-                          className="glass rounded-2xl p-3 cursor-pointer active:cursor-grabbing hover:border-accent/50 transition-colors border border-border/40"
+                          className="glass rounded-2xl p-3 cursor-pointer active:cursor-grabbing hover:border-accent/50 transition-colors border border-border/40 relative"
                         >
-                          <div className="font-medium text-sm truncate">{lead.name}</div>
+                          <div onClick={(e) => e.stopPropagation()} className="absolute top-2 left-2">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <button
+                                  className="size-7 rounded-lg hover:bg-muted/60 flex items-center justify-center text-muted-foreground"
+                                  aria-label="העבר לסטטוס"
+                                >
+                                  <MoreVertical className="size-4" />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="start">
+                                <DropdownMenuLabel>העבר לסטטוס</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                {columns.filter((c) => c.key !== lead.status).map((c) => (
+                                  <DropdownMenuItem key={c.key} onSelect={() => moveLead(lead.id, c.key)}>
+                                    {c.label}
+                                  </DropdownMenuItem>
+                                ))}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                          <div className="font-medium text-sm truncate pl-8">{lead.name}</div>
                           {lead.company && (
-                            <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5 truncate">
+                            <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5 truncate">
                               <Building2 className="size-3 shrink-0" />
                               <span className="truncate">{lead.company}</span>
                             </div>
                           )}
-                          <div className="mt-2">
+                          <div className="mt-2" onClick={(e) => e.stopPropagation()}>
                             <QuickContactActions email={lead.email} phone={lead.phone} />
                           </div>
                           {assignee && (
-                            <div className="mt-1 text-[10px] text-muted-foreground flex items-center gap-1">
+                            <div className="mt-1 text-xs text-muted-foreground flex items-center gap-1">
                               <UserCircle2 className="size-3" /> {assignee.full_name ?? assignee.email}
                             </div>
                           )}
@@ -175,7 +196,7 @@ function LeadsBoardPage() {
                           )}
                           {lead.next_follow_up_at && (
                             <div className={cn(
-                              "mt-1 text-[10px] rounded-full px-2 py-0.5 inline-block",
+                              "mt-1 text-xs rounded-full px-2 py-0.5 inline-block",
                               new Date(lead.next_follow_up_at) < new Date()
                                 ? "bg-red-100 text-red-700 border border-red-200"
                                 : "bg-amber-100 text-amber-700 border border-amber-200",
@@ -184,7 +205,7 @@ function LeadsBoardPage() {
                             </div>
                           )}
                           {lead.status === "lost" && lead.lost_reason && (
-                            <div className="mt-1 text-[10px] rounded-full px-2 py-0.5 inline-flex items-center gap-1 bg-red-50 text-red-700 border border-red-200">
+                            <div className="mt-1 text-xs rounded-full px-2 py-0.5 inline-flex items-center gap-1 bg-red-50 text-red-700 border border-red-200">
                               <XCircle className="size-3" /> {LOST_REASON_LABEL[lead.lost_reason] ?? lead.lost_reason}
                             </div>
                           )}
@@ -198,6 +219,7 @@ function LeadsBoardPage() {
           })}
         </div>
       )}
+
 
       <LostReasonDialog
         open={!!pendingLost}
