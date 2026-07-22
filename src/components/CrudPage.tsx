@@ -74,7 +74,16 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
     const payload: Record<string, any> = {};
     for (const f of fields) {
       const v = fd.get(f.name);
-      if (f.type === "tags" || f.type === "user-tags") {
+      if (f.type === "duration") {
+        const minutes = Number(v);
+        const startVal = String(fd.get(f.startFieldName) ?? "");
+        if (startVal && Number.isFinite(minutes) && minutes > 0) {
+          const start = new Date(startVal);
+          const end = new Date(start.getTime() + minutes * 60 * 1000);
+          payload[f.endFieldName] = end.toISOString();
+        }
+        // do not store duration itself
+      } else if (f.type === "tags" || f.type === "user-tags") {
         const str = String(v ?? "");
         const arr = str
           .split(/[\n,]/)
