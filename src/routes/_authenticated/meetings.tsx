@@ -22,6 +22,7 @@ const fields: FieldDef[] = [
   { name: "title", label: "נושא הפגישה", type: "text", required: true },
   { name: "description", label: "תיאור / סדר יום", type: "textarea" },
   { name: "start_time", label: "תאריך ושעה", type: "datetime-local", required: true },
+  { name: "duration_minutes", label: "משך הפגישה", type: "duration", startFieldName: "start_time", endFieldName: "end_time", defaultMinutes: 60 },
   { name: "location", label: "מיקום", type: "text" },
   { name: "meeting_url", label: "קישור לפגישה (יווצר אוטומטית ב-Teams אם ריק)", type: "text" },
   { name: "participants", label: "משתתפים", type: "user-tags", placeholder: "חפש משתמש או הקלד אימייל…" },
@@ -201,7 +202,7 @@ export const Route = createFileRoute("/_authenticated/meetings")({
         if (!meetingUrl) {
           try {
             const { joinUrl } = await createTeamsMeetingLink({
-              data: { subject: item.title, startTime: item.start_time },
+              data: { subject: item.title, startTime: item.start_time, endTime: item.end_time ?? undefined },
             });
             meetingUrl = joinUrl;
             await supabase.from("meetings").update({ meeting_url: joinUrl }).eq("id", item.id);

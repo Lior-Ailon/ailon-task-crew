@@ -27,7 +27,8 @@ export type FieldDef =
   | { name: string; label: string; type: "select"; options: { value: string; label: string }[]; required?: boolean }
   | { name: string; label: string; type: "lookup"; lookupTable: "customers" | "projects" | "profiles" | "leads"; labelField: string; required?: boolean }
   | { name: string; label: string; type: "tags"; placeholder?: string; required?: boolean }
-  | { name: string; label: string; type: "user-tags"; placeholder?: string; required?: boolean };
+  | { name: string; label: string; type: "user-tags"; placeholder?: string; required?: boolean }
+  | { name: string; label: string; type: "duration"; startFieldName: string; endFieldName: string; options?: { value: number; label: string }[]; defaultMinutes?: number; required?: boolean };
 
 export type TableName = "leads" | "customers" | "projects" | "tasks" | "meetings" | "ideas" | "subscriptions" | "quotes" | "shelf_products";
 
@@ -73,7 +74,16 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
     const payload: Record<string, any> = {};
     for (const f of fields) {
       const v = fd.get(f.name);
-      if (f.type === "tags" || f.type === "user-tags") {
+      if (f.type === "duration") {
+        const minutes = Number(v);
+        const startVal = String(fd.get(f.startFieldName) ?? "");
+        if (startVal && Number.isFinite(minutes) && minutes > 0) {
+          const start = new Date(startVal);
+          const end = new Date(start.getTime() + minutes * 60 * 1000);
+          payload[f.endFieldName] = end.toISOString();
+        }
+        // do not store duration itself
+      } else if (f.type === "tags" || f.type === "user-tags") {
         const str = String(v ?? "");
         const arr = str
           .split(/[\n,]/)
@@ -227,6 +237,20 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
                       placeholder={f.placeholder}
                       defaultValue={Array.isArray(editing?.[f.name]) ? editing[f.name] : []}
                     />
+                  ) : f.type === "duration" ? (
+                    <DurationPicker
+                      name={f.name}
+                      options={f.options}
+                      defaultMinutes={
+                        editing?.[f.startFieldName] && editing?.[f.endFieldName]
+                          ? Math.round(
+                              (new Date(editing[f.endFieldName]).getTime() -
+                                new Date(editing[f.startFieldName]).getTime()) /
+                                60000,
+                            )
+                          : f.defaultMinutes ?? 60
+                      }
+                    />
                   ) : (
                     <Input
                       id={f.name}
@@ -318,6 +342,47 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
 
 export function StatusPill({ label, tone = "default" }: { label: string; tone?: StatusTone }) {
   return <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_TONE_CLASS[tone]}`}>{label}</span>;
+}
+
+const DEFAULT_DURATION_OPTIONS = [
+  { value: 15, label: "15 ד'" },
+  { value: 30, label: "30 ד'" },
+  { value: 45, label: "45 ד'" },
+  { value: 60, label: "שעה" },
+  { value: 90, label: "1.5 שעות" },
+  { value: 120, label: "2 שעות" },
+];
+
+function DurationPicker({
+  name,
+  options,
+  defaultMinutes,
+}: {
+  name: string;
+  options?: { value: number; label: string }[];
+  defaultMinutes: number;
+}) {
+  const opts = options ?? DEFAULT_DURATION_OPTIONS;
+  const [value, setValue] = useState<number>(defaultMinutes);
+  return (
+    <>
+      <input type="hidden" name={name} value={value} />
+      <div className="flex flex-wrap gap-2">
+        {opts.map((o) => (
+          <Button
+            key={o.value}
+            type="button"
+            size="sm"
+            variant={value === o.value ? "default" : "outline"}
+            className={value === o.value ? "bg-gradient-to-l from-primary to-accent text-primary-foreground" : "glass"}
+            onClick={() => setValue(o.value)}
+          >
+            {o.label}
+          </Button>
+        ))}
+      </div>
+    </>
+  );
 }
 
 function LookupSelect({ name, table, labelField, defaultValue }: { name: string; table: "customers" | "projects" | "profiles" | "leads"; labelField: string; defaultValue?: string }) {
