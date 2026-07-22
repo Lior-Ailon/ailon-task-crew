@@ -202,7 +202,7 @@ export const Route = createFileRoute("/_authenticated/meetings")({
         if (!meetingUrl) {
           try {
             const { joinUrl } = await createTeamsMeetingLink({
-              data: { subject: item.title, startTime: item.start_time },
+              data: { subject: item.title, startTime: item.start_time, endTime: item.end_time ?? undefined },
             });
             meetingUrl = joinUrl;
             await supabase.from("meetings").update({ meeting_url: joinUrl }).eq("id", item.id);
