@@ -344,6 +344,47 @@ export function StatusPill({ label, tone = "default" }: { label: string; tone?: 
   return <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_TONE_CLASS[tone]}`}>{label}</span>;
 }
 
+const DEFAULT_DURATION_OPTIONS = [
+  { value: 15, label: "15 ד'" },
+  { value: 30, label: "30 ד'" },
+  { value: 45, label: "45 ד'" },
+  { value: 60, label: "שעה" },
+  { value: 90, label: "1.5 שעות" },
+  { value: 120, label: "2 שעות" },
+];
+
+function DurationPicker({
+  name,
+  options,
+  defaultMinutes,
+}: {
+  name: string;
+  options?: { value: number; label: string }[];
+  defaultMinutes: number;
+}) {
+  const opts = options ?? DEFAULT_DURATION_OPTIONS;
+  const [value, setValue] = useState<number>(defaultMinutes);
+  return (
+    <>
+      <input type="hidden" name={name} value={value} />
+      <div className="flex flex-wrap gap-2">
+        {opts.map((o) => (
+          <Button
+            key={o.value}
+            type="button"
+            size="sm"
+            variant={value === o.value ? "default" : "outline"}
+            className={value === o.value ? "bg-gradient-to-l from-primary to-accent text-primary-foreground" : "glass"}
+            onClick={() => setValue(o.value)}
+          >
+            {o.label}
+          </Button>
+        ))}
+      </div>
+    </>
+  );
+}
+
 function LookupSelect({ name, table, labelField, defaultValue }: { name: string; table: "customers" | "projects" | "profiles" | "leads"; labelField: string; defaultValue?: string }) {
   const [value, setValue] = useState<string>(defaultValue || "__none__");
   const { data: options = [] } = useQuery({
