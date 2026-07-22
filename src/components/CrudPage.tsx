@@ -237,6 +237,20 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
                       placeholder={f.placeholder}
                       defaultValue={Array.isArray(editing?.[f.name]) ? editing[f.name] : []}
                     />
+                  ) : f.type === "duration" ? (
+                    <DurationPicker
+                      name={f.name}
+                      options={f.options}
+                      defaultMinutes={
+                        editing?.[f.startFieldName] && editing?.[f.endFieldName]
+                          ? Math.round(
+                              (new Date(editing[f.endFieldName]).getTime() -
+                                new Date(editing[f.startFieldName]).getTime()) /
+                                60000,
+                            )
+                          : f.defaultMinutes ?? 60
+                      }
+                    />
                   ) : (
                     <Input
                       id={f.name}
