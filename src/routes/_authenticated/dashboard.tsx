@@ -17,6 +17,7 @@ import introVideo from "@/assets/ailon-intro.mp4.asset.json";
 import officeAsset from "@/assets/ailon-office.jpg.asset.json";
 import { getAppIcon } from "@/lib/shelf-product-icons";
 import { LEAD_STATUS_LABEL, LEAD_STATUS_TONE, TASK_STATUS_LABEL, TASK_STATUS_TONE, STATUS_TONE_CLASS, SOFT_OVERDUE } from "@/lib/status-colors";
+import { sendEntityNotification } from "@/lib/email/send-entity-notification";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
@@ -519,13 +520,25 @@ function NewMeetingDialog() {
 
     setSaving(true);
     const { data: userData } = await supabase.auth.getUser();
-    const { error } = await supabase.from("meetings").insert({
+    const { data: inserted, error } = await supabase.from("meetings").insert({
       title, start_time, location, meeting_url, description,
       status: "scheduled", user_id: userData.user?.id ?? "",
-    } as any);
+    } as any).select().maybeSingle();
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("הפגישה נקבעה");
+    sendEntityNotification({
+      entityLabel: "פגישה",
+      action: "נוצר",
+      title,
+      entityId: inserted?.id ?? "unknown",
+      fields: [
+        { label: "start_time", value: start_time },
+        ...(location ? [{ label: "location", value: location }] : []),
+        ...(meeting_url ? [{ label: "meeting_url", value: meeting_url }] : []),
+      ],
+      actor: userData.user?.email ?? undefined,
+    });
     qc.invalidateQueries({ queryKey: ["dashboard-meetings"] });
     qc.invalidateQueries({ queryKey: ["meetings"] });
     setOpen(false);

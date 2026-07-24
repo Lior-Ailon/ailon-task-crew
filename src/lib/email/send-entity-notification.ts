@@ -20,6 +20,7 @@ const TABLE_LABELS: Record<string, string> = {
   quotes: 'הצעת מחיר',
   expenses: 'הוצאה',
   incomes: 'הכנסה',
+  shelf_products: 'מוצר מדף',
 }
 
 export function labelForTable(table: string) {
