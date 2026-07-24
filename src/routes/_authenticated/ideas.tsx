@@ -6,6 +6,7 @@ import { Lightbulb, Tag, UserPlus, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { confirmDialog } from "@/components/confirm-dialog";
+import { sendEntityNotification } from "@/lib/email/send-entity-notification";
 
 const statusOptions = [
   { value: "new", label: "חדש" },
@@ -50,16 +51,32 @@ function IdeasPage() {
     if (!ok) return;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return toast.error("לא מחובר");
-    const { error: pErr } = await supabase.from("projects").insert({
+    const { data: newProject, error: pErr } = await supabase.from("projects").insert({
       user_id: user.id,
       name: item.title,
       description: item.description ?? null,
       status: "planning",
-    });
+    }).select().maybeSingle();
     if (pErr) return toast.error(pErr.message);
     const { error: iErr } = await supabase.from("ideas").update({ status: "implemented" }).eq("id", item.id);
     if (iErr) return toast.error(iErr.message);
     toast.success("הרעיון הפך לפרויקט בהצלחה");
+    sendEntityNotification({
+      entityLabel: "פרויקט",
+      action: "נוצר מרעיון",
+      title: item.title,
+      entityId: newProject?.id ?? "unknown",
+      fields: [{ label: "idea_id", value: String(item.id) }],
+      actor: user.email ?? undefined,
+    });
+    sendEntityNotification({
+      entityLabel: "רעיון",
+      action: "מומש",
+      title: item.title,
+      entityId: item.id,
+      fields: [{ label: "status", value: "implemented" }],
+      actor: user.email ?? undefined,
+    });
     qc.invalidateQueries({ queryKey: ["ideas"] });
     qc.invalidateQueries({ queryKey: ["projects"] });
     qc.invalidateQueries({ queryKey: ["count", "projects"] });
