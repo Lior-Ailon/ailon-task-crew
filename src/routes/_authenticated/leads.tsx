@@ -117,6 +117,16 @@ function LeadsPage() {
     } as any).eq("id", lostTarget.id);
     if (error) { toast.error(error.message); return; }
     toast.success("סיבת האובדן נשמרה");
+    sendEntityNotification({
+      entityLabel: "ליד",
+      action: "סומן כלא רלוונטי",
+      title: lostTarget.name ?? "—",
+      entityId: lostTarget.id,
+      fields: [
+        { label: "lost_reason", value: reason },
+        ...(note ? [{ label: "note", value: note }] : []),
+      ],
+    });
     qc.invalidateQueries({ queryKey: ["leads"] });
     setLostTarget(null);
   }
@@ -168,6 +178,13 @@ function LeadsPage() {
     const { error } = await supabase.from("leads").insert(rows as any);
     if (error) return toast.error(error.message);
     toast.success(`יובאו ${rows.length} לידים`);
+    sendEntityNotification({
+      entityLabel: "ליד",
+      action: "ייבוא מרוכז",
+      title: `${rows.length} לידים`,
+      entityId: "bulk-import",
+      fields: [{ label: "count", value: String(rows.length) }],
+    });
     setImportOpen(false);
     setImportRows([]);
     qc.invalidateQueries({ queryKey: ["leads"] });

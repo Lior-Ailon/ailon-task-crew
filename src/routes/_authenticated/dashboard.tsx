@@ -519,13 +519,25 @@ function NewMeetingDialog() {
 
     setSaving(true);
     const { data: userData } = await supabase.auth.getUser();
-    const { error } = await supabase.from("meetings").insert({
+    const { data: inserted, error } = await supabase.from("meetings").insert({
       title, start_time, location, meeting_url, description,
       status: "scheduled", user_id: userData.user?.id ?? "",
-    } as any);
+    } as any).select().maybeSingle();
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("הפגישה נקבעה");
+    sendEntityNotification({
+      entityLabel: "פגישה",
+      action: "נוצר",
+      title,
+      entityId: inserted?.id ?? "unknown",
+      fields: [
+        { label: "start_time", value: start_time },
+        ...(location ? [{ label: "location", value: location }] : []),
+        ...(meeting_url ? [{ label: "meeting_url", value: meeting_url }] : []),
+      ],
+      actor: userData.user?.email ?? undefined,
+    });
     qc.invalidateQueries({ queryKey: ["dashboard-meetings"] });
     qc.invalidateQueries({ queryKey: ["meetings"] });
     setOpen(false);

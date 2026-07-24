@@ -117,7 +117,7 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
       toast.success("נוצר בהצלחה");
       const created = inserted ?? { ...payload, user_id: user.id };
       onAfterSave?.("created", created, null);
-      if (table !== "tasks") notifyEntity("created", created);
+      notifyEntity("created", created);
       recordActivity("created", created, null);
     }
     setOpen(false);

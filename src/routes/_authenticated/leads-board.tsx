@@ -12,6 +12,7 @@ import { QuickContactActions } from "@/components/QuickContactActions";
 import { LostReasonDialog } from "@/components/LostReasonDialog";
 import { LOST_REASON_LABEL } from "@/lib/lead-utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { sendEntityNotification } from "@/lib/email/send-entity-notification";
 
 type LeadStatus = "new" | "contacted" | "qualified" | "converted" | "lost";
 
@@ -51,12 +52,26 @@ function LeadsBoardPage() {
   const visibleLeads = onlyMine ? leads.filter((l: any) => l.assigned_to === currentUserId) : leads;
 
   async function updateStatus(leadId: string, newStatus: LeadStatus, extra: Record<string, any> = {}) {
+    const prevLead = leads.find((l: any) => l.id === leadId);
     qc.setQueryData(["leads"], (prev: any[] | undefined) =>
       (prev ?? []).map((l) => (l.id === leadId ? { ...l, status: newStatus, ...extra } : l)),
     );
     const { error } = await supabase.from("leads").update({ status: newStatus, ...extra } as any).eq("id", leadId);
     if (error) { toast.error(error.message); qc.invalidateQueries({ queryKey: ["leads"] }); return; }
-    toast.success(`עודכן ל"${columns.find((c) => c.key === newStatus)?.label}"`);
+    const fromLabel = columns.find((c) => c.key === (prevLead?.status ?? "new"))?.label ?? String(prevLead?.status ?? "—");
+    const toLabel = columns.find((c) => c.key === newStatus)?.label ?? String(newStatus);
+    toast.success(`עודכן ל"${toLabel}"`);
+    sendEntityNotification({
+      entityLabel: "ליד",
+      action: "שינוי סטטוס",
+      title: prevLead?.name ?? "—",
+      entityId: leadId,
+      fields: [
+        { label: "from", value: fromLabel },
+        { label: "to", value: toLabel },
+        ...(extra.lost_reason ? [{ label: "lost_reason", value: String(extra.lost_reason) }] : []),
+      ],
+    });
     qc.invalidateQueries({ queryKey: ["count", "leads"] });
   }
 
