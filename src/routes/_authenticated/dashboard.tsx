@@ -17,6 +17,7 @@ import introVideo from "@/assets/ailon-intro.mp4.asset.json";
 import officeAsset from "@/assets/ailon-office.jpg.asset.json";
 import { getAppIcon } from "@/lib/shelf-product-icons";
 import { LEAD_STATUS_LABEL, LEAD_STATUS_TONE, TASK_STATUS_LABEL, TASK_STATUS_TONE, STATUS_TONE_CLASS, SOFT_OVERDUE } from "@/lib/status-colors";
+import { sendEntityNotification } from "@/lib/email/send-entity-notification";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
