@@ -32,11 +32,13 @@ import { Route as AuthenticatedCustomersRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as ApiV1TableRouteImport } from './routes/api/v1/$table'
+import { Route as ApiPublicLeadsRouteImport } from './routes/api/public/leads'
 import { Route as AuthenticatedLeadsIdRouteImport } from './routes/_authenticated/leads.$id'
 import { Route as AuthenticatedCustomersIdRouteImport } from './routes/_authenticated/customers.$id'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
+import { Route as ApiV1TableIdRouteImport } from './routes/api/v1/$table/$id'
 import { Route as ApiPublicMeetingsRespondRouteImport } from './routes/api/public/meetings.respond'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -155,6 +157,11 @@ const ApiV1TableRoute = ApiV1TableRouteImport.update({
   path: '/api/v1/$table',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicLeadsRoute = ApiPublicLeadsRouteImport.update({
+  id: '/api/public/leads',
+  path: '/api/public/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedLeadsIdRoute = AuthenticatedLeadsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -184,6 +191,11 @@ const LovableEmailQueueProcessRoute =
     path: '/lovable/email/queue/process',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiV1TableIdRoute = ApiV1TableIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiV1TableRoute,
+} as any)
 const ApiPublicMeetingsRespondRoute =
   ApiPublicMeetingsRespondRouteImport.update({
     id: '/api/public/meetings/respond',
@@ -214,9 +226,11 @@ export interface FileRoutesByFullPath {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/leads/$id': typeof AuthenticatedLeadsIdRoute
-  '/api/v1/$table': typeof ApiV1TableRoute
+  '/api/public/leads': typeof ApiPublicLeadsRoute
+  '/api/v1/$table': typeof ApiV1TableRouteWithChildren
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/meetings/respond': typeof ApiPublicMeetingsRespondRoute
+  '/api/v1/$table/$id': typeof ApiV1TableIdRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
@@ -244,9 +258,11 @@ export interface FileRoutesByTo {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/leads/$id': typeof AuthenticatedLeadsIdRoute
-  '/api/v1/$table': typeof ApiV1TableRoute
+  '/api/public/leads': typeof ApiPublicLeadsRoute
+  '/api/v1/$table': typeof ApiV1TableRouteWithChildren
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/meetings/respond': typeof ApiPublicMeetingsRespondRoute
+  '/api/v1/$table/$id': typeof ApiV1TableIdRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
@@ -276,9 +292,11 @@ export interface FileRoutesById {
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/_authenticated/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/_authenticated/leads/$id': typeof AuthenticatedLeadsIdRoute
-  '/api/v1/$table': typeof ApiV1TableRoute
+  '/api/public/leads': typeof ApiPublicLeadsRoute
+  '/api/v1/$table': typeof ApiV1TableRouteWithChildren
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/meetings/respond': typeof ApiPublicMeetingsRespondRoute
+  '/api/v1/$table/$id': typeof ApiV1TableIdRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
@@ -308,9 +326,11 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/customers/$id'
     | '/leads/$id'
+    | '/api/public/leads'
     | '/api/v1/$table'
     | '/lovable/email/suppression'
     | '/api/public/meetings/respond'
+    | '/api/v1/$table/$id'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
@@ -338,9 +358,11 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/customers/$id'
     | '/leads/$id'
+    | '/api/public/leads'
     | '/api/v1/$table'
     | '/lovable/email/suppression'
     | '/api/public/meetings/respond'
+    | '/api/v1/$table/$id'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
@@ -369,9 +391,11 @@ export interface FileRouteTypes {
     | '/email/unsubscribe'
     | '/_authenticated/customers/$id'
     | '/_authenticated/leads/$id'
+    | '/api/public/leads'
     | '/api/v1/$table'
     | '/lovable/email/suppression'
     | '/api/public/meetings/respond'
+    | '/api/v1/$table/$id'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
@@ -384,7 +408,8 @@ export interface RootRouteChildren {
   MeetingInviteRoute: typeof MeetingInviteRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
-  ApiV1TableRoute: typeof ApiV1TableRoute
+  ApiPublicLeadsRoute: typeof ApiPublicLeadsRoute
+  ApiV1TableRoute: typeof ApiV1TableRouteWithChildren
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicMeetingsRespondRoute: typeof ApiPublicMeetingsRespondRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -555,6 +580,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiV1TableRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/leads': {
+      id: '/api/public/leads'
+      path: '/api/public/leads'
+      fullPath: '/api/public/leads'
+      preLoaderRoute: typeof ApiPublicLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/leads/$id': {
       id: '/_authenticated/leads/$id'
       path: '/$id'
@@ -589,6 +621,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/lovable/email/queue/process'
       preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/$table/$id': {
+      id: '/api/v1/$table/$id'
+      path: '/$id'
+      fullPath: '/api/v1/$table/$id'
+      preLoaderRoute: typeof ApiV1TableIdRouteImport
+      parentRoute: typeof ApiV1TableRoute
     }
     '/api/public/meetings/respond': {
       id: '/api/public/meetings/respond'
@@ -664,6 +703,18 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface ApiV1TableRouteChildren {
+  ApiV1TableIdRoute: typeof ApiV1TableIdRoute
+}
+
+const ApiV1TableRouteChildren: ApiV1TableRouteChildren = {
+  ApiV1TableIdRoute: ApiV1TableIdRoute,
+}
+
+const ApiV1TableRouteWithChildren = ApiV1TableRoute._addFileChildren(
+  ApiV1TableRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -671,7 +722,8 @@ const rootRouteChildren: RootRouteChildren = {
   MeetingInviteRoute: MeetingInviteRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
-  ApiV1TableRoute: ApiV1TableRoute,
+  ApiPublicLeadsRoute: ApiPublicLeadsRoute,
+  ApiV1TableRoute: ApiV1TableRouteWithChildren,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicMeetingsRespondRoute: ApiPublicMeetingsRespondRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
