@@ -3,7 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UsersManager } from "@/components/UsersManager";
 import { TeamsConnectCard } from "@/components/TeamsConnectCard";
 import { MonthlyTargetEditor } from "@/components/MonthlyTarget";
-import { ShieldCheck, Settings as SettingsIcon, Plug, Target } from "lucide-react";
+import { ShieldCheck, Settings as SettingsIcon, Plug, Target, KeyRound } from "lucide-react";
+import { ApiKeysManager } from "@/components/ApiKeysManager";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   ssr: false,
@@ -31,6 +32,9 @@ function SettingsPage() {
           <TabsTrigger value="goals" className="gap-2">
             <Target className="size-4" /> יעדים
           </TabsTrigger>
+          <TabsTrigger value="api" className="gap-2">
+            <KeyRound className="size-4" /> API
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="users" className="mt-6">
           <UsersManager />
@@ -40,6 +44,9 @@ function SettingsPage() {
         </TabsContent>
         <TabsContent value="goals" className="mt-6 space-y-4">
           <MonthlyTargetEditor />
+        </TabsContent>
+        <TabsContent value="api" className="mt-6 space-y-4">
+          <ApiKeysManager />
         </TabsContent>
       </Tabs>
     </div>
