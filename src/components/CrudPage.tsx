@@ -316,70 +316,187 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
 
       {extraHeader}
 
-      <div className="relative">
-        <Search className="size-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="חיפוש..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pr-10 glass"
-        />
+      <div className="flex flex-col sm:flex-row gap-2">
+        <div className="relative flex-1">
+          <Search className="size-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="חיפוש..."
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setVisibleCount(PAGE_SIZE); }}
+            className="pr-10 glass"
+          />
+        </div>
+        {statusField && (
+          <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setVisibleCount(PAGE_SIZE); }}>
+            <SelectTrigger className="w-full sm:w-44 glass" aria-label="סינון סטטוס">
+              <SelectValue placeholder="סטטוס" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">כל הסטטוסים</SelectItem>
+              {statusField.options.map((o) => (
+                <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+        <Select value={sortKey} onValueChange={(v) => setSortKey(v as SortKey)}>
+          <SelectTrigger className="w-full sm:w-40 glass" aria-label="מיון">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">חדשים ראשונים</SelectItem>
+            <SelectItem value="oldest">ישנים ראשונים</SelectItem>
+            <SelectItem value="name">לפי שם</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {isLoading ? (
         <div className="text-center py-12 text-muted-foreground">טוען...</div>
-      ) : filtered.length === 0 ? (
+      ) : sorted.length === 0 ? (
         <div className="glass-strong rounded-3xl p-12 text-center">
-          <p className="text-muted-foreground">{search ? "לא נמצאו תוצאות" : "אין נתונים עדיין. הוסף ראשון!"}</p>
+          <p className="text-muted-foreground">{search || statusFilter !== "__all__" ? "לא נמצאו תוצאות" : "אין נתונים עדיין. הוסף ראשון!"}</p>
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {filtered.map((item: any) => {
-            const handleActivate = () => {
-              if (onCardClick) onCardClick(item);
-              else { setEditing(item); setOpen(true); }
-            };
-            return (
-              <div
-                key={item.id}
-                role="button"
-                tabIndex={0}
-                onClick={handleActivate}
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleActivate(); } }}
-                className="cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-3xl"
-              >
-                {renderCard(
-                  item,
-                  <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
-                    {onCardClick && (
+        <>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {visible.map((item: any) => {
+              const handleActivate = () => {
+                if (onCardClick) onCardClick(item);
+                else setViewing(item);
+              };
+              return (
+                <div
+                  key={item.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={handleActivate}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleActivate(); } }}
+                  className="cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-3xl"
+                >
+                  {renderCard(
+                    item,
+                    <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="size-8"
+                        className="size-10 sm:size-9"
                         onClick={(e) => { e.stopPropagation(); setEditing(item); setOpen(true); }}
                         aria-label="עריכה"
                       >
-                        <Pencil className="size-3.5" />
+                        <Pencil className="size-4" />
                       </Button>
-                    )}
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="size-8 hover:text-destructive"
-                      onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
-                    >
-                      <Trash2 className="size-3.5" />
-                    </Button>
-                  </div>,
-                )}
-              </div>
-            );
-          })}
-        </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="size-10 sm:size-9"
+                            aria-label="פעולות נוספות"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <MoreHorizontal className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                          <DropdownMenuItem
+                            aria-label="מחיקה"
+                            className="text-destructive focus:text-destructive"
+                            onSelect={() => handleDelete(item.id)}
+                          >
+                            <Trash2 className="size-4 ml-2" /> מחק
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>,
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          {visibleCount < sorted.length && (
+            <div className="flex justify-center">
+              <Button variant="outline" className="glass" onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}>
+                טען עוד ({sorted.length - visibleCount})
+              </Button>
+            </div>
+          )}
+          <p className="text-xs text-muted-foreground text-center">
+            מציג {visible.length} מתוך {sorted.length}
+          </p>
+        </>
       )}
+
+      <DetailDialog
+        item={viewing}
+        fields={fields}
+        onClose={() => setViewing(null)}
+        onEdit={() => { if (viewing) { setEditing(viewing); setViewing(null); setOpen(true); } }}
+      />
     </div>
   );
 }
+
+function DetailDialog({
+  item,
+  fields,
+  onClose,
+  onEdit,
+}: {
+  item: any | null;
+  fields: FieldDef[];
+  onClose: () => void;
+  onEdit: () => void;
+}) {
+  const heading = item?.title ?? item?.name ?? item?.subject ?? item?.quote_number ?? "פרטים";
+  return (
+    <Dialog open={!!item} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent className="glass-strong max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{String(heading)}</DialogTitle>
+        </DialogHeader>
+        {item && (
+          <div className="space-y-3">
+            {fields.map((f) => {
+              if (f.type === "duration") return null;
+              const raw = item[f.name];
+              if (raw === null || raw === undefined || raw === "") return null;
+              return (
+                <div key={f.name} className="grid grid-cols-[7rem_1fr] gap-3 items-start border-b border-border/40 pb-2 last:border-b-0">
+                  <div className="text-xs font-medium text-muted-foreground">{f.label}</div>
+                  <div className="text-sm break-words">
+                    {f.type === "select"
+                      ? (f.options.find((o) => o.value === raw)?.label ?? String(raw))
+                      : Array.isArray(raw)
+                        ? raw.length
+                          ? (
+                              <div className="flex flex-wrap gap-1">
+                                {raw.map((t: any, i: number) => (
+                                  <span key={i} className="text-xs px-2 py-0.5 rounded-full tone-default">{String(t)}</span>
+                                ))}
+                              </div>
+                            )
+                          : "—"
+                        : f.type === "textarea"
+                          ? <p className="whitespace-pre-wrap">{String(raw)}</p>
+                          : String(raw)}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        <DialogFooter className="pt-2">
+          <Button variant="outline" onClick={onClose}>סגור</Button>
+          <Button onClick={onEdit} className="bg-gradient-to-l from-primary to-accent text-primary-foreground font-semibold">
+            <Pencil className="size-4 ml-1" /> עריכה
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 
 export function StatusPill({ label, tone = "default" }: { label: string; tone?: StatusTone }) {
   return <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_TONE_CLASS[tone]}`}>{label}</span>;
