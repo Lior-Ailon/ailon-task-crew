@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,13 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Plus, Pencil, Trash2, Search, MoreHorizontal } from "lucide-react";
 import { UserTagsInput } from "@/components/UserTagsInput";
 import { toast } from "sonner";
 import { sendEntityNotification, labelForTable } from "@/lib/email/send-entity-notification";
@@ -46,11 +52,30 @@ export interface CrudPageProps {
   onCardClick?: (item: any) => void;
 }
 
+const PAGE_SIZE = 24;
+type SortKey = "newest" | "oldest" | "name";
+
 export function CrudPage({ title, subtitle, table, fields, renderCard, searchKeys = ["name", "title"], extraHeader, orderBy = "created_at", onAfterSave, filterItems, onCardClick }: CrudPageProps) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
+  const [viewing, setViewing] = useState<any>(null);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("__all__");
+  const [sortKey, setSortKey] = useState<SortKey>("newest");
+  const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
+
+  const statusField = useMemo(
+    () => fields.find((f) => f.name === "status" && f.type === "select") as
+      | Extract<FieldDef, { type: "select" }>
+      | undefined,
+    [fields],
+  );
+
+  const nameKey = useMemo(
+    () => (searchKeys.includes("name") ? "name" : searchKeys.includes("title") ? "title" : searchKeys[0] ?? "name"),
+    [searchKeys],
+  );
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: [table],
@@ -61,12 +86,28 @@ export function CrudPage({ title, subtitle, table, fields, renderCard, searchKey
     },
   });
 
-  const filtered = items.filter((it: any) => {
+  const filtered = (items as any[]).filter((it: any) => {
     if (filterItems && !filterItems(it)) return false;
+    if (statusFilter !== "__all__" && it.status !== statusFilter) return false;
     if (!search) return true;
     const q = search.toLowerCase();
     return searchKeys.some((k) => String(it[k] ?? "").toLowerCase().includes(q));
   });
+
+  const sorted = useMemo(() => {
+    const arr = [...filtered];
+    if (sortKey === "name") {
+      arr.sort((a, b) => String(a[nameKey] ?? "").localeCompare(String(b[nameKey] ?? ""), "he"));
+    } else if (sortKey === "oldest") {
+      arr.sort((a, b) => new Date(a[orderBy] ?? 0).getTime() - new Date(b[orderBy] ?? 0).getTime());
+    } else {
+      arr.sort((a, b) => new Date(b[orderBy] ?? 0).getTime() - new Date(a[orderBy] ?? 0).getTime());
+    }
+    return arr;
+  }, [filtered, sortKey, nameKey, orderBy]);
+
+  const visible = sorted.slice(0, visibleCount);
+
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
