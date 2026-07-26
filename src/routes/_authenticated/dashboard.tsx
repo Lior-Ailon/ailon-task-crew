@@ -428,7 +428,7 @@ function FollowUpBody({ item, date, isOverdue }: { item: any; date: Date; isOver
       <div className="font-medium text-sm truncate">{item.name}</div>
       {item.company && <div className="text-xs text-muted-foreground truncate">{item.company}</div>}
       {item.follow_up_note && <div className="text-xs mt-1 line-clamp-1">{item.follow_up_note}</div>}
-      <div className={cn("text-xs mt-1 font-medium", isOverdue ? "text-red-600" : "text-amber-600")}>
+      <div className={cn("text-xs mt-1 font-medium", isOverdue ? "text-[var(--danger)]" : "text-[var(--warning)]")}>
         {isOverdue ? "באיחור: " : ""}{date.toLocaleDateString("he-IL")} {date.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}
       </div>
     </>
