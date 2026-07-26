@@ -111,26 +111,19 @@ function DashboardPage() {
   });
 
   const stats = [
-    { label: "לידים", value: leads.data ?? 0, icon: UserPlus, to: "/leads", color: "from-fuchsia-500 to-purple-500" },
-    { label: "לקוחות", value: customers.data ?? 0, icon: Users, to: "/customers", color: "from-cyan-400 to-blue-500" },
-    { label: "פרויקטים", value: projects.data ?? 0, icon: FolderKanban, to: "/projects", color: "from-emerald-400 to-teal-500" },
-    { label: "משימות", value: tasks.data ?? 0, icon: CheckSquare, to: "/tasks", color: "from-amber-400 to-orange-500" },
-    { label: "רעיונות", value: ideas.data ?? 0, icon: Lightbulb, to: "/ideas", color: "from-yellow-400 to-amber-500" },
-    { label: "הצעות מחיר", value: quotes.data ?? 0, icon: FileText, to: "/quotes", color: "from-sky-400 to-indigo-500" },
-    { label: "פגישות", value: meetingsCount.data ?? 0, icon: CalendarDays, to: "/meetings", color: "from-rose-400 to-pink-500" },
-    { label: "מוצרי מדף", value: shelfProductsCount.data ?? 0, icon: Package, to: "/shelf-products", color: "from-violet-400 to-fuchsia-500" },
+    { label: "לידים", value: leads.data ?? 0, icon: UserPlus, to: "/leads" },
+    { label: "לקוחות", value: customers.data ?? 0, icon: Users, to: "/customers" },
+    { label: "פרויקטים", value: projects.data ?? 0, icon: FolderKanban, to: "/projects" },
+    { label: "משימות", value: tasks.data ?? 0, icon: CheckSquare, to: "/tasks" },
+    { label: "רעיונות", value: ideas.data ?? 0, icon: Lightbulb, to: "/ideas" },
+    { label: "הצעות מחיר", value: quotes.data ?? 0, icon: FileText, to: "/quotes" },
+    { label: "פגישות", value: meetingsCount.data ?? 0, icon: CalendarDays, to: "/meetings" },
+    { label: "מוצרי מדף", value: shelfProductsCount.data ?? 0, icon: Package, to: "/shelf-products" },
   ] as const;
 
   return (
     <div className="space-y-6">
-      <blockquote className="glass-strong rounded-3xl p-4 sm:p-5 text-center border-s-4 border-accent/50">
-        <p className="text-lg sm:text-xl font-medium italic text-foreground">
-          "מה שלא ניתן למדוד לא ניתן לנהל, ומה שלא ניתן לנהל לא ניתן לשפר"
-        </p>
-        <footer className="mt-2 text-sm text-muted-foreground">— פיטר דרוקר</footer>
-      </blockquote>
-
-      {/* Hero banner with intro video + office backdrop (shrunk; video desktop-only) */}
+      {/* Compact hero — video desktop-only */}
       <header className="relative overflow-hidden rounded-3xl glass-strong">
         <img
           src={officeAsset.url}
@@ -147,30 +140,63 @@ function DashboardPage() {
           className="absolute inset-0 size-full object-cover opacity-40 mix-blend-luminosity hidden md:block"
         />
         <div className="absolute inset-0 bg-gradient-to-l from-primary/90 via-primary/60 to-primary/20" />
-        <div className="relative z-10 p-4 sm:p-6 flex items-center gap-4 text-white">
-          <img src={logoAsset.url} alt="" className="size-12 sm:size-14 object-contain drop-shadow-lg shrink-0" />
+        <div className="relative z-10 p-3 sm:p-4 flex items-center gap-3 text-white">
+          <img src={logoAsset.url} alt="" className="size-10 sm:size-12 object-contain drop-shadow-lg shrink-0" />
           <div className="min-w-0">
             <div className="text-xs tracking-[0.3em] opacity-80">AILON TASK · CRM</div>
-            <h1 className="text-xl sm:text-2xl font-extrabold mt-0.5 leading-tight">
+            <h1 className="text-lg sm:text-xl font-extrabold mt-0.5 leading-tight">
               Dream it. Plan it. <span className="text-accent">Achieve it.</span>
             </h1>
           </div>
         </div>
       </header>
 
-      {/* Follow-ups first: most time-critical */}
-      <MonthlyTargetCard compact />
+      {/* Actionable first: follow-ups, today's meetings, open tasks */}
       <FollowUpsSection />
 
+      <div className="grid lg:grid-cols-2 gap-4">
+        <TodayMeetingsSection />
+        <section className="glass-strong rounded-3xl p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Clock className="size-5 text-accent" />
+            <h2 className="font-semibold">משימות פתוחות</h2>
+          </div>
+          {recentTasks.data?.length ? (
+            <ul className="space-y-2">
+              {recentTasks.data.map((t) => (
+                <li key={t.id} className="flex justify-between items-center p-3 rounded-xl bg-muted/30">
+                  <div>
+                    <div className="font-medium text-sm">{t.title}</div>
+                    {t.due_date && <div className="text-xs text-muted-foreground">עד {t.due_date}</div>}
+                  </div>
+                  <StatusBadge status={t.status} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-muted-foreground">אין משימות עדיין</p>
+          )}
+        </section>
+      </div>
+
+      {/* Target + KPI cards */}
+      <MonthlyTargetCard compact />
+
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {stats.map((s) => (
+        {stats.map((s, i) => (
           <Link
             key={s.label}
             to={s.to}
             className="glass-strong rounded-3xl p-4 sm:p-5 hover:scale-[1.02] transition-transform group"
           >
-            <div className={`size-10 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center mb-3 group-hover:glow transition-shadow`}>
-              <s.icon className="size-5 text-white" />
+            <div
+              className="size-10 rounded-xl flex items-center justify-center mb-3 group-hover:glow transition-shadow"
+              style={{
+                background: `linear-gradient(135deg, var(--primary), var(--accent))`,
+                opacity: 0.85 + (i % 2) * 0.1,
+              }}
+            >
+              <s.icon className="size-5 text-primary-foreground" />
             </div>
             <div className="text-3xl font-bold">{s.value}</div>
             <div className="text-xs text-muted-foreground mt-1">{s.label}</div>
@@ -178,7 +204,7 @@ function DashboardPage() {
         ))}
       </section>
 
-
+      {/* Secondary content */}
       <div className="grid lg:grid-cols-2 gap-4">
         <section className="glass-strong rounded-3xl p-5">
           <div className="flex items-center justify-between mb-4">
@@ -209,63 +235,96 @@ function DashboardPage() {
 
         <section className="glass-strong rounded-3xl p-5">
           <div className="flex items-center gap-2 mb-4">
-            <Clock className="size-5 text-accent" />
-            <h2 className="font-semibold">משימות פתוחות</h2>
+            <Lightbulb className="size-5 text-accent" />
+            <h2 className="font-semibold">רעיונות אחרונים</h2>
+            <Link to="/ideas" className="text-xs text-primary hover:underline mr-auto">לכל הרעיונות ←</Link>
           </div>
-          {recentTasks.data?.length ? (
-            <ul className="space-y-2">
-              {recentTasks.data.map((t) => (
-                <li key={t.id} className="flex justify-between items-center p-3 rounded-xl bg-muted/30">
-                  <div>
-                    <div className="font-medium text-sm">{t.title}</div>
-                    {t.due_date && <div className="text-xs text-muted-foreground">עד {t.due_date}</div>}
+          {recentIdeas.data?.length ? (
+            <ul className="grid sm:grid-cols-2 gap-2">
+              {recentIdeas.data.map((idea: any) => (
+                <li key={idea.id} className="p-3 rounded-xl bg-muted/30 border border-border/40">
+                  <div className="font-medium text-sm truncate">{idea.title}</div>
+                  {idea.description && (
+                    <div className="text-xs text-muted-foreground mt-1 line-clamp-2">{idea.description}</div>
+                  )}
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-xs px-2 py-0.5 rounded-full tone-warning">
+                      {idea.status ?? "חדש"}
+                    </span>
+                    {idea.priority && (
+                      <span className="text-xs text-muted-foreground">עדיפות: {idea.priority}</span>
+                    )}
                   </div>
-                  <StatusBadge status={t.status} />
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground">אין משימות עדיין</p>
+            <p className="text-sm text-muted-foreground">אין רעיונות עדיין — <Link to="/ideas" className="text-primary hover:underline">הוסף ראשון</Link></p>
           )}
         </section>
       </div>
 
-      <section className="glass-strong rounded-3xl p-5">
-        <div className="flex items-center gap-2 mb-4">
-          <Lightbulb className="size-5 text-accent" />
-          <h2 className="font-semibold">רעיונות אחרונים</h2>
-          <Link to="/ideas" className="text-xs text-primary hover:underline mr-auto">לכל הרעיונות ←</Link>
-        </div>
-        {recentIdeas.data?.length ? (
-          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
-            {recentIdeas.data.map((idea: any) => (
-              <li key={idea.id} className="p-3 rounded-xl bg-muted/30 border border-border/40">
-                <div className="font-medium text-sm truncate">{idea.title}</div>
-                {idea.description && (
-                  <div className="text-xs text-muted-foreground mt-1 line-clamp-2">{idea.description}</div>
-                )}
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200">
-                    {idea.status ?? "חדש"}
-                  </span>
-                  {idea.priority && (
-                    <span className="text-[10px] text-muted-foreground">עדיפות: {idea.priority}</span>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-muted-foreground">אין רעיונות עדיין — <Link to="/ideas" className="text-primary hover:underline">הוסף ראשון</Link></p>
-        )}
-      </section>
-
       <ShelfProductsSection />
 
       <MeetingsCalendarSection />
+
+      {/* Quote at the very bottom, subtle */}
+      <blockquote className="glass rounded-3xl p-4 text-center border-s-2 border-accent/40 opacity-80">
+        <p className="text-sm italic text-muted-foreground">
+          "מה שלא ניתן למדוד לא ניתן לנהל, ומה שלא ניתן לנהל לא ניתן לשפר"
+        </p>
+        <footer className="mt-1 text-xs text-muted-foreground/80">— פיטר דרוקר</footer>
+      </blockquote>
     </div>
   );
 }
+
+function TodayMeetingsSection() {
+  const { data: meetings = [] } = useQuery({
+    queryKey: ["today-meetings"],
+    queryFn: async () => {
+      const start = new Date(); start.setHours(0, 0, 0, 0);
+      const end = new Date(); end.setHours(23, 59, 59, 999);
+      const { data, error } = await supabase
+        .from("meetings")
+        .select("id, title, start_time, location")
+        .eq("status", "scheduled")
+        .gte("start_time", start.toISOString())
+        .lte("start_time", end.toISOString())
+        .order("start_time", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  return (
+    <section className="glass-strong rounded-3xl p-5">
+      <div className="flex items-center gap-2 mb-4">
+        <CalendarDays className="size-5 text-accent" />
+        <h2 className="font-semibold">פגישות היום</h2>
+        <Link to="/meetings" className="mr-auto text-xs text-primary hover:underline">ליומן ←</Link>
+      </div>
+      {meetings.length ? (
+        <ul className="space-y-2">
+          {meetings.map((m: any) => (
+            <li key={m.id} className="flex justify-between items-center p-3 rounded-xl bg-muted/30">
+              <div className="min-w-0">
+                <div className="font-medium text-sm truncate">{m.title}</div>
+                {m.location && <div className="text-xs text-muted-foreground truncate flex items-center gap-1"><MapPin className="size-3" />{m.location}</div>}
+              </div>
+              <div className="text-xs font-medium text-primary shrink-0">
+                {new Date(m.start_time).toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" })}
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-sm text-muted-foreground">אין פגישות היום</p>
+      )}
+    </section>
+  );
+}
+
 
 function FollowUpsSection() {
   const nowIso = new Date().toISOString();
