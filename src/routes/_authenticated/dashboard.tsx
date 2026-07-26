@@ -392,14 +392,15 @@ function FollowUpsSection() {
             return (
               <li key={`${item.kind}-${item.id}`} className={cn(
                 "p-3 rounded-xl border flex items-start gap-2",
-                isOverdue ? "bg-red-500/5 border-red-500/30" : "bg-muted/30 border-border/40",
+                isOverdue ? "tone-danger" : "bg-muted/30 border-border/40",
               )}>
                 <div className={cn(
                   "size-8 rounded-lg flex items-center justify-center shrink-0",
-                  item.kind === "customer" ? "bg-cyan-500/20 text-cyan-600" : "bg-fuchsia-500/20 text-fuchsia-600",
+                  item.kind === "customer" ? "tone-info" : "tone-warning",
                 )}>
                   {item.kind === "customer" ? <Users className="size-4" /> : <UserPlus className="size-4" />}
                 </div>
+
                 {item.kind === "customer" ? (
                   <Link to="/customers/$id" params={{ id: item.id }} className="min-w-0 flex-1 hover:opacity-80">
                     <FollowUpBody item={item} date={date} isOverdue={isOverdue} />
