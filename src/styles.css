@@ -109,7 +109,15 @@
     radial-gradient(at 52% 48%, oklch(0.78 0.12 200 / 14%) 0px, transparent 60%);
   --shadow-glow: 0 10px 40px -12px oklch(0.44 0.08 185 / 40%);
   --shadow-glass: 0 6px 24px -10px oklch(0.42 0.07 195 / 14%);
+
+  /* Semantic status tones — harmonized with brand teal/cyan */
+  --success: oklch(0.62 0.13 168);
+  --warning: oklch(0.72 0.13 75);
+  --info: oklch(0.66 0.11 210);
+  --danger: oklch(0.62 0.22 25);
+  --neutral: oklch(0.55 0.02 200);
 }
+
 
 @layer base {
   * {
@@ -162,3 +170,35 @@
 @utility glow {
   box-shadow: var(--shadow-glow);
 }
+
+@utility tone-default {
+  background: color-mix(in oklab, var(--neutral) 12%, transparent);
+  color: color-mix(in oklab, var(--neutral) 85%, black);
+  border: 1px solid color-mix(in oklab, var(--neutral) 25%, transparent);
+}
+@utility tone-success {
+  background: color-mix(in oklab, var(--success) 14%, transparent);
+  color: color-mix(in oklab, var(--success) 70%, black);
+  border: 1px solid color-mix(in oklab, var(--success) 30%, transparent);
+}
+@utility tone-warning {
+  background: color-mix(in oklab, var(--warning) 18%, transparent);
+  color: color-mix(in oklab, var(--warning) 55%, black);
+  border: 1px solid color-mix(in oklab, var(--warning) 35%, transparent);
+}
+@utility tone-info {
+  background: color-mix(in oklab, var(--info) 16%, transparent);
+  color: color-mix(in oklab, var(--info) 65%, black);
+  border: 1px solid color-mix(in oklab, var(--info) 32%, transparent);
+}
+@utility tone-danger {
+  background: color-mix(in oklab, var(--danger) 14%, transparent);
+  color: color-mix(in oklab, var(--danger) 75%, black);
+  border: 1px solid color-mix(in oklab, var(--danger) 30%, transparent);
+}
+@utility tone-neutral {
+  background: color-mix(in oklab, var(--neutral) 10%, transparent);
+  color: color-mix(in oklab, var(--neutral) 80%, black);
+  border: 1px solid color-mix(in oklab, var(--neutral) 22%, transparent);
+}
+
