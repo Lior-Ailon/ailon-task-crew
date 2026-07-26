@@ -170,3 +170,35 @@
 @utility glow {
   box-shadow: var(--shadow-glow);
 }
+
+@utility tone-default {
+  background: color-mix(in oklab, var(--neutral) 12%, transparent);
+  color: color-mix(in oklab, var(--neutral) 85%, black);
+  border: 1px solid color-mix(in oklab, var(--neutral) 25%, transparent);
+}
+@utility tone-success {
+  background: color-mix(in oklab, var(--success) 14%, transparent);
+  color: color-mix(in oklab, var(--success) 70%, black);
+  border: 1px solid color-mix(in oklab, var(--success) 30%, transparent);
+}
+@utility tone-warning {
+  background: color-mix(in oklab, var(--warning) 18%, transparent);
+  color: color-mix(in oklab, var(--warning) 55%, black);
+  border: 1px solid color-mix(in oklab, var(--warning) 35%, transparent);
+}
+@utility tone-info {
+  background: color-mix(in oklab, var(--info) 16%, transparent);
+  color: color-mix(in oklab, var(--info) 65%, black);
+  border: 1px solid color-mix(in oklab, var(--info) 32%, transparent);
+}
+@utility tone-danger {
+  background: color-mix(in oklab, var(--danger) 14%, transparent);
+  color: color-mix(in oklab, var(--danger) 75%, black);
+  border: 1px solid color-mix(in oklab, var(--danger) 30%, transparent);
+}
+@utility tone-neutral {
+  background: color-mix(in oklab, var(--neutral) 10%, transparent);
+  color: color-mix(in oklab, var(--neutral) 80%, black);
+  border: 1px solid color-mix(in oklab, var(--neutral) 22%, transparent);
+}
+
