@@ -16,13 +16,36 @@ import { sendEntityNotification } from "@/lib/email/send-entity-notification";
 
 type LeadStatus = "new" | "contacted" | "qualified" | "converted" | "lost";
 
-const columns: { key: LeadStatus; label: string; gradient: string; ring: string }[] = [
-  { key: "new", label: "חדש", gradient: "from-sky-500/20 to-sky-500/5", ring: "ring-sky-400/40" },
-  { key: "contacted", label: "יצרנו קשר", gradient: "from-violet-500/20 to-violet-500/5", ring: "ring-violet-400/40" },
-  { key: "qualified", label: "רלוונטי", gradient: "from-cyan-500/20 to-cyan-500/5", ring: "ring-cyan-400/40" },
-  { key: "converted", label: "הפך ללקוח", gradient: "from-emerald-500/20 to-emerald-500/5", ring: "ring-emerald-400/40" },
-  { key: "lost", label: "לא רלוונטי", gradient: "from-red-500/20 to-red-500/5", ring: "ring-red-400/40" },
+/** Semantic tone per column, harmonized with the brand teal/cyan palette.
+ *  info = open pipeline (with subtle tonal steps), success = converted, danger = lost. */
+const columns: { key: LeadStatus; label: string; tone: "info" | "success" | "danger"; depth: number }[] = [
+  { key: "new", label: "חדש", tone: "info", depth: 7 },
+  { key: "contacted", label: "יצרנו קשר", tone: "info", depth: 11 },
+  { key: "qualified", label: "רלוונטי", tone: "info", depth: 16 },
+  { key: "converted", label: "הפך ללקוח", tone: "success", depth: 14 },
+  { key: "lost", label: "לא רלוונטי", tone: "danger", depth: 12 },
 ];
+
+const OPEN_STAGES: LeadStatus[] = ["new", "contacted", "qualified"];
+
+function columnStyle(tone: string, depth: number) {
+  return {
+    backgroundImage: `linear-gradient(to bottom, color-mix(in oklab, var(--${tone}) ${depth}%, transparent), transparent)`,
+  } as const;
+}
+
+function daysInStage(lead: any) {
+  const since = lead.status_changed_at ?? lead.created_at;
+  if (!since) return 0;
+  return Math.max(0, Math.floor((Date.now() - new Date(since).getTime()) / 86400000));
+}
+
+function stageChipTone(lead: any, days: number) {
+  if (!OPEN_STAGES.includes(lead.status ?? "new")) return "tone-neutral";
+  if (days > 14) return "tone-danger";
+  if (days > 7) return "tone-warning";
+  return "tone-neutral";
+}
 
 function LeadsBoardPage() {
   const qc = useQueryClient();
