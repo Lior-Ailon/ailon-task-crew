@@ -233,18 +233,22 @@ function LeadsBoardPage() {
                               ₪{Number(lead.estimated_value).toLocaleString()}
                             </div>
                           )}
+                          <div className={cn(
+                            "mt-2 text-xs rounded-full px-2 py-0.5 inline-flex items-center gap-1",
+                            stageChipTone(lead, stageDays),
+                          )}>
+                            <Clock className="size-3" /> {stageDays} ימים בשלב
+                          </div>
                           {lead.next_follow_up_at && (
                             <div className={cn(
                               "mt-1 text-xs rounded-full px-2 py-0.5 inline-block",
-                              new Date(lead.next_follow_up_at) < new Date()
-                                ? "bg-red-100 text-red-700 border border-red-200"
-                                : "bg-amber-100 text-amber-700 border border-amber-200",
+                              new Date(lead.next_follow_up_at) < new Date() ? "tone-danger" : "tone-warning",
                             )}>
                               מעקב: {new Date(lead.next_follow_up_at).toLocaleDateString("he-IL")}
                             </div>
                           )}
                           {lead.status === "lost" && lead.lost_reason && (
-                            <div className="mt-1 text-xs rounded-full px-2 py-0.5 inline-flex items-center gap-1 bg-red-50 text-red-700 border border-red-200">
+                            <div className="mt-1 text-xs rounded-full px-2 py-0.5 inline-flex items-center gap-1 tone-danger">
                               <XCircle className="size-3" /> {LOST_REASON_LABEL[lead.lost_reason] ?? lead.lost_reason}
                             </div>
                           )}
