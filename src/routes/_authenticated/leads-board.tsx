@@ -180,6 +180,7 @@ function LeadsBoardPage() {
                   ) : (
                     items.map((lead: any) => {
                       const assignee = lead.assigned_to ? profileById[lead.assigned_to] : null;
+                      const stageDays = daysInStage(lead);
                       return (
                         <article
                           key={lead.id}
