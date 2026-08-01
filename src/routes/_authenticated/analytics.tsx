@@ -17,9 +17,21 @@ export const Route = createFileRoute("/_authenticated/analytics")({
 const leadStatusLabels: Record<string, string> = {
   new: "חדש", contacted: "יצרנו קשר", qualified: "רלוונטי", converted: "הפך ללקוח", lost: "לא רלוונטי",
 };
+// Brand/semantic colors read from the CSS design tokens
 const leadStatusColors: Record<string, string> = {
-  new: "#38bdf8", contacted: "#a78bfa", qualified: "#22d3ee", converted: "#10b981", lost: "#ef4444",
+  new: "color-mix(in oklab, var(--info) 55%, white)",
+  contacted: "color-mix(in oklab, var(--info) 80%, white)",
+  qualified: "var(--info)",
+  converted: "var(--success)",
+  lost: "var(--danger)",
 };
+
+const TOOLTIP_STYLE = {
+  background: "var(--popover)",
+  border: "1px solid var(--border)",
+  borderRadius: 12,
+  color: "var(--foreground)",
+} as const;
 
 function AnalyticsPage() {
   const leads = useQuery({
@@ -126,12 +138,12 @@ function AnalyticsPage() {
 
       {/* KPIs */}
       <section className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-        <KPI icon={Percent} label="שיעור המרה" value={`${kpis.conversionRate.toFixed(1)}%`} sub="לידים ← לקוחות" color="from-emerald-400 to-teal-500" />
-        <KPI icon={Target} label="שווי צנרת" value={`₪${kpis.pipelineValue.toLocaleString()}`} sub="לידים פתוחים" color="from-cyan-400 to-blue-500" />
-        <KPI icon={Trophy} label="הצלחת הצעות" value={`${kpis.quoteWinRate.toFixed(1)}%`} sub="הצעות מחיר שאושרו" color="from-violet-400 to-fuchsia-500" />
-        <KPI icon={TrendingUp} label="הכנסות" value={`₪${kpis.totalIncome.toLocaleString()}`} color="from-emerald-500 to-green-600" />
-        <KPI icon={Wallet} label="הוצאות" value={`₪${kpis.totalExpense.toLocaleString()}`} color="from-red-400 to-rose-500" />
-        <KPI icon={BarChart3} label="רווח נטו" value={`₪${kpis.netProfit.toLocaleString()}`} color={kpis.netProfit >= 0 ? "from-emerald-500 to-teal-500" : "from-red-500 to-rose-600"} />
+        <KPI icon={Percent} label="שיעור המרה" value={`${kpis.conversionRate.toFixed(1)}%`} sub="לידים ← לקוחות" color="from-primary to-accent" />
+        <KPI icon={Target} label="שווי צנרת" value={`₪${kpis.pipelineValue.toLocaleString()}`} sub="לידים פתוחים" color="from-accent to-primary" />
+        <KPI icon={Trophy} label="הצלחת הצעות" value={`${kpis.quoteWinRate.toFixed(1)}%`} sub="הצעות מחיר שאושרו" color="from-primary/80 to-accent/80" />
+        <KPI icon={TrendingUp} label="הכנסות" value={`₪${kpis.totalIncome.toLocaleString()}`} color="from-primary to-accent" />
+        <KPI icon={Wallet} label="הוצאות" value={`₪${kpis.totalExpense.toLocaleString()}`} color="from-muted-foreground to-primary/60" />
+        <KPI icon={BarChart3} label="רווח נטו" value={`₪${kpis.netProfit.toLocaleString()}`} color={kpis.netProfit >= 0 ? "from-primary to-accent" : "from-destructive to-destructive/70"} />
       </section>
 
       <MonthlyTargetCard />
@@ -149,7 +161,7 @@ function AnalyticsPage() {
               <XAxis type="number" fontSize={11} />
               <YAxis dataKey="name" type="category" fontSize={11} width={80} />
               <Tooltip
-                contentStyle={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))", borderRadius: 12 }}
+                contentStyle={TOOLTIP_STYLE}
                 formatter={(v: any, _n: any, p: any) => [`${v} לידים · ₪${p.payload.total.toLocaleString()}`, p.payload.name]}
               />
               <Bar dataKey="value" radius={[0, 8, 8, 0]}>
@@ -177,10 +189,10 @@ function AnalyticsPage() {
                   <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
                   <XAxis dataKey="month" fontSize={11} />
                   <YAxis fontSize={11} />
-                  <Tooltip contentStyle={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))", borderRadius: 12 }} />
+                  <Tooltip contentStyle={TOOLTIP_STYLE} />
                   <Legend />
-                  <Line type="monotone" dataKey="income" name="הכנסות" stroke="#10b981" strokeWidth={2} />
-                  <Line type="monotone" dataKey="expense" name="הוצאות" stroke="#ef4444" strokeWidth={2} />
+                  <Line type="monotone" dataKey="income" name="הכנסות" stroke="var(--success)" strokeWidth={2} />
+                  <Line type="monotone" dataKey="expense" name="הוצאות" stroke="var(--danger)" strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -199,7 +211,7 @@ function AnalyticsPage() {
                 <Pie data={funnelData.filter((d) => d.value > 0)} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={(e: any) => `${e.name}: ${e.value}`}>
                   {funnelData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                 </Pie>
-                <Tooltip contentStyle={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))", borderRadius: 12 }} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -242,7 +254,7 @@ function KPI({ icon: Icon, label, value, sub, color }: any) {
       </div>
       <div className="text-2xl font-bold">{value}</div>
       <div className="text-xs text-muted-foreground mt-1">{label}</div>
-      {sub && <div className="text-[10px] text-muted-foreground/70 mt-0.5">{sub}</div>}
+      {sub && <div className="text-xs text-muted-foreground/70 mt-0.5">{sub}</div>}
     </div>
   );
 }
@@ -280,7 +292,7 @@ function FunnelStageDetails({ leads, funnelData }: { leads: any[]; funnelData: a
           <div className="font-medium flex items-center gap-1"><XCircle className="size-3" /> סיבות אובדן</div>
           <div className="mt-1 flex flex-wrap gap-1">
             {Object.entries(lostByReason).map(([k, v]) => (
-              <span key={k} className="px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200">
+              <span key={k} className="px-2 py-0.5 rounded-full tone-danger">
                 {LOST_REASON_LABEL[k] ?? k}: {v}
               </span>
             ))}

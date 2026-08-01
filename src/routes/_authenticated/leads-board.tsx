@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Building2, LayoutGrid, List, Filter, XCircle, UserCircle2, MoreVertical } from "lucide-react";
+import { Building2, LayoutGrid, List, Filter, XCircle, UserCircle2, MoreVertical, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -16,13 +16,36 @@ import { sendEntityNotification } from "@/lib/email/send-entity-notification";
 
 type LeadStatus = "new" | "contacted" | "qualified" | "converted" | "lost";
 
-const columns: { key: LeadStatus; label: string; gradient: string; ring: string }[] = [
-  { key: "new", label: "חדש", gradient: "from-sky-500/20 to-sky-500/5", ring: "ring-sky-400/40" },
-  { key: "contacted", label: "יצרנו קשר", gradient: "from-violet-500/20 to-violet-500/5", ring: "ring-violet-400/40" },
-  { key: "qualified", label: "רלוונטי", gradient: "from-cyan-500/20 to-cyan-500/5", ring: "ring-cyan-400/40" },
-  { key: "converted", label: "הפך ללקוח", gradient: "from-emerald-500/20 to-emerald-500/5", ring: "ring-emerald-400/40" },
-  { key: "lost", label: "לא רלוונטי", gradient: "from-red-500/20 to-red-500/5", ring: "ring-red-400/40" },
+/** Semantic tone per column, harmonized with the brand teal/cyan palette.
+ *  info = open pipeline (with subtle tonal steps), success = converted, danger = lost. */
+const columns: { key: LeadStatus; label: string; tone: "info" | "success" | "danger"; depth: number }[] = [
+  { key: "new", label: "חדש", tone: "info", depth: 7 },
+  { key: "contacted", label: "יצרנו קשר", tone: "info", depth: 11 },
+  { key: "qualified", label: "רלוונטי", tone: "info", depth: 16 },
+  { key: "converted", label: "הפך ללקוח", tone: "success", depth: 14 },
+  { key: "lost", label: "לא רלוונטי", tone: "danger", depth: 12 },
 ];
+
+const OPEN_STAGES: LeadStatus[] = ["new", "contacted", "qualified"];
+
+function columnStyle(tone: string, depth: number) {
+  return {
+    backgroundImage: `linear-gradient(to bottom, color-mix(in oklab, var(--${tone}) ${depth}%, transparent), transparent)`,
+  } as const;
+}
+
+function daysInStage(lead: any) {
+  const since = lead.status_changed_at ?? lead.created_at;
+  if (!since) return 0;
+  return Math.max(0, Math.floor((Date.now() - new Date(since).getTime()) / 86400000));
+}
+
+function stageChipTone(lead: any, days: number) {
+  if (!OPEN_STAGES.includes(lead.status ?? "new")) return "tone-neutral";
+  if (days > 14) return "tone-danger";
+  if (days > 7) return "tone-warning";
+  return "tone-neutral";
+}
 
 function LeadsBoardPage() {
   const qc = useQueryClient();
@@ -56,7 +79,7 @@ function LeadsBoardPage() {
     qc.setQueryData(["leads"], (prev: any[] | undefined) =>
       (prev ?? []).map((l) => (l.id === leadId ? { ...l, status: newStatus, ...extra } : l)),
     );
-    const { error } = await supabase.from("leads").update({ status: newStatus, ...extra } as any).eq("id", leadId);
+    const { error } = await supabase.from("leads").update({ status: newStatus, status_changed_at: new Date().toISOString(), ...extra } as any).eq("id", leadId);
     if (error) { toast.error(error.message); qc.invalidateQueries({ queryKey: ["leads"] }); return; }
     const fromLabel = columns.find((c) => c.key === (prevLead?.status ?? "new"))?.label ?? String(prevLead?.status ?? "—");
     const toLabel = columns.find((c) => c.key === newStatus)?.label ?? String(newStatus);
@@ -90,7 +113,11 @@ function LeadsBoardPage() {
     setPendingLost(null);
   }
 
-  const byStatus = (s: LeadStatus) => visibleLeads.filter((l: any) => (l.status ?? "new") === s);
+  // Longest-in-stage first
+  const byStatus = (s: LeadStatus) =>
+    visibleLeads
+      .filter((l: any) => (l.status ?? "new") === s)
+      .sort((a: any, b: any) => daysInStage(b) - daysInStage(a));
   const totalValue = (s: LeadStatus) => byStatus(s).reduce((sum, l: any) => sum + (Number(l.estimated_value) || 0), 0);
 
   return (
@@ -135,10 +162,10 @@ function LeadsBoardPage() {
                   const id = e.dataTransfer.getData("text/lead-id");
                   if (id) moveLead(id, col.key);
                 }}
+                style={columnStyle(col.tone, col.depth)}
                 className={cn(
-                  "glass-strong rounded-3xl p-3 flex flex-col min-h-[400px] bg-gradient-to-b transition-all",
-                  col.gradient,
-                  isDropTarget && `ring-2 ${col.ring} scale-[1.01]`,
+                  "glass-strong rounded-3xl p-3 flex flex-col min-h-[400px] transition-all",
+                  isDropTarget && "ring-2 ring-accent/50 scale-[1.01]",
                 )}
               >
                 <div className="flex items-center justify-between px-2 pb-3 border-b border-border/40 mb-3">
@@ -157,6 +184,7 @@ function LeadsBoardPage() {
                   ) : (
                     items.map((lead: any) => {
                       const assignee = lead.assigned_to ? profileById[lead.assigned_to] : null;
+                      const stageDays = daysInStage(lead);
                       return (
                         <article
                           key={lead.id}
@@ -209,18 +237,22 @@ function LeadsBoardPage() {
                               ₪{Number(lead.estimated_value).toLocaleString()}
                             </div>
                           )}
+                          <div className={cn(
+                            "mt-2 text-xs rounded-full px-2 py-0.5 inline-flex items-center gap-1",
+                            stageChipTone(lead, stageDays),
+                          )}>
+                            <Clock className="size-3" /> {stageDays} ימים בשלב
+                          </div>
                           {lead.next_follow_up_at && (
                             <div className={cn(
                               "mt-1 text-xs rounded-full px-2 py-0.5 inline-block",
-                              new Date(lead.next_follow_up_at) < new Date()
-                                ? "bg-red-100 text-red-700 border border-red-200"
-                                : "bg-amber-100 text-amber-700 border border-amber-200",
+                              new Date(lead.next_follow_up_at) < new Date() ? "tone-danger" : "tone-warning",
                             )}>
                               מעקב: {new Date(lead.next_follow_up_at).toLocaleDateString("he-IL")}
                             </div>
                           )}
                           {lead.status === "lost" && lead.lost_reason && (
-                            <div className="mt-1 text-xs rounded-full px-2 py-0.5 inline-flex items-center gap-1 bg-red-50 text-red-700 border border-red-200">
+                            <div className="mt-1 text-xs rounded-full px-2 py-0.5 inline-flex items-center gap-1 tone-danger">
                               <XCircle className="size-3" /> {LOST_REASON_LABEL[lead.lost_reason] ?? lead.lost_reason}
                             </div>
                           )}
