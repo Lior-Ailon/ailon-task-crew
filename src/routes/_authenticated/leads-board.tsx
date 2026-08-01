@@ -158,10 +158,10 @@ function LeadsBoardPage() {
                   const id = e.dataTransfer.getData("text/lead-id");
                   if (id) moveLead(id, col.key);
                 }}
+                style={columnStyle(col.tone, col.depth)}
                 className={cn(
-                  "glass-strong rounded-3xl p-3 flex flex-col min-h-[400px] bg-gradient-to-b transition-all",
-                  col.gradient,
-                  isDropTarget && `ring-2 ${col.ring} scale-[1.01]`,
+                  "glass-strong rounded-3xl p-3 flex flex-col min-h-[400px] transition-all",
+                  isDropTarget && "ring-2 ring-accent/50 scale-[1.01]",
                 )}
               >
                 <div className="flex items-center justify-between px-2 pb-3 border-b border-border/40 mb-3">
