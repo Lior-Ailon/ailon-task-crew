@@ -40,6 +40,7 @@ import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/l
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiV1TableIdRouteImport } from './routes/api/v1/$table/$id'
 import { Route as ApiPublicMeetingsRespondRouteImport } from './routes/api/public/meetings.respond'
+import { Route as ApiPublicHooksEmailDigestRouteImport } from './routes/api/public/hooks/email-digest'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -202,6 +203,12 @@ const ApiPublicMeetingsRespondRoute =
     path: '/api/public/meetings/respond',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksEmailDigestRoute =
+  ApiPublicHooksEmailDigestRouteImport.update({
+    id: '/api/public/hooks/email-digest',
+    path: '/api/public/hooks/email-digest',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -229,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/api/public/leads': typeof ApiPublicLeadsRoute
   '/api/v1/$table': typeof ApiV1TableRouteWithChildren
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/api/public/hooks/email-digest': typeof ApiPublicHooksEmailDigestRoute
   '/api/public/meetings/respond': typeof ApiPublicMeetingsRespondRoute
   '/api/v1/$table/$id': typeof ApiV1TableIdRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -261,6 +269,7 @@ export interface FileRoutesByTo {
   '/api/public/leads': typeof ApiPublicLeadsRoute
   '/api/v1/$table': typeof ApiV1TableRouteWithChildren
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/api/public/hooks/email-digest': typeof ApiPublicHooksEmailDigestRoute
   '/api/public/meetings/respond': typeof ApiPublicMeetingsRespondRoute
   '/api/v1/$table/$id': typeof ApiV1TableIdRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -295,6 +304,7 @@ export interface FileRoutesById {
   '/api/public/leads': typeof ApiPublicLeadsRoute
   '/api/v1/$table': typeof ApiV1TableRouteWithChildren
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/api/public/hooks/email-digest': typeof ApiPublicHooksEmailDigestRoute
   '/api/public/meetings/respond': typeof ApiPublicMeetingsRespondRoute
   '/api/v1/$table/$id': typeof ApiV1TableIdRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -329,6 +339,7 @@ export interface FileRouteTypes {
     | '/api/public/leads'
     | '/api/v1/$table'
     | '/lovable/email/suppression'
+    | '/api/public/hooks/email-digest'
     | '/api/public/meetings/respond'
     | '/api/v1/$table/$id'
     | '/lovable/email/queue/process'
@@ -361,6 +372,7 @@ export interface FileRouteTypes {
     | '/api/public/leads'
     | '/api/v1/$table'
     | '/lovable/email/suppression'
+    | '/api/public/hooks/email-digest'
     | '/api/public/meetings/respond'
     | '/api/v1/$table/$id'
     | '/lovable/email/queue/process'
@@ -394,6 +406,7 @@ export interface FileRouteTypes {
     | '/api/public/leads'
     | '/api/v1/$table'
     | '/lovable/email/suppression'
+    | '/api/public/hooks/email-digest'
     | '/api/public/meetings/respond'
     | '/api/v1/$table/$id'
     | '/lovable/email/queue/process'
@@ -411,6 +424,7 @@ export interface RootRouteChildren {
   ApiPublicLeadsRoute: typeof ApiPublicLeadsRoute
   ApiV1TableRoute: typeof ApiV1TableRouteWithChildren
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  ApiPublicHooksEmailDigestRoute: typeof ApiPublicHooksEmailDigestRoute
   ApiPublicMeetingsRespondRoute: typeof ApiPublicMeetingsRespondRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -636,6 +650,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMeetingsRespondRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/email-digest': {
+      id: '/api/public/hooks/email-digest'
+      path: '/api/public/hooks/email-digest'
+      fullPath: '/api/public/hooks/email-digest'
+      preLoaderRoute: typeof ApiPublicHooksEmailDigestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -725,6 +746,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicLeadsRoute: ApiPublicLeadsRoute,
   ApiV1TableRoute: ApiV1TableRouteWithChildren,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  ApiPublicHooksEmailDigestRoute: ApiPublicHooksEmailDigestRoute,
   ApiPublicMeetingsRespondRoute: ApiPublicMeetingsRespondRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
