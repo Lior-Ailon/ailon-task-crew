@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Building2, LayoutGrid, List, Filter, XCircle, UserCircle2, MoreVertical } from "lucide-react";
+import { Building2, LayoutGrid, List, Filter, XCircle, UserCircle2, MoreVertical, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -79,7 +79,7 @@ function LeadsBoardPage() {
     qc.setQueryData(["leads"], (prev: any[] | undefined) =>
       (prev ?? []).map((l) => (l.id === leadId ? { ...l, status: newStatus, ...extra } : l)),
     );
-    const { error } = await supabase.from("leads").update({ status: newStatus, ...extra } as any).eq("id", leadId);
+    const { error } = await supabase.from("leads").update({ status: newStatus, status_changed_at: new Date().toISOString(), ...extra } as any).eq("id", leadId);
     if (error) { toast.error(error.message); qc.invalidateQueries({ queryKey: ["leads"] }); return; }
     const fromLabel = columns.find((c) => c.key === (prevLead?.status ?? "new"))?.label ?? String(prevLead?.status ?? "—");
     const toLabel = columns.find((c) => c.key === newStatus)?.label ?? String(newStatus);
@@ -113,7 +113,11 @@ function LeadsBoardPage() {
     setPendingLost(null);
   }
 
-  const byStatus = (s: LeadStatus) => visibleLeads.filter((l: any) => (l.status ?? "new") === s);
+  // Longest-in-stage first
+  const byStatus = (s: LeadStatus) =>
+    visibleLeads
+      .filter((l: any) => (l.status ?? "new") === s)
+      .sort((a: any, b: any) => daysInStage(b) - daysInStage(a));
   const totalValue = (s: LeadStatus) => byStatus(s).reduce((sum, l: any) => sum + (Number(l.estimated_value) || 0), 0);
 
   return (
