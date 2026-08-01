@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { UserPlus, Users, FolderKanban, CheckSquare, TrendingUp, Clock, Lightbulb, FileText, CalendarDays, MapPin, Plus, Package, ExternalLink, Bell, LayoutGrid, ChevronRight, ChevronLeft } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -367,6 +367,29 @@ function FollowUpsSection() {
 
   const overdue = combined.filter((x) => x.next_follow_up_at < nowIso);
   const upcoming = combined.filter((x) => x.next_follow_up_at >= nowIso);
+
+  // Overdue follow-ups trigger an immediate team email (once per item per day).
+  useEffect(() => {
+    if (overdue.length === 0 || typeof window === "undefined") return;
+    const today = new Date().toISOString().slice(0, 10);
+    for (const item of overdue) {
+      const key = `overdue-notified:${item.kind}:${item.id}:${today}`;
+      if (localStorage.getItem(key)) continue;
+      localStorage.setItem(key, "1");
+      sendEntityNotification({
+        entityLabel: item.kind === "customer" ? "לקוח" : "ליד",
+        action: "מעקב באיחור",
+        title: item.name ?? "—",
+        entityId: item.id,
+        immediate: true,
+        fields: [
+          { label: "מועד מעקב", value: new Date(item.next_follow_up_at).toLocaleDateString("he-IL") },
+          ...(item.follow_up_note ? [{ label: "הערה", value: String(item.follow_up_note) }] : []),
+        ],
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [overdue.map((o) => o.id).join(",")]);
 
   return (
     <section className="glass-strong rounded-3xl p-5">
