@@ -88,17 +88,23 @@ export type Database = {
       }
       app_settings: {
         Row: {
+          digest_enabled: boolean
           id: string
+          immediate_notifications_enabled: boolean
           monthly_sales_target: number | null
           updated_at: string
         }
         Insert: {
+          digest_enabled?: boolean
           id?: string
+          immediate_notifications_enabled?: boolean
           monthly_sales_target?: number | null
           updated_at?: string
         }
         Update: {
+          digest_enabled?: boolean
           id?: string
+          immediate_notifications_enabled?: boolean
           monthly_sales_target?: number | null
           updated_at?: string
         }
@@ -435,6 +441,7 @@ export type Database = {
           phone: string | null
           source: string | null
           status: Database["public"]["Enums"]["lead_status"]
+          status_changed_at: string
           updated_at: string
           user_id: string
         }
@@ -456,6 +463,7 @@ export type Database = {
           phone?: string | null
           source?: string | null
           status?: Database["public"]["Enums"]["lead_status"]
+          status_changed_at?: string
           updated_at?: string
           user_id: string
         }
@@ -477,6 +485,7 @@ export type Database = {
           phone?: string | null
           source?: string | null
           status?: Database["public"]["Enums"]["lead_status"]
+          status_changed_at?: string
           updated_at?: string
           user_id?: string
         }
@@ -606,6 +615,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notification_events: {
+        Row: {
+          action: string
+          actor: string | null
+          created_at: string
+          entity_id: string | null
+          entity_label: string
+          fields: Json
+          id: string
+          sent_at: string | null
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_label: string
+          fields?: Json
+          id?: string
+          sent_at?: string | null
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_label?: string
+          fields?: Json
+          id?: string
+          sent_at?: string | null
+          title?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
