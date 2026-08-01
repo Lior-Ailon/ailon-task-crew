@@ -49,6 +49,9 @@ function SettingsPage() {
         <TabsContent value="goals" className="mt-6 space-y-4">
           <MonthlyTargetEditor />
         </TabsContent>
+        <TabsContent value="notifications" className="mt-6 space-y-4">
+          <NotificationSettings />
+        </TabsContent>
         <TabsContent value="api" className="mt-6 space-y-4">
           <ApiKeysManager />
         </TabsContent>
