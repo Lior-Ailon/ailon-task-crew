@@ -33,6 +33,9 @@ function SettingsPage() {
           <TabsTrigger value="goals" className="gap-2">
             <Target className="size-4" /> יעדים
           </TabsTrigger>
+          <TabsTrigger value="notifications" className="gap-2">
+            <Bell className="size-4" /> התראות
+          </TabsTrigger>
           <TabsTrigger value="api" className="gap-2">
             <KeyRound className="size-4" /> API
           </TabsTrigger>
